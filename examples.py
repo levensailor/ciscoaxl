@@ -20,14 +20,16 @@ Users
 
 
 ''''Get Specific User'''
-# user = ucm.get_user('mscott')
+# user = ucm.get_user(uuid='AF29090C-D5D9-DF36-14C2-495AC40F9810')
 # if user['success']:
 #     print(user['response'])
+# else:
+#     print(user['error'])
 
 # ''''Add User'''
-this_add_user = ucm.add_user(user_id='jlevensailor', last_name='Levensailor', first_name='Jeff')
-if this_add_user['success']:
-    print(this_add_user['response'])
+# this_add_user = ucm.add_user(user_id='jlevensailor2', last_name='Levensailor', first_name='Jeff')
+# if this_add_user['success']:
+#     print(this_add_user['response'])
 
 # ''''Delete User'''
 # this_delete_user = ucm.delete_user(user_id='jlevensailor')
@@ -51,9 +53,9 @@ Phones
 
 #---Get Specific Phone
 
-# this_phone = ucm.get_user(user_id='lsimpson')
-# if this_phone['success']:
-#     print(this_phone['response'])
+this_phone = ucm.get_phone(name='SEP7426ACF360E1')
+if this_phone['success']:
+    print(this_phone['response'])
 
 # print(ucm.list_route_plan('2901'))
 
