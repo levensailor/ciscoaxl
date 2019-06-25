@@ -1,0 +1,3020 @@
+<?xml version="1.0"?>
+<xsd:schema 
+	targetNamespace="http://www.cisco.com/AXL/10.0" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:axl="http://www.cisco.com/AXL/10.0" 
+	elementFormDefault="unqualified" 
+	attributeFormDefault="unqualified">
+	
+	<xsd:annotation>
+		<xsd:documentation>
+			Version 1.00
+			Copyright (c) 2001, 2005-2013 Cisco Systems, Inc.
+		</xsd:documentation>
+	</xsd:annotation>
+	
+	<xsd:simpleType name="XASN1RoseOidEncoding">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Changes"/>
+			<xsd:enumeration value="Use Local Value"/>
+			<xsd:enumeration value="Use Global Value ISO"/>
+			<xsd:enumeration value="Use Global Value ECMA"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XAlarmSeverity">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Emergency"/>
+			<xsd:enumeration value="Alert"/>
+			<xsd:enumeration value="Critical"/>
+			<xsd:enumeration value="Error"/>
+			<xsd:enumeration value="Warning"/>
+			<xsd:enumeration value="Notice"/>
+			<xsd:enumeration value="Informational"/>
+			<xsd:enumeration value="Debug"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XAppServer">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Cisco Unity Voice Mail 4.x or later"/>
+			<xsd:enumeration value="Cisco Unity Connection"/>
+			<xsd:enumeration value="Cisco Unified CM IM and Presence (Obsolete)"/>
+			<xsd:enumeration value="CUMA Provisioning Server"/>
+			<xsd:enumeration value="CER Location Management"/>
+			<xsd:enumeration value="Cisco Web Dialer"/>
+			<xsd:enumeration value="Remote Syslog Server"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XAppServerContent">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="UNITY KUBRIK"/>
+			<xsd:enumeration value="UNITY PRE KUBRIK"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XAuthenticationMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="By Authentication String"/>
+			<xsd:enumeration value="By Null String"/>
+			<xsd:enumeration value="By Existing Certificate (precedence to LSC)"/>
+			<xsd:enumeration value="By Existing Certificate (precedence to MIC)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XAutoAnswer">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Auto Answer Off"/>
+			<xsd:enumeration value="Auto Answer with Headset"/>
+			<xsd:enumeration value="Auto Answer with Speakerphone"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XBLFSDOption">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Pickup"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XBarge">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Off"/>
+			<xsd:enumeration value="Barge"/>
+			<xsd:enumeration value="CBarge"/>
+			<xsd:enumeration value="Default"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XBillingserverprotocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SFTP"/>
+			<xsd:enumeration value="FTP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XBriProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="BRI NET3"/>
+			<xsd:enumeration value="NI"/>
+			<xsd:enumeration value="QSIG"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCALHeaders">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Disabled"/>
+			<xsd:enumeration value="Preferred"/>
+			<xsd:enumeration value="Required"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCALMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Fixed"/>
+			<xsd:enumeration value="Variable"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCFACSSActivationPolicy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Use System Default"/>
+			<xsd:enumeration value="With Configured CSS"/>
+			<xsd:enumeration value="With Activating Device/Line CSS"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCSUParam">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="0dB"/>
+			<xsd:enumeration value="-7.5dB"/>
+			<xsd:enumeration value="-15dB"/>
+			<xsd:enumeration value="-22.5dB"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCUCMVersionInSipHeader">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Major And Minor"/>
+			<xsd:enumeration value="Major"/>
+			<xsd:enumeration value="Major, Minor And Revision"/>
+			<xsd:enumeration value="Full Build"/>
+			<xsd:enumeration value="None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCallTreatmentOnFailure">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Allow Calls"/>
+			<xsd:enumeration value="Block Calls"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCallerFilterMask">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Directory Number"/>
+			<xsd:enumeration value="Not Available"/>
+			<xsd:enumeration value="Private"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCallerID">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ANI"/>
+			<xsd:enumeration value="DNIS"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCallingLineIdentification">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Default"/>
+			<xsd:enumeration value="Strict From URI presentation Only"/>
+			<xsd:enumeration value="Strict Identity Headers presentation Only"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCallingPartySelection">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Originator"/>
+			<xsd:enumeration value="First Redirect Number"/>
+			<xsd:enumeration value="Last Redirect Number"/>
+			<xsd:enumeration value="First Redirect Number (External)"/>
+			<xsd:enumeration value="Last Redirect Number (External)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCertificateOperation">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Pending Operation"/>
+			<xsd:enumeration value="Install/Upgrade"/>
+			<xsd:enumeration value="Delete"/>
+			<xsd:enumeration value="Troubleshoot"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCertificateService">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Phone-trust"/>
+			<xsd:enumeration value="Phone-VPN-trust"/>
+			<xsd:enumeration value="CallManager"/>
+			<xsd:enumeration value="CallManager-trust"/>
+			<xsd:enumeration value="tomcat"/>
+			<xsd:enumeration value="tomcat-trust"/>
+			<xsd:enumeration value="ipsec"/>
+			<xsd:enumeration value="ipsec-trust"/>
+			<xsd:enumeration value="CAPF"/>
+			<xsd:enumeration value="CAPF-trust"/>
+			<xsd:enumeration value="TVS"/>
+			<xsd:enumeration value="TVS-trust"/>
+			<xsd:enumeration value="directory-trust"/>
+			<xsd:enumeration value="Phone-SAST-trust"/>
+			<xsd:enumeration value="Phone-CTL-trust"/>
+			<xsd:enumeration value="userlicensing-trust"/>
+			<xsd:enumeration value="ITLRecovery"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCertificateStatus">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="Operation Pending"/>
+			<xsd:enumeration value="Upgrade Success"/>
+			<xsd:enumeration value="Delete Success"/>
+			<xsd:enumeration value="Troubleshoot Success"/>
+			<xsd:enumeration value="Upgrade Failed"/>
+			<xsd:enumeration value="Delete Failed"/>
+			<xsd:enumeration value="Troubleshoot Failed"/>
+			<xsd:enumeration value="Upgrade Failed: Invalid LSC"/>
+			<xsd:enumeration value="Upgrade Failed: Invalid Authentication String"/>
+			<xsd:enumeration value="Upgrade Failed: Invalid MIC"/>
+			<xsd:enumeration value="Upgrade Failed: Invalid Credentials"/>
+			<xsd:enumeration value="Upgrade Failed: Phone Communication Failure"/>
+			<xsd:enumeration value="Upgrade Failed: Key Generation Failed/Timeout"/>
+			<xsd:enumeration value="Upgrade Failed: CA Communication Failure"/>
+			<xsd:enumeration value="Upgrade Failed: CA Rejected Connection"/>
+			<xsd:enumeration value="Upgrade Failed: User Initiated Request Late/Timedout"/>
+			<xsd:enumeration value="Delete Failed: Invalid LSC"/>
+			<xsd:enumeration value="Delete Failed: Invalid Authentication String"/>
+			<xsd:enumeration value="Delete Failed: Invalid MIC"/>
+			<xsd:enumeration value="Delete Failed: Invalid Credentials"/>
+			<xsd:enumeration value="Delete Failed: Phone Communication Failure"/>
+			<xsd:enumeration value="Delete Failed: Key Generation Failed/Timeout"/>
+			<xsd:enumeration value="Delete Failed: CA Communication Failure"/>
+			<xsd:enumeration value="Delete Failed: CA Rejected Connection"/>
+			<xsd:enumeration value="Delete Failed: User Initiated Request Late/Timedout"/>
+			<xsd:enumeration value="Troubleshoot Failed: Invalid LSC"/>
+			<xsd:enumeration value="Troubleshoot Failed: Invalid Authentication String"/>
+			<xsd:enumeration value="Troubleshoot Failed: Invalid MIC"/>
+			<xsd:enumeration value="Troubleshoot Failed: Invalid Credentials"/>
+			<xsd:enumeration value="Troubleshoot Failed: Phone Communication Failure"/>
+			<xsd:enumeration value="Troubleshoot Failed: Key Generation Failed/Timeout"/>
+			<xsd:enumeration value="Troubleshoot Failed: User Initiated Request Late/Timedout"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCertificateVerificationLevel">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Any Certificate"/>
+			<xsd:enumeration value="Self-signed or Keystore"/>
+			<xsd:enumeration value="Keystore Only"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XClass">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Phone"/>
+			<xsd:enumeration value="Gateway"/>
+			<xsd:enumeration value="Conference Bridge"/>
+			<xsd:enumeration value="Media Termination Point"/>
+			<xsd:enumeration value="Route List"/>
+			<xsd:enumeration value="Voice Mail"/>
+			<xsd:enumeration value="CTI Route Point"/>
+			<xsd:enumeration value="Music On Hold"/>
+			<xsd:enumeration value="Simulation"/>
+			<xsd:enumeration value="Pilot"/>
+			<xsd:enumeration value="GateKeeper"/>
+			<xsd:enumeration value="Add-on modules"/>
+			<xsd:enumeration value="Hidden Phone"/>
+			<xsd:enumeration value="Trunk"/>
+			<xsd:enumeration value="Tone Announcement Player"/>
+			<xsd:enumeration value="Remote Destination Profile"/>
+			<xsd:enumeration value="EMCC Base Phone Template"/>
+			<xsd:enumeration value="EMCC Base Phone"/>
+			<xsd:enumeration value="Remote Destination Profile Template"/>
+			<xsd:enumeration value="Gateway Template"/>
+			<xsd:enumeration value="UDP Template"/>
+			<xsd:enumeration value="Phone Template"/>
+			<xsd:enumeration value="Device Profile"/>
+			<xsd:enumeration value="Invalid"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XClockReference">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Network"/>
+			<xsd:enumeration value="Internal"/>
+			<xsd:enumeration value="Span 1"/>
+			<xsd:enumeration value="Span 2"/>
+			<xsd:enumeration value="Span 3"/>
+			<xsd:enumeration value="Span 4"/>
+			<xsd:enumeration value="Span 5"/>
+			<xsd:enumeration value="Span 6"/>
+			<xsd:enumeration value="Span 7"/>
+			<xsd:enumeration value="Span 8"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XConnectProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="HTTP"/>
+			<xsd:enumeration value="HTTPS"/>
+			<xsd:enumeration value="TCP"/>
+			<xsd:enumeration value="TCP + UDP"/>
+			<xsd:enumeration value="UDP"/>
+			<xsd:enumeration value="SSL"/>
+			<xsd:enumeration value="TLS"/>
+			<xsd:enumeration value="SIP"/>
+			<xsd:enumeration value="OWA"/>
+			<xsd:enumeration value="SOAP"/>
+			<xsd:enumeration value="EWS"/>
+			<xsd:enumeration value="XMPP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCountry">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Argentina"/>
+			<xsd:enumeration value="Australia"/>
+			<xsd:enumeration value="Austria"/>
+			<xsd:enumeration value="Belgium"/>
+			<xsd:enumeration value="Brazil"/>
+			<xsd:enumeration value="Canada"/>
+			<xsd:enumeration value="China"/>
+			<xsd:enumeration value="Colombia"/>
+			<xsd:enumeration value="Cyprus"/>
+			<xsd:enumeration value="Czech Republic"/>
+			<xsd:enumeration value="Denmark"/>
+			<xsd:enumeration value="Egypt"/>
+			<xsd:enumeration value="Finland"/>
+			<xsd:enumeration value="France"/>
+			<xsd:enumeration value="Germany"/>
+			<xsd:enumeration value="Ghana"/>
+			<xsd:enumeration value="Greece"/>
+			<xsd:enumeration value="Hong Kong"/>
+			<xsd:enumeration value="Hungary"/>
+			<xsd:enumeration value="Iceland"/>
+			<xsd:enumeration value="India"/>
+			<xsd:enumeration value="Indonesia"/>
+			<xsd:enumeration value="Ireland"/>
+			<xsd:enumeration value="Israel"/>
+			<xsd:enumeration value="Italy"/>
+			<xsd:enumeration value="Japan"/>
+			<xsd:enumeration value="Jordan"/>
+			<xsd:enumeration value="Kenya"/>
+			<xsd:enumeration value="Korea Republic"/>
+			<xsd:enumeration value="Lebanon"/>
+			<xsd:enumeration value="Luxembourg"/>
+			<xsd:enumeration value="Malaysia"/>
+			<xsd:enumeration value="Mexico"/>
+			<xsd:enumeration value="Nepal"/>
+			<xsd:enumeration value="Netherlands"/>
+			<xsd:enumeration value="New Zealand"/>
+			<xsd:enumeration value="Nigeria"/>
+			<xsd:enumeration value="Norway"/>
+			<xsd:enumeration value="Pakistan"/>
+			<xsd:enumeration value="Panama"/>
+			<xsd:enumeration value="Peru"/>
+			<xsd:enumeration value="Philippines"/>
+			<xsd:enumeration value="Poland"/>
+			<xsd:enumeration value="Portugal"/>
+			<xsd:enumeration value="Russian Federation"/>
+			<xsd:enumeration value="Saudi Arabia"/>
+			<xsd:enumeration value="Singapore"/>
+			<xsd:enumeration value="Slovakia"/>
+			<xsd:enumeration value="Slovenia"/>
+			<xsd:enumeration value="South Africa"/>
+			<xsd:enumeration value="Spain"/>
+			<xsd:enumeration value="Sweden"/>
+			<xsd:enumeration value="Switzerland"/>
+			<xsd:enumeration value="Taiwan"/>
+			<xsd:enumeration value="Thailand"/>
+			<xsd:enumeration value="Turkey"/>
+			<xsd:enumeration value="United Kingdom"/>
+			<xsd:enumeration value="United States"/>
+			<xsd:enumeration value="Venezuela"/>
+			<xsd:enumeration value="Zimbabwe"/>
+			<xsd:enumeration value="Itu"/>
+			<xsd:enumeration value="Chile"/>
+			<xsd:enumeration value="Bulgaria"/>
+			<xsd:enumeration value="Croatia"/>
+			<xsd:enumeration value="Romania"/>
+			<xsd:enumeration value="Serbia and Montenegro"/>
+			<xsd:enumeration value="United Arab Emirates"/>
+			<xsd:enumeration value="Oman"/>
+			<xsd:enumeration value="Kuwait"/>
+			<xsd:enumeration value="Algeria"/>
+			<xsd:enumeration value="Bahrain"/>
+			<xsd:enumeration value="Iraq"/>
+			<xsd:enumeration value="Mauritania"/>
+			<xsd:enumeration value="Republic of Montenegro"/>
+			<xsd:enumeration value="Morocco"/>
+			<xsd:enumeration value="Qatar"/>
+			<xsd:enumeration value="Republic of Serbia"/>
+			<xsd:enumeration value="Sudan"/>
+			<xsd:enumeration value="Tunisia"/>
+			<xsd:enumeration value="Vietnam"/>
+			<xsd:enumeration value="Yemen"/>
+			<xsd:enumeration value="Lithuania"/>
+			<xsd:enumeration value="Latvia"/>
+			<xsd:enumeration value="Estonia"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCredential">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Password"/>
+			<xsd:enumeration value="PIN"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XCredentialUser">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="End User"/>
+			<xsd:enumeration value="Application User"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDNDOption">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Ringer Off"/>
+			<xsd:enumeration value="Call Reject"/>
+			<xsd:enumeration value="Use Common Phone Profile Setting"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDTMFSignaling">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Preference"/>
+			<xsd:enumeration value="Out of Band"/>
+			<xsd:enumeration value="RFC 2833"/>
+			<xsd:enumeration value="OOB and RFC 2833"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDayOfWeek">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Sun"/>
+			<xsd:enumeration value="Mon"/>
+			<xsd:enumeration value="Tue"/>
+			<xsd:enumeration value="Wed"/>
+			<xsd:enumeration value="Thu"/>
+			<xsd:enumeration value="Fri"/>
+			<xsd:enumeration value="Sat"/>
+			<xsd:enumeration value="None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDeviceProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SCCP"/>
+			<xsd:enumeration value="Digital Access PRI"/>
+			<xsd:enumeration value="H.225"/>
+			<xsd:enumeration value="Analog Access"/>
+			<xsd:enumeration value="Digital Access T1"/>
+			<xsd:enumeration value="Route Point"/>
+			<xsd:enumeration value="Unicast Bridge"/>
+			<xsd:enumeration value="Multicast Point"/>
+			<xsd:enumeration value="Inter-Cluster Trunk"/>
+			<xsd:enumeration value="RAS"/>
+			<xsd:enumeration value="Digital Access BRI"/>
+			<xsd:enumeration value="SIP"/>
+			<xsd:enumeration value="MGCP"/>
+			<xsd:enumeration value="Static SIP Mobile Subscriber"/>
+			<xsd:enumeration value="SIP Connector"/>
+			<xsd:enumeration value="Remote Destination"/>
+			<xsd:enumeration value="Mobile Smart Client"/>
+			<xsd:enumeration value="Digital Access E1 R2"/>
+			<xsd:enumeration value="CTI Remote Device"/>
+			<xsd:enumeration value="Protocol Not Specified"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDeviceSecurityMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Non Secure"/>
+			<xsd:enumeration value="Authenticated"/>
+			<xsd:enumeration value="Encrypted"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDeviceTrustMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Not Trusted"/>
+			<xsd:enumeration value="Trusted"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDialParameter">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Pattern"/>
+			<xsd:enumeration value="Button"/>
+			<xsd:enumeration value="Timeout"/>
+			<xsd:enumeration value="User"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDialPattern">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="7905_7912"/>
+			<xsd:enumeration value="7940_7960_OTHER"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDialViaOffice">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Dial via Office Reverse"/>
+			<xsd:enumeration value="Dial via Office Forward"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDigitSending">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DTMF"/>
+			<xsd:enumeration value="MF"/>
+			<xsd:enumeration value="PULSE"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XDistributeAlgorithm">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Top Down"/>
+			<xsd:enumeration value="Circular"/>
+			<xsd:enumeration value="Longest Idle Time"/>
+			<xsd:enumeration value="Broadcast"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XEncode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="A-law"/>
+			<xsd:enumeration value="u-law"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XFDLChannel">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="AT&amp;T 54016"/>
+			<xsd:enumeration value="ANSI T1.403 NI"/>
+			<xsd:enumeration value="ANSI T1.403.CI"/>
+			<xsd:enumeration value="None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XFallBackCSSSelection">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Calling device AAR Calling Search Space"/>
+			<xsd:enumeration value="Trunk ReRoute Calling Search Space"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XFeature">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Redial"/>
+			<xsd:enumeration value="Speed Dial"/>
+			<xsd:enumeration value="Hold"/>
+			<xsd:enumeration value="Transfer"/>
+			<xsd:enumeration value="Forward All"/>
+			<xsd:enumeration value="Display"/>
+			<xsd:enumeration value="Line"/>
+			<xsd:enumeration value="Chat"/>
+			<xsd:enumeration value="Whiteboard"/>
+			<xsd:enumeration value="Application Sharing"/>
+			<xsd:enumeration value="File Transfer"/>
+			<xsd:enumeration value="Video"/>
+			<xsd:enumeration value="Message Waiting"/>
+			<xsd:enumeration value="Answer/Release"/>
+			<xsd:enumeration value="Auto Answer"/>
+			<xsd:enumeration value="Settings"/>
+			<xsd:enumeration value="Privacy"/>
+			<xsd:enumeration value="Service URL"/>
+			<xsd:enumeration value="Speed Dial BLF"/>
+			<xsd:enumeration value="Call Park BLF"/>
+			<xsd:enumeration value="Intercom"/>
+			<xsd:enumeration value="Malicious Call Identification"/>
+			<xsd:enumeration value="Meet Me Conference"/>
+			<xsd:enumeration value="Conference"/>
+			<xsd:enumeration value="Call Park"/>
+			<xsd:enumeration value="Call Pickup"/>
+			<xsd:enumeration value="Group Call Pickup"/>
+			<xsd:enumeration value="Mobility"/>
+			<xsd:enumeration value="Do Not Disturb"/>
+			<xsd:enumeration value="Conference List"/>
+			<xsd:enumeration value="Remove Last Participant"/>
+			<xsd:enumeration value="Quality Reporting Tool"/>
+			<xsd:enumeration value="CallBack"/>
+			<xsd:enumeration value="Other Pickup"/>
+			<xsd:enumeration value="Video Mode"/>
+			<xsd:enumeration value="New Call"/>
+			<xsd:enumeration value="End Call"/>
+			<xsd:enumeration value="Hunt Group Logout"/>
+			<xsd:enumeration value="All Calls"/>
+			<xsd:enumeration value="Answer Oldest"/>
+			<xsd:enumeration value="Alerting Calls"/>
+			<xsd:enumeration value="Queue Status"/>
+			<xsd:enumeration value="Record"/>
+			<xsd:enumeration value="Services"/>
+			<xsd:enumeration value="Messages"/>
+			<xsd:enumeration value="Directories"/>
+			<xsd:enumeration value="Information"/>
+			<xsd:enumeration value="Application Menu"/>
+			<xsd:enumeration value="Headset"/>
+			<xsd:enumeration value="AEC"/>
+			<xsd:enumeration value="None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XGClear">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Disabled"/>
+			<xsd:enumeration value="CLEARMODE"/>
+			<xsd:enumeration value="CCD"/>
+			<xsd:enumeration value="G.nX64"/>
+			<xsd:enumeration value="X-CCD"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XGeoLocationDevice">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Border"/>
+			<xsd:enumeration value="Interior"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XGlobalNumber">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Enterprise Number"/>
+			<xsd:enumeration value="+E.164 Number"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XHTTPProxy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="Manual"/>
+			<xsd:enumeration value="Auto"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XHostedRoutePatternPSTNRule">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Use pattern"/>
+			<xsd:enumeration value="Specify"/>
+			<xsd:enumeration value="No PSTN"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XHotspotAuthenticationMethod">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="WEP"/>
+			<xsd:enumeration value="WPA-PSK"/>
+			<xsd:enumeration value="WPA2-PSK"/>
+			<xsd:enumeration value="EAP-FAST"/>
+			<xsd:enumeration value="PEAP-MSCHAPv2"/>
+			<xsd:enumeration value="PEAP-GTC"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XHuntAlgorithm">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Try next member; then, try next group in Hunt List"/>
+			<xsd:enumeration value="Try next member, but do not go to next group"/>
+			<xsd:enumeration value="Skip remaining members, and go directly to next group"/>
+			<xsd:enumeration value="Stop hunting"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XIPAddressingMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="IPv4 Only"/>
+			<xsd:enumeration value="IPv6 Only"/>
+			<xsd:enumeration value="IPv4 and IPv6"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XIPAddressingModePrefControl">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="IPv4"/>
+			<xsd:enumeration value="IPv6"/>
+			<xsd:enumeration value="Use System Default"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XInterClusterService">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="EMCC"/>
+			<xsd:enumeration value="PSTN Access"/>
+			<xsd:enumeration value="RSVP Agent"/>
+			<xsd:enumeration value="TFTP"/>
+			<xsd:enumeration value="LBM"/>
+			<xsd:enumeration value="UDS"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XKeepAliveTimeInterval">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="0"/>
+			<xsd:enumeration value="5"/>
+			<xsd:enumeration value="10"/>
+			<xsd:enumeration value="15"/>
+			<xsd:enumeration value="20"/>
+			<xsd:enumeration value="25"/>
+			<xsd:enumeration value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XKeySize">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="512"/>
+			<xsd:enumeration value="1024"/>
+			<xsd:enumeration value="2048"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XLDAPDirectoryFunction">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DirSync"/>
+			<xsd:enumeration value="DN Alias Sync and Lookup"/>
+			<xsd:enumeration value="Alias Sync only"/>
+			<xsd:enumeration value="Lookup only"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XLdapServer">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Microsoft Active Directory"/>
+			<xsd:enumeration value="Sun or Oracle Directory Server"/>
+			<xsd:enumeration value="OpenLDAP"/>
+			<xsd:enumeration value="Microsoft ADAM or Lightweight Directory Services"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XLogicalPartitionPolicy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Use Default Policy"/>
+			<xsd:enumeration value="Allow"/>
+			<xsd:enumeration value="Deny"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XLossyNetwork">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Keep Current Setting"/>
+			<xsd:enumeration value="Use System Default"/>
+			<xsd:enumeration value="Low Loss"/>
+			<xsd:enumeration value="Lossy"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMGCPSlotModule">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="NM-1V"/>
+			<xsd:enumeration value="NM-2V"/>
+			<xsd:enumeration value="NM-HDV"/>
+			<xsd:enumeration value="VIC-SLOT"/>
+			<xsd:enumeration value="NONE"/>
+			<xsd:enumeration value="VWIC-SLOT"/>
+			<xsd:enumeration value="FLEX-SLOT"/>
+			<xsd:enumeration value="ANALOG"/>
+			<xsd:enumeration value="DIGITAL"/>
+			<xsd:enumeration value="VGC_PORT"/>
+			<xsd:enumeration value="WS-X6600"/>
+			<xsd:enumeration value="AIM-VOICE-30 (2 subunits)"/>
+			<xsd:enumeration value="NM-HDA"/>
+			<xsd:enumeration value="PA-VXA"/>
+			<xsd:enumeration value="PA-VXB"/>
+			<xsd:enumeration value="PA-VXC"/>
+			<xsd:enumeration value="PA-MCX"/>
+			<xsd:enumeration value="NM-HD-1V"/>
+			<xsd:enumeration value="NM-HD-2V"/>
+			<xsd:enumeration value="NM-HD-2VE"/>
+			<xsd:enumeration value="GENERIC-SLOT"/>
+			<xsd:enumeration value="NM-4VWIC-MBRD"/>
+			<xsd:enumeration value="EVM-HD"/>
+			<xsd:enumeration value="NM-HDV2-0PORT"/>
+			<xsd:enumeration value="NM-HDV2-1PORT-T1"/>
+			<xsd:enumeration value="NM-HDV2-1PORT-E1"/>
+			<xsd:enumeration value="NM-HDV2-2PORT-T1"/>
+			<xsd:enumeration value="NM-HDV2-2PORT-E1"/>
+			<xsd:enumeration value="AIM-VOICE-30-SLOT-0 (3 subunits- slot 0 only)"/>
+			<xsd:enumeration value="NM-3VWIC-MBRD"/>
+			<xsd:enumeration value="ISR-3NIM-MBRD"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMGCPVic">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="VIC-2FXS"/>
+			<xsd:enumeration value="VIC-2FXO"/>
+			<xsd:enumeration value="VWIC-1MFT-T1"/>
+			<xsd:enumeration value="VWIC-2MFT-T1"/>
+			<xsd:enumeration value="VIC_NONE"/>
+			<xsd:enumeration value="VWIC-1MFT-E1"/>
+			<xsd:enumeration value="VWIC-2MFT-E1"/>
+			<xsd:enumeration value="WS-U4604-8FXS"/>
+			<xsd:enumeration value="8FXS"/>
+			<xsd:enumeration value="16FXS"/>
+			<xsd:enumeration value="1T1"/>
+			<xsd:enumeration value="16FXS8FXO"/>
+			<xsd:enumeration value="48_PORTS"/>
+			<xsd:enumeration value="VIC-4FXS"/>
+			<xsd:enumeration value="VIC-4FXO"/>
+			<xsd:enumeration value="VIC-8FXS"/>
+			<xsd:enumeration value="VIC-16FXS"/>
+			<xsd:enumeration value="WS-X6600-24FXS"/>
+			<xsd:enumeration value="WS-X6600-6T1"/>
+			<xsd:enumeration value="WS-X6600-6E1"/>
+			<xsd:enumeration value="EM-4FXO-EM0"/>
+			<xsd:enumeration value="EM-4FXO-EM1"/>
+			<xsd:enumeration value="EM-8FXS-EM0"/>
+			<xsd:enumeration value="EM-8FXS-EM1"/>
+			<xsd:enumeration value="NM-HDA-4FXS"/>
+			<xsd:enumeration value="PA-VXA-1TE1-24-T1"/>
+			<xsd:enumeration value="PA-VXA-1TE1-30-E1"/>
+			<xsd:enumeration value="PA-VXB-2TE1-T1"/>
+			<xsd:enumeration value="PA-VXB-2TE1-E1"/>
+			<xsd:enumeration value="PA-VXC-2TE1-T1"/>
+			<xsd:enumeration value="PA-VXC-2TE1-E1"/>
+			<xsd:enumeration value="PA-MCX-2TE1-T1"/>
+			<xsd:enumeration value="PA-MCX-2TE1-E1"/>
+			<xsd:enumeration value="PA-MCX-4TE1-T1"/>
+			<xsd:enumeration value="PA-MCX-4TE1-E1"/>
+			<xsd:enumeration value="PA-MCX-6TE1-T1"/>
+			<xsd:enumeration value="PA-MCX-6TE1-E1"/>
+			<xsd:enumeration value="PA-MCX-8TE1-T1"/>
+			<xsd:enumeration value="PA-MCX-8TE1-E1"/>
+			<xsd:enumeration value="VIC-8FXO"/>
+			<xsd:enumeration value="WS-U4604-8FXO-2FXS"/>
+			<xsd:enumeration value="WS-U4604-16FXS"/>
+			<xsd:enumeration value="VIC-2BRI"/>
+			<xsd:enumeration value="VIC-2FXS-SCCP"/>
+			<xsd:enumeration value="VIC-4FXS-SCCP"/>
+			<xsd:enumeration value="VIC2-2FXS-SCCP"/>
+			<xsd:enumeration value="VIC2-2BRI-NT/TE-SCCP"/>
+			<xsd:enumeration value="NM-HDA-4FXS-SCCP"/>
+			<xsd:enumeration value="EM-8FXS-EM0-SCCP"/>
+			<xsd:enumeration value="24FXS-SCCP"/>
+			<xsd:enumeration value="EM-8FXS-EM1-SCCP"/>
+			<xsd:enumeration value="EVM-HD-8FXS/DID-SCCP"/>
+			<xsd:enumeration value="EM-4BRI-NT/TE-SCCP"/>
+			<xsd:enumeration value="EM-HDA-8FXS-SCCP"/>
+			<xsd:enumeration value="EM-HDA-3FXS/4FXO-SCCP"/>
+			<xsd:enumeration value="VIC3-2FXS/DID"/>
+			<xsd:enumeration value="VIC3-4FXS/DID"/>
+			<xsd:enumeration value="EM3-HDA-8FXS/DID"/>
+			<xsd:enumeration value="VIC3-2FXS/DID-SCCP"/>
+			<xsd:enumeration value="VIC3-4FXS/DID-SCCP"/>
+			<xsd:enumeration value="EM3-HDA-8FXS/DID-SCCP"/>
+			<xsd:enumeration value="4FXS-MGCP"/>
+			<xsd:enumeration value="4FXS-SCCP"/>
+			<xsd:enumeration value="2FXS-MGCP"/>
+			<xsd:enumeration value="2FXS-SCCP"/>
+			<xsd:enumeration value="VGD-DFC-CT3"/>
+			<xsd:enumeration value="VIC3-2FXS-E/DID"/>
+			<xsd:enumeration value="VIC3-2FXS-E/DID-SCCP"/>
+			<xsd:enumeration value="VIC2-1FXO"/>
+			<xsd:enumeration value="VIC2-1BRI"/>
+			<xsd:enumeration value="HWIC-1CE1T1-PRI-T1"/>
+			<xsd:enumeration value="HWIC-1CE1T1-PRI-E1"/>
+			<xsd:enumeration value="HWIC-2CE1T1-PRI-T1"/>
+			<xsd:enumeration value="HWIC-2CE1T1-PRI-E1"/>
+			<xsd:enumeration value="HWIC-4CE1T1-PRI-T1"/>
+			<xsd:enumeration value="HWIC-4CE1T1-PRI-E1"/>
+			<xsd:enumeration value="VWIC3-1MFT-T1E1-T1"/>
+			<xsd:enumeration value="VWIC3-1MFT-T1E1-E1"/>
+			<xsd:enumeration value="VWIC3-1MFT-G703-T1"/>
+			<xsd:enumeration value="VWIC3-1MFT-G703-E1"/>
+			<xsd:enumeration value="VWIC3-2MFT-T1E1-T1"/>
+			<xsd:enumeration value="VWIC3-2MFT-T1E1-E1"/>
+			<xsd:enumeration value="VWIC3-2MFT-G703-T1"/>
+			<xsd:enumeration value="VWIC3-2MFT-G703-E1"/>
+			<xsd:enumeration value="VWIC3-4MFT-T1E1-T1"/>
+			<xsd:enumeration value="VWIC3-4MFT-T1E1-E1"/>
+			<xsd:enumeration value="SM-D-48FXS-E"/>
+			<xsd:enumeration value="SM-D-72FXS"/>
+			<xsd:enumeration value="SM-D-48FXS-E-SCCP"/>
+			<xsd:enumeration value="SM-D-72FXS-SCCP"/>
+			<xsd:enumeration value="Intelbras 80 Port FXS"/>
+			<xsd:enumeration value="WS-SVC-CMM-MS"/>
+			<xsd:enumeration value="VIC2-2FXS"/>
+			<xsd:enumeration value="VIC2-2FXO"/>
+			<xsd:enumeration value="VIC2-2BRI"/>
+			<xsd:enumeration value="VIC-4FXS/DID"/>
+			<xsd:enumeration value="VIC2-4FXO"/>
+			<xsd:enumeration value="NM-HDV2-ONBOARD-T1"/>
+			<xsd:enumeration value="NM-HDV2-ONBOARD-E1"/>
+			<xsd:enumeration value="VWIC2-1MFT-T1E1-T1"/>
+			<xsd:enumeration value="VWIC2-1MFT-T1E1-E1"/>
+			<xsd:enumeration value="VWIC2-2MFT-T1E1-T1"/>
+			<xsd:enumeration value="VWIC2-2MFT-T1E1-E1"/>
+			<xsd:enumeration value="VWIC2-1MFT-G703-T1"/>
+			<xsd:enumeration value="VWIC2-1MFT-G703-E1"/>
+			<xsd:enumeration value="VWIC2-2MFT-G703-T1"/>
+			<xsd:enumeration value="VWIC2-2MFT-G703-E1"/>
+			<xsd:enumeration value="EVM-HD-8FXS/DID"/>
+			<xsd:enumeration value="EM-4BRI-NT/TE-EM0"/>
+			<xsd:enumeration value="EM-4BRI-NT/TE-EM1"/>
+			<xsd:enumeration value="24FXS"/>
+			<xsd:enumeration value="NM-HDV2-ONBOARD-T1-2PORT"/>
+			<xsd:enumeration value="NM-HDV2-ONBOARD-E1-2PORT"/>
+			<xsd:enumeration value="EM-HDA-8FXS"/>
+			<xsd:enumeration value="EM-HDA-6FXO"/>
+			<xsd:enumeration value="EM-HDA-3FXS/4FXO"/>
+			<xsd:enumeration value="EM-4BRI-NT/TE"/>
+			<xsd:enumeration value="VIC2-1MFT-T1E1-T1"/>
+			<xsd:enumeration value="VIC2-1MFT-T1E1-E1"/>
+			<xsd:enumeration value="VIC2-2MFT-T1E1-T1"/>
+			<xsd:enumeration value="VIC2-2MFT-T1E1-E1"/>
+			<xsd:enumeration value="EM2-4FXO-EM0"/>
+			<xsd:enumeration value="EM2-4FXO-EM1"/>
+			<xsd:enumeration value="NIM-1MFT-T1E1-T1"/>
+			<xsd:enumeration value="NIM-1CE1T1-PRI-T1"/>
+			<xsd:enumeration value="NIM-1MFT-T1E1-E1"/>
+			<xsd:enumeration value="NIM-1CE1T1-PRI-E1"/>
+			<xsd:enumeration value="NIM-2MFT-T1E1-T1"/>
+			<xsd:enumeration value="NIM-2CE1T1-PRI-T1"/>
+			<xsd:enumeration value="NIM-2MFT-T1E1-E1"/>
+			<xsd:enumeration value="NIM-2CE1T1-PRI-E1"/>
+			<xsd:enumeration value="NIM-4MFT-T1E1-T1"/>
+			<xsd:enumeration value="NIM-4MFT-T1E1-E1"/>
+			<xsd:enumeration value="NIM-8MFT-T1E1-T1"/>
+			<xsd:enumeration value="NIM-8CE1T1-PRI-T1"/>
+			<xsd:enumeration value="NIM-8MFT-T1E1-E1"/>
+			<xsd:enumeration value="NIM-8CE1T1-PRI-E1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMWLPolicy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Use System Policy"/>
+			<xsd:enumeration value="Light and Prompt"/>
+			<xsd:enumeration value="Prompt Only"/>
+			<xsd:enumeration value="Light Only"/>
+			<xsd:enumeration value="None"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMatrixValue">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Use System Default"/>
+			<xsd:enumeration value="No Reservation"/>
+			<xsd:enumeration value="Optional(Video Desired)"/>
+			<xsd:enumeration value="Mandatory"/>
+			<xsd:enumeration value="Mandatory(Video Desired)"/>
+			<xsd:enumeration value="Allow Subscription"/>
+			<xsd:enumeration value="Disallow Subscription"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMediaPayload">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="G711 a-law 64K"/>
+			<xsd:enumeration value="G711 u-law 64K"/>
+			<xsd:enumeration value="G723"/>
+			<xsd:enumeration value="G729"/>
+			<xsd:enumeration value="G729AnnexA"/>
+			<xsd:enumeration value="G729AnnexB"/>
+			<xsd:enumeration value="G729AnnexA-AnnexB"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMobileSmartClient">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CUMC"/>
+			<xsd:enumeration value="Standard"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XModel">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Cisco 30 SP+"/>
+			<xsd:enumeration value="Cisco 12 SP+"/>
+			<xsd:enumeration value="Cisco 12 SP"/>
+			<xsd:enumeration value="Cisco 12 S"/>
+			<xsd:enumeration value="Cisco 30 VIP"/>
+			<xsd:enumeration value="Cisco 7910"/>
+			<xsd:enumeration value="Cisco 7960"/>
+			<xsd:enumeration value="Cisco 7940"/>
+			<xsd:enumeration value="Cisco 7935"/>
+			<xsd:enumeration value="Cisco VGC Phone"/>
+			<xsd:enumeration value="Cisco VGC Virtual Phone"/>
+			<xsd:enumeration value="Cisco ATA 186"/>
+			<xsd:enumeration value="EMCC Base Phone"/>
+			<xsd:enumeration value="SCCP Phone"/>
+			<xsd:enumeration value="Analog Access"/>
+			<xsd:enumeration value="Digital Access"/>
+			<xsd:enumeration value="Digital Access+"/>
+			<xsd:enumeration value="Digital Access WS-X6608"/>
+			<xsd:enumeration value="Analog Access WS-X6624"/>
+			<xsd:enumeration value="VGC Gateway"/>
+			<xsd:enumeration value="Conference Bridge"/>
+			<xsd:enumeration value="Conference Bridge WS-X6608"/>
+			<xsd:enumeration value="Cisco IOS Conference Bridge (HDV2)"/>
+			<xsd:enumeration value="Cisco Conference Bridge (WS-SVC-CMM)"/>
+			<xsd:enumeration value="H.323 Phone"/>
+			<xsd:enumeration value="H.323 Gateway"/>
+			<xsd:enumeration value="Music On Hold"/>
+			<xsd:enumeration value="Device Pilot"/>
+			<xsd:enumeration value="CTI Port"/>
+			<xsd:enumeration value="CTI Route Point"/>
+			<xsd:enumeration value="Voice Mail Port"/>
+			<xsd:enumeration value="Cisco IOS Software Media Termination Point (HDV2)"/>
+			<xsd:enumeration value="Cisco Media Server (WS-SVC-CMM-MS)"/>
+			<xsd:enumeration value="Cisco Video Conference Bridge (IPVC-35xx)"/>
+			<xsd:enumeration value="Cisco IOS Heterogeneous Video Conference Bridge"/>
+			<xsd:enumeration value="Cisco IOS Guaranteed Audio Video Conference Bridge"/>
+			<xsd:enumeration value="Cisco IOS Homogeneous Video Conference Bridge"/>
+			<xsd:enumeration value="Route List"/>
+			<xsd:enumeration value="Load Simulator"/>
+			<xsd:enumeration value="Media Termination Point"/>
+			<xsd:enumeration value="Media Termination Point Hardware"/>
+			<xsd:enumeration value="Cisco IOS Media Termination Point (HDV2)"/>
+			<xsd:enumeration value="Cisco Media Termination Point (WS-SVC-CMM)"/>
+			<xsd:enumeration value="Cisco 7941"/>
+			<xsd:enumeration value="Cisco 7971"/>
+			<xsd:enumeration value="MGCP Station"/>
+			<xsd:enumeration value="MGCP Trunk"/>
+			<xsd:enumeration value="GateKeeper"/>
+			<xsd:enumeration value="7914 14-Button Line Expansion Module"/>
+			<xsd:enumeration value="Trunk"/>
+			<xsd:enumeration value="Tone Announcement Player"/>
+			<xsd:enumeration value="SIP Trunk"/>
+			<xsd:enumeration value="SIP Gateway"/>
+			<xsd:enumeration value="WSM Trunk"/>
+			<xsd:enumeration value="Remote Destination Profile"/>
+			<xsd:enumeration value="7915 12-Button Line Expansion Module"/>
+			<xsd:enumeration value="7915 24-Button Line Expansion Module"/>
+			<xsd:enumeration value="7916 12-Button Line Expansion Module"/>
+			<xsd:enumeration value="7916 24-Button Line Expansion Module"/>
+			<xsd:enumeration value="CKEM 36-Button Line Expansion Module"/>
+			<xsd:enumeration value="SPA8800"/>
+			<xsd:enumeration value="Unknown MGCP Gateway"/>
+			<xsd:enumeration value="Unknown"/>
+			<xsd:enumeration value="Cisco 7985"/>
+			<xsd:enumeration value="Cisco 7911"/>
+			<xsd:enumeration value="Cisco 7961G-GE"/>
+			<xsd:enumeration value="Cisco 7941G-GE"/>
+			<xsd:enumeration value="Motorola CN622"/>
+			<xsd:enumeration value="Third-party SIP Device (Basic)"/>
+			<xsd:enumeration value="Cisco 7931"/>
+			<xsd:enumeration value="Cisco Unified Personal Communicator"/>
+			<xsd:enumeration value="Cisco 7921"/>
+			<xsd:enumeration value="Cisco 7906"/>
+			<xsd:enumeration value="Third-party SIP Device (Advanced)"/>
+			<xsd:enumeration value="Cisco TelePresence"/>
+			<xsd:enumeration value="Nokia S60"/>
+			<xsd:enumeration value="Cisco 7962"/>
+			<xsd:enumeration value="Cisco 3951"/>
+			<xsd:enumeration value="Cisco 7937"/>
+			<xsd:enumeration value="Cisco 7942"/>
+			<xsd:enumeration value="Cisco 7945"/>
+			<xsd:enumeration value="Cisco 7965"/>
+			<xsd:enumeration value="Cisco 7975"/>
+			<xsd:enumeration value="Cisco 3911"/>
+			<xsd:enumeration value="Cisco Unified Mobile Communicator"/>
+			<xsd:enumeration value="Cisco TelePresence 1000"/>
+			<xsd:enumeration value="Cisco TelePresence 3000"/>
+			<xsd:enumeration value="Cisco TelePresence 3200"/>
+			<xsd:enumeration value="Cisco TelePresence 500-37"/>
+			<xsd:enumeration value="Cisco 7925"/>
+			<xsd:enumeration value="Cisco 9971"/>
+			<xsd:enumeration value="Cisco 6921"/>
+			<xsd:enumeration value="Cisco 6941"/>
+			<xsd:enumeration value="Cisco 6961"/>
+			<xsd:enumeration value="Cisco Unified Client Services Framework"/>
+			<xsd:enumeration value="Cisco TelePresence 1300-65"/>
+			<xsd:enumeration value="Cisco TelePresence 1100"/>
+			<xsd:enumeration value="Transnova S3"/>
+			<xsd:enumeration value="BlackBerry MVS VoWifi"/>
+			<xsd:enumeration value="Cisco 9951"/>
+			<xsd:enumeration value="Cisco 8961"/>
+			<xsd:enumeration value="Cisco 6901"/>
+			<xsd:enumeration value="Cisco 6911"/>
+			<xsd:enumeration value="Cisco ATA 187"/>
+			<xsd:enumeration value="Cisco TelePresence 200"/>
+			<xsd:enumeration value="Cisco TelePresence 400"/>
+			<xsd:enumeration value="Cisco Dual Mode for iPhone"/>
+			<xsd:enumeration value="Cisco 6945"/>
+			<xsd:enumeration value="Cisco Dual Mode for Android"/>
+			<xsd:enumeration value="Cisco 7926"/>
+			<xsd:enumeration value="Cisco E20"/>
+			<xsd:enumeration value="Generic Single Screen Room System"/>
+			<xsd:enumeration value="Generic Multiple Screen Room System"/>
+			<xsd:enumeration value="Cisco TelePresence EX90"/>
+			<xsd:enumeration value="Cisco 8945"/>
+			<xsd:enumeration value="Cisco 8941"/>
+			<xsd:enumeration value="Generic Desktop Video Endpoint"/>
+			<xsd:enumeration value="Cisco TelePresence 500-32"/>
+			<xsd:enumeration value="Cisco TelePresence 1300-47"/>
+			<xsd:enumeration value="Cisco 3905"/>
+			<xsd:enumeration value="Cisco Cius"/>
+			<xsd:enumeration value="VKEM 36-Button Line Expansion Module"/>
+			<xsd:enumeration value="Cisco TelePresence TX1310-65"/>
+			<xsd:enumeration value="Cisco TelePresence MCU"/>
+			<xsd:enumeration value="Ascom IP-DECT Device"/>
+			<xsd:enumeration value="Cisco TelePresence Exchange System"/>
+			<xsd:enumeration value="Cisco TelePresence EX60"/>
+			<xsd:enumeration value="Cisco TelePresence Codec C90"/>
+			<xsd:enumeration value="Cisco TelePresence Codec C60"/>
+			<xsd:enumeration value="Cisco TelePresence Codec C40"/>
+			<xsd:enumeration value="Cisco TelePresence Quick Set C20"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 42 (C20)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 42 (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 52 (C40)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 52 (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 52 Dual (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 65 (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 65 Dual (C90)"/>
+			<xsd:enumeration value="Cisco TelePresence MX200"/>
+			<xsd:enumeration value="Cisco TelePresence TX9000"/>
+			<xsd:enumeration value="Cisco TelePresence TX9200"/>
+			<xsd:enumeration value="Cisco 7821"/>
+			<xsd:enumeration value="Cisco 7841"/>
+			<xsd:enumeration value="Cisco 7861"/>
+			<xsd:enumeration value="Cisco TelePresence SX20"/>
+			<xsd:enumeration value="Cisco TelePresence MX300"/>
+			<xsd:enumeration value="IMS-integrated Mobile (Basic)"/>
+			<xsd:enumeration value="Third-party AS-SIP Endpoint"/>
+			<xsd:enumeration value="Cisco Cius SP"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 42 (C40)"/>
+			<xsd:enumeration value="Cisco VXC 6215"/>
+			<xsd:enumeration value="CTI Remote Device"/>
+			<xsd:enumeration value="Usage Profile"/>
+			<xsd:enumeration value="Carrier-integrated Mobile"/>
+			<xsd:enumeration value="Universal Device Template"/>
+			<xsd:enumeration value="Cisco DX650"/>
+			<xsd:enumeration value="Cisco Unified Communications for RTX"/>
+			<xsd:enumeration value="Cisco Jabber for Tablet"/>
+			<xsd:enumeration value="Cisco 8831"/>
+			<xsd:enumeration value="Cisco 7905"/>
+			<xsd:enumeration value="Cisco 7920"/>
+			<xsd:enumeration value="Cisco 7970"/>
+			<xsd:enumeration value="Cisco 7912"/>
+			<xsd:enumeration value="Cisco 7902"/>
+			<xsd:enumeration value="Cisco IP Communicator"/>
+			<xsd:enumeration value="Cisco 7961"/>
+			<xsd:enumeration value="Cisco 7936"/>
+			<xsd:enumeration value="Analog Phone"/>
+			<xsd:enumeration value="ISDN BRI Phone"/>
+			<xsd:enumeration value="SCCP gateway virtual phone"/>
+			<xsd:enumeration value="IP-STE"/>
+			<xsd:enumeration value="Cisco TelePresence Conductor"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XMonthOfYear">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="Jan"/>
+			<xsd:enumeration value="Feb"/>
+			<xsd:enumeration value="Mar"/>
+			<xsd:enumeration value="Apr"/>
+			<xsd:enumeration value="May"/>
+			<xsd:enumeration value="Jun"/>
+			<xsd:enumeration value="Jul"/>
+			<xsd:enumeration value="Aug"/>
+			<xsd:enumeration value="Sep"/>
+			<xsd:enumeration value="Oct"/>
+			<xsd:enumeration value="Nov"/>
+			<xsd:enumeration value="Dec"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XNSFService">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ACCUNET Switched Digital Service"/>
+			<xsd:enumeration value="Billing Number Only"/>
+			<xsd:enumeration value="Billing Number Preferred"/>
+			<xsd:enumeration value="Calling Party Number Only"/>
+			<xsd:enumeration value="Calling Party Number Preferred"/>
+			<xsd:enumeration value="Foreign Exchange"/>
+			<xsd:enumeration value="Foreign Exchange Selection"/>
+			<xsd:enumeration value="International Long Distance Service"/>
+			<xsd:enumeration value="InterLATAOUTWATS"/>
+			<xsd:enumeration value="IntraLATAOUTWATS"/>
+			<xsd:enumeration value="Long Distance Service"/>
+			<xsd:enumeration value="MEGACOM Telecom Service"/>
+			<xsd:enumeration value="National ISDN Banded OUTWATS"/>
+			<xsd:enumeration value="National ISDN Unbanded OUTWATS"/>
+			<xsd:enumeration value="OUTWATS Selection"/>
+			<xsd:enumeration value="Private"/>
+			<xsd:enumeration value="Private Selection"/>
+			<xsd:enumeration value="Software Defined Network"/>
+			<xsd:enumeration value="Tie Trunk (Cut-through)"/>
+			<xsd:enumeration value="Tie Trunk (Senderized)"/>
+			<xsd:enumeration value="Tie Trunk Selection (Cut-through)"/>
+			<xsd:enumeration value="Tie Trunk Selection (Senderized)"/>
+			<xsd:enumeration value="WATS Band Selection"/>
+			<xsd:enumeration value="WATS Maximal Subscribed Band"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XNetworkLocation">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="OnNet"/>
+			<xsd:enumeration value="OffNet"/>
+			<xsd:enumeration value="Use System Default"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XNodeUsage">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Publisher"/>
+			<xsd:enumeration value="Subscriber"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XNumberingPlan">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Cisco CallManager"/>
+			<xsd:enumeration value="ISDN"/>
+			<xsd:enumeration value="National Standard"/>
+			<xsd:enumeration value="Private"/>
+			<xsd:enumeration value="Unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XOperator">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="NOT-SELECTED"/>
+			<xsd:enumeration value="EXISTS"/>
+			<xsd:enumeration value="DOES-NOT-EXIST"/>
+			<xsd:enumeration value="=="/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XOutboundCallRollover">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Rollover"/>
+			<xsd:enumeration value="Rollover Within Same DN"/>
+			<xsd:enumeration value="Rollover to any line"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPRIChanIE">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Timeslot Number"/>
+			<xsd:enumeration value="Slotmap"/>
+			<xsd:enumeration value="Use Number when 1B"/>
+			<xsd:enumeration value="Continuous Number"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPacketCaptureMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="Batch Processing Mode"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XParam">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="boolean"/>
+			<xsd:enumeration value="double"/>
+			<xsd:enumeration value="long"/>
+			<xsd:enumeration value="string"/>
+			<xsd:enumeration value="date/time"/>
+			<xsd:enumeration value="any digit"/>
+			<xsd:enumeration value="digits"/>
+			<xsd:enumeration value="timeout"/>
+			<xsd:enumeration value="terminating"/>
+			<xsd:enumeration value="more digits"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPartitionUsage">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Intercom"/>
+			<xsd:enumeration value="Call Control Discovery Learned Pattern"/>
+			<xsd:enumeration value="General"/>
+			<xsd:enumeration value="Directory URI"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPatternPrecedence">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Flash Override"/>
+			<xsd:enumeration value="Flash"/>
+			<xsd:enumeration value="Immediate"/>
+			<xsd:enumeration value="Priority"/>
+			<xsd:enumeration value="Routine"/>
+			<xsd:enumeration value="Default"/>
+			<xsd:enumeration value="Executive Override"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPatternRouteClass">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Default"/>
+			<xsd:enumeration value="Voice"/>
+			<xsd:enumeration value="Data"/>
+			<xsd:enumeration value="Satellite Avoidance"/>
+			<xsd:enumeration value="Hotline Voice"/>
+			<xsd:enumeration value="Hotline Data"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPatternUsage">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CallPark"/>
+			<xsd:enumeration value="Conference"/>
+			<xsd:enumeration value="Device"/>
+			<xsd:enumeration value="Translation"/>
+			<xsd:enumeration value="Call Pick Up Group"/>
+			<xsd:enumeration value="Route"/>
+			<xsd:enumeration value="Message Waiting"/>
+			<xsd:enumeration value="Hunt Pilot"/>
+			<xsd:enumeration value="Voice Mail Port"/>
+			<xsd:enumeration value="Domain Routing"/>
+			<xsd:enumeration value="IPAddress Routing"/>
+			<xsd:enumeration value="Device template"/>
+			<xsd:enumeration value="Directed Call Park"/>
+			<xsd:enumeration value="Device Intercom"/>
+			<xsd:enumeration value="Translation Intercom"/>
+			<xsd:enumeration value="Translation Calling Party Number"/>
+			<xsd:enumeration value="Mobility Handoff"/>
+			<xsd:enumeration value="Mobility Enterprise Feature Access"/>
+			<xsd:enumeration value="Mobility IVR"/>
+			<xsd:enumeration value="Device Intercom Template"/>
+			<xsd:enumeration value="Called Party Number Transformation"/>
+			<xsd:enumeration value="Call Control Discovery Learned Pattern"/>
+			<xsd:enumeration value="Uri Routing"/>
+			<xsd:enumeration value="ILS Learned Enterprise Number"/>
+			<xsd:enumeration value="ILS Learned E164 Number"/>
+			<xsd:enumeration value="ILS Learned Enterprise Numeric Pattern"/>
+			<xsd:enumeration value="ILS Learned E164 Numeric Pattern"/>
+			<xsd:enumeration value="Alternate Number"/>
+			<xsd:enumeration value="ILS Learned URI"/>
+			<xsd:enumeration value="ILS Learned PSTN Failover Rule"/>
+			<xsd:enumeration value="ILS Imported E164 Number"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPhonePersonalization">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Disabled"/>
+			<xsd:enumeration value="Enabled"/>
+			<xsd:enumeration value="HTTPS Only"/>
+			<xsd:enumeration value="Default"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPhoneService">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Standard IP Phone Service"/>
+			<xsd:enumeration value="Directories"/>
+			<xsd:enumeration value="Messages"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPhoneServiceCategory">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="XML Service"/>
+			<xsd:enumeration value="Java MIDlet"/>
+			<xsd:enumeration value="Web Widget"/>
+			<xsd:enumeration value="Web Link"/>
+			<xsd:enumeration value="Android APK"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPhoneServiceDisplay">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Internal"/>
+			<xsd:enumeration value="External URL"/>
+			<xsd:enumeration value="Both"/>
+			<xsd:enumeration value="Default"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPickupNotification">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Alert"/>
+			<xsd:enumeration value="Audio Alert"/>
+			<xsd:enumeration value="Visual Alert"/>
+			<xsd:enumeration value="Audio and Visual Alert"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPreemption">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Disabled"/>
+			<xsd:enumeration value="Forceful"/>
+			<xsd:enumeration value="Default"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPreferredMediaSource">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Gateway Preferred"/>
+			<xsd:enumeration value="Phone Preferred"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPresentationBit">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Default"/>
+			<xsd:enumeration value="Allowed"/>
+			<xsd:enumeration value="Restricted"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPriOfNumber">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Cisco CallManager"/>
+			<xsd:enumeration value="Unknown"/>
+			<xsd:enumeration value="National"/>
+			<xsd:enumeration value="International"/>
+			<xsd:enumeration value="Subscriber"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XPriProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="PRI 4ESS"/>
+			<xsd:enumeration value="PRI 5E8"/>
+			<xsd:enumeration value="PRI 5E8 TELEOS"/>
+			<xsd:enumeration value="PRI 5E8 INTECOME"/>
+			<xsd:enumeration value="PRI 5E9"/>
+			<xsd:enumeration value="PRI DMS-100"/>
+			<xsd:enumeration value="PRI DMS-250"/>
+			<xsd:enumeration value="PRI EURO"/>
+			<xsd:enumeration value="PRI NI2"/>
+			<xsd:enumeration value="PRI AUSTRALIAN"/>
+			<xsd:enumeration value="PRI 5E8 CUSTOM"/>
+			<xsd:enumeration value="PRI ETSI SC"/>
+			<xsd:enumeration value="PRI NTT"/>
+			<xsd:enumeration value="PRI ISO QSIG T1"/>
+			<xsd:enumeration value="PRI ISO QSIG E1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XProcessNodeRole">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CUCM Voice/Video"/>
+			<xsd:enumeration value="CUCM IM and Presence"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XProduct">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Pilot"/>
+			<xsd:enumeration value="Cisco Catalyst 6000 T1 VoIP Gateway"/>
+			<xsd:enumeration value="Cisco Catalyst 6000 E1 VoIP Gateway"/>
+			<xsd:enumeration value="Cisco Catalyst 6000 24 port FXS Gateway"/>
+			<xsd:enumeration value="Cisco Catalyst 6000 12 port FXO Gateway"/>
+			<xsd:enumeration value="EMCC Base Phone"/>
+			<xsd:enumeration value="H.323 Client"/>
+			<xsd:enumeration value="H.323 Gateway"/>
+			<xsd:enumeration value="Cisco MGCP FXO Port"/>
+			<xsd:enumeration value="Cisco MGCP FXS Port"/>
+			<xsd:enumeration value="Cisco 12 SP+"/>
+			<xsd:enumeration value="Cisco 12 SP"/>
+			<xsd:enumeration value="Cisco 12 S"/>
+			<xsd:enumeration value="Cisco 30 SP+"/>
+			<xsd:enumeration value="Cisco 30 VIP"/>
+			<xsd:enumeration value="CTI Port"/>
+			<xsd:enumeration value="Cisco Voice Mail Port"/>
+			<xsd:enumeration value="Cisco Conference Bridge Software"/>
+			<xsd:enumeration value="Cisco Conference Bridge Hardware"/>
+			<xsd:enumeration value="Cisco Media Termination Point Software"/>
+			<xsd:enumeration value="Cisco Media Termination Point Hardware"/>
+			<xsd:enumeration value="Cisco 7935"/>
+			<xsd:enumeration value="SCCP Device"/>
+			<xsd:enumeration value="Cisco 7910"/>
+			<xsd:enumeration value="Cisco 7960"/>
+			<xsd:enumeration value="Cisco 7940"/>
+			<xsd:enumeration value="Route List"/>
+			<xsd:enumeration value="Unknown"/>
+			<xsd:enumeration value="Load Simulator"/>
+			<xsd:enumeration value="Gatekeeper"/>
+			<xsd:enumeration value="NM-1V"/>
+			<xsd:enumeration value="NM-2V"/>
+			<xsd:enumeration value="Cisco VG200"/>
+			<xsd:enumeration value="Cisco 26XX"/>
+			<xsd:enumeration value="Cisco 362X"/>
+			<xsd:enumeration value="Cisco 364X"/>
+			<xsd:enumeration value="Cisco 366X"/>
+			<xsd:enumeration value="CTI Route Point"/>
+			<xsd:enumeration value="Music On Hold"/>
+			<xsd:enumeration value="Cisco MGCP T1 Port"/>
+			<xsd:enumeration value="NM-HDV"/>
+			<xsd:enumeration value="VIC_SLOT"/>
+			<xsd:enumeration value="Cisco MGCP E1 Port"/>
+			<xsd:enumeration value="VWIC_SLOT"/>
+			<xsd:enumeration value="FLEX_SLOT"/>
+			<xsd:enumeration value="Cisco Catalyst 4224 Voice Gateway Switch"/>
+			<xsd:enumeration value="Cisco Catalyst 4000 Access Gateway  Module"/>
+			<xsd:enumeration value="Cisco IOS Conference Bridge"/>
+			<xsd:enumeration value="Cisco IOS Media Termination Point"/>
+			<xsd:enumeration value="Cisco  IAD2400"/>
+			<xsd:enumeration value="IAD2400_ANALOG"/>
+			<xsd:enumeration value="IAD2400_DIGITAL"/>
+			<xsd:enumeration value="Cisco VGC Phone"/>
+			<xsd:enumeration value="Cisco VG248 Gateway"/>
+			<xsd:enumeration value="VGC Port"/>
+			<xsd:enumeration value="Cisco VGC Virtual Phone"/>
+			<xsd:enumeration value="Cisco ATA 186"/>
+			<xsd:enumeration value="H.225 Trunk (Gatekeeper Controlled)"/>
+			<xsd:enumeration value="Inter-Cluster Trunk (Gatekeeper Controlled)"/>
+			<xsd:enumeration value="Inter-Cluster Trunk (Non-Gatekeeper Controlled)"/>
+			<xsd:enumeration value="Communication Media Module"/>
+			<xsd:enumeration value="WS-X6600"/>
+			<xsd:enumeration value="AIM-VOICE-30"/>
+			<xsd:enumeration value="NM-HDA"/>
+			<xsd:enumeration value="PA-VXA"/>
+			<xsd:enumeration value="PA-VXB"/>
+			<xsd:enumeration value="PA-VXC"/>
+			<xsd:enumeration value="PA-MCX"/>
+			<xsd:enumeration value="Annunciator"/>
+			<xsd:enumeration value="Cisco MGCP BRI Port"/>
+			<xsd:enumeration value="NM-HD-1V"/>
+			<xsd:enumeration value="NM-HD-2V"/>
+			<xsd:enumeration value="NM-HD-2VE"/>
+			<xsd:enumeration value="SIP Trunk"/>
+			<xsd:enumeration value="Cisco Conference Bridge (WS-SVC-CMM)"/>
+			<xsd:enumeration value="Cisco Media Server (WS-SVC-CMM-MS)"/>
+			<xsd:enumeration value="Cisco Media Termination Point (WS-SVC-CMM)"/>
+			<xsd:enumeration value="Cisco IOS Enhanced Software Media Termination Point"/>
+			<xsd:enumeration value="7914 14-Button Line Expansion Module"/>
+			<xsd:enumeration value="Cisco IOS Enhanced Conference Bridge"/>
+			<xsd:enumeration value="Cisco IOS Enhanced Media Termination Point"/>
+			<xsd:enumeration value="Cisco Video Conference Bridge(IPVC-35xx)"/>
+			<xsd:enumeration value="Cisco IOS Heterogeneous Video Conference Bridge"/>
+			<xsd:enumeration value="Cisco IOS Guaranteed Audio Video Conference Bridge"/>
+			<xsd:enumeration value="Cisco IOS Homogeneous Video Conference Bridge"/>
+			<xsd:enumeration value="Hunt List"/>
+			<xsd:enumeration value="SIP WSM Connection"/>
+			<xsd:enumeration value="Remote Destination Profile"/>
+			<xsd:enumeration value="Cisco 7941"/>
+			<xsd:enumeration value="Cisco 7971"/>
+			<xsd:enumeration value="Cisco 7985"/>
+			<xsd:enumeration value="Cisco 7911"/>
+			<xsd:enumeration value="Cisco 7961G-GE"/>
+			<xsd:enumeration value="Cisco 7941G-GE"/>
+			<xsd:enumeration value="7915 12-Button Line Expansion Module"/>
+			<xsd:enumeration value="7915 24-Button Line Expansion Module"/>
+			<xsd:enumeration value="7916 12-Button Line Expansion Module"/>
+			<xsd:enumeration value="7916 24-Button Line Expansion Module"/>
+			<xsd:enumeration value="CKEM 36-Button Line Expansion Module"/>
+			<xsd:enumeration value="Motorola CN622"/>
+			<xsd:enumeration value="Third-party SIP Device (Basic)"/>
+			<xsd:enumeration value="Cisco 7931"/>
+			<xsd:enumeration value="Cisco Unified Personal Communicator"/>
+			<xsd:enumeration value="Cisco 7921"/>
+			<xsd:enumeration value="Cisco 7906"/>
+			<xsd:enumeration value="Third-party SIP Device (Advanced)"/>
+			<xsd:enumeration value="Cisco TelePresence"/>
+			<xsd:enumeration value="Nokia S60"/>
+			<xsd:enumeration value="Cisco 7962"/>
+			<xsd:enumeration value="Cisco 3951"/>
+			<xsd:enumeration value="Cisco 7937"/>
+			<xsd:enumeration value="Cisco 7942"/>
+			<xsd:enumeration value="Cisco 7945"/>
+			<xsd:enumeration value="Cisco 7965"/>
+			<xsd:enumeration value="Cisco 7975"/>
+			<xsd:enumeration value="Cisco 3911"/>
+			<xsd:enumeration value="Cisco Unified Mobile Communicator"/>
+			<xsd:enumeration value="Cisco TelePresence 1000"/>
+			<xsd:enumeration value="Cisco TelePresence 3000"/>
+			<xsd:enumeration value="Cisco TelePresence 3200"/>
+			<xsd:enumeration value="Cisco TelePresence 500-37"/>
+			<xsd:enumeration value="Cisco 7925"/>
+			<xsd:enumeration value="Cisco 9971"/>
+			<xsd:enumeration value="Cisco 6921"/>
+			<xsd:enumeration value="Cisco 6941"/>
+			<xsd:enumeration value="Cisco 6961"/>
+			<xsd:enumeration value="Cisco Unified Client Services Framework"/>
+			<xsd:enumeration value="Cisco TelePresence 1300-65"/>
+			<xsd:enumeration value="Cisco TelePresence 1100"/>
+			<xsd:enumeration value="Transnova S3"/>
+			<xsd:enumeration value="Cisco 9951"/>
+			<xsd:enumeration value="Cisco 8961"/>
+			<xsd:enumeration value="Cisco 6901"/>
+			<xsd:enumeration value="Cisco 6911"/>
+			<xsd:enumeration value="Cisco ATA 187"/>
+			<xsd:enumeration value="Cisco TelePresence 200"/>
+			<xsd:enumeration value="Cisco TelePresence 400"/>
+			<xsd:enumeration value="Cisco Dual Mode for iPhone"/>
+			<xsd:enumeration value="Cisco 6945"/>
+			<xsd:enumeration value="Cisco Dual Mode for Android"/>
+			<xsd:enumeration value="Cisco 7926"/>
+			<xsd:enumeration value="Cisco E20"/>
+			<xsd:enumeration value="Generic Single Screen Room System"/>
+			<xsd:enumeration value="Generic Multiple Screen Room System"/>
+			<xsd:enumeration value="Cisco TelePresence EX90"/>
+			<xsd:enumeration value="Cisco 8945"/>
+			<xsd:enumeration value="Cisco 8941"/>
+			<xsd:enumeration value="Generic Desktop Video Endpoint"/>
+			<xsd:enumeration value="Cisco TelePresence 500-32"/>
+			<xsd:enumeration value="Cisco TelePresence 1300-47"/>
+			<xsd:enumeration value="Cisco 3905"/>
+			<xsd:enumeration value="Cisco Cius"/>
+			<xsd:enumeration value="VKEM 36-Button Line Expansion Module"/>
+			<xsd:enumeration value="Cisco TelePresence TX1310-65"/>
+			<xsd:enumeration value="Cisco TelePresence MCU"/>
+			<xsd:enumeration value="Cisco TelePresence Conductor"/>
+			<xsd:enumeration value="Cisco TelePresence Exchange System"/>
+			<xsd:enumeration value="Cisco TelePresence EX60"/>
+			<xsd:enumeration value="Cisco TelePresence Codec C90"/>
+			<xsd:enumeration value="Cisco TelePresence Codec C60"/>
+			<xsd:enumeration value="Cisco TelePresence Codec C40"/>
+			<xsd:enumeration value="Cisco TelePresence Quick Set C20"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 42 (C20)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 42 (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 52 (C40)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 52 (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 52 Dual (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 65 (C60)"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 65 Dual (C90)"/>
+			<xsd:enumeration value="Cisco TelePresence MX200"/>
+			<xsd:enumeration value="Cisco TelePresence TX9000"/>
+			<xsd:enumeration value="Cisco TelePresence TX9200"/>
+			<xsd:enumeration value="Cisco 7821"/>
+			<xsd:enumeration value="Cisco 7841"/>
+			<xsd:enumeration value="Cisco 7861"/>
+			<xsd:enumeration value="Cisco TelePresence SX20"/>
+			<xsd:enumeration value="Cisco TelePresence MX300"/>
+			<xsd:enumeration value="IMS-integrated Mobile (Basic)"/>
+			<xsd:enumeration value="Third-party AS-SIP Endpoint"/>
+			<xsd:enumeration value="Cisco Cius SP"/>
+			<xsd:enumeration value="Cisco TelePresence Profile 42 (C40)"/>
+			<xsd:enumeration value="Cisco VXC 6215"/>
+			<xsd:enumeration value="CTI Remote Device"/>
+			<xsd:enumeration value="Carrier-integrated Mobile"/>
+			<xsd:enumeration value="Universal Device Template"/>
+			<xsd:enumeration value="Cisco DX650"/>
+			<xsd:enumeration value="Cisco Unified Communications for RTX"/>
+			<xsd:enumeration value="Cisco Jabber for Tablet"/>
+			<xsd:enumeration value="Cisco 8831"/>
+			<xsd:enumeration value="WS-SVC-CMM-MS"/>
+			<xsd:enumeration value="NM-4VWIC-MBRD"/>
+			<xsd:enumeration value="VNM-HDA"/>
+			<xsd:enumeration value="NM-HDV2-0PORT"/>
+			<xsd:enumeration value="NM-HDV2-1PORT"/>
+			<xsd:enumeration value="NM-HDV2-2PORT"/>
+			<xsd:enumeration value="Cisco 3745"/>
+			<xsd:enumeration value="Cisco 3725"/>
+			<xsd:enumeration value="Cisco 7905"/>
+			<xsd:enumeration value="Cisco 7920"/>
+			<xsd:enumeration value="Cisco 269X"/>
+			<xsd:enumeration value="Cisco 7970"/>
+			<xsd:enumeration value="Cisco 1760"/>
+			<xsd:enumeration value="Cisco 1751"/>
+			<xsd:enumeration value="Cisco 7912"/>
+			<xsd:enumeration value="Cisco 7902"/>
+			<xsd:enumeration value="VG224"/>
+			<xsd:enumeration value="Cisco 2821"/>
+			<xsd:enumeration value="Cisco IP Communicator"/>
+			<xsd:enumeration value="Cisco 7961"/>
+			<xsd:enumeration value="Cisco 7936"/>
+			<xsd:enumeration value="Cisco 3825"/>
+			<xsd:enumeration value="Cisco 3845"/>
+			<xsd:enumeration value="Cisco 2811"/>
+			<xsd:enumeration value="Cisco 2851"/>
+			<xsd:enumeration value="Analog Phone"/>
+			<xsd:enumeration value="ISDN BRI Phone"/>
+			<xsd:enumeration value="SCCP gateway virtual phone"/>
+			<xsd:enumeration value="IP-STE"/>
+			<xsd:enumeration value="Cisco 2801"/>
+			<xsd:enumeration value="Cisco 1861"/>
+			<xsd:enumeration value="VG204"/>
+			<xsd:enumeration value="Cisco VGD-1T3"/>
+			<xsd:enumeration value="VG202"/>
+			<xsd:enumeration value="Cisco 881"/>
+			<xsd:enumeration value="Cisco 2951"/>
+			<xsd:enumeration value="Cisco 3945"/>
+			<xsd:enumeration value="Cisco 888/887/886"/>
+			<xsd:enumeration value="Cisco 2911"/>
+			<xsd:enumeration value="Cisco 3925"/>
+			<xsd:enumeration value="Cisco 2921"/>
+			<xsd:enumeration value="Cisco 2901"/>
+			<xsd:enumeration value="Cisco 3945E"/>
+			<xsd:enumeration value="Cisco 3925E"/>
+			<xsd:enumeration value="SPA8800"/>
+			<xsd:enumeration value="C881VA-V"/>
+			<xsd:enumeration value="C887VA-V"/>
+			<xsd:enumeration value="VG350"/>
+			<xsd:enumeration value="Cisco ISR 4451"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XProtocolSide">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Network"/>
+			<xsd:enumeration value="User"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XQSIGVariant">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Changes"/>
+			<xsd:enumeration value="ECMA"/>
+			<xsd:enumeration value="ISO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XRSVPOverSIP">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Local RSVP"/>
+			<xsd:enumeration value="E2E"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XRecordingFlag">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Call Recording Disabled"/>
+			<xsd:enumeration value="Automatic Call Recording Enabled"/>
+			<xsd:enumeration value="Selective Call Recording Enabled"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XReleaseCauseValue">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Error"/>
+			<xsd:enumeration value="Unallocated Number"/>
+			<xsd:enumeration value="Call Rejected"/>
+			<xsd:enumeration value="Number Changed"/>
+			<xsd:enumeration value="Invalid Number Format"/>
+			<xsd:enumeration value="Precedence Level Exceeded"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XReset">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Reset"/>
+			<xsd:enumeration value="Restart"/>
+			<xsd:enumeration value="Apply Configuration"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XRevertPriority">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Default"/>
+			<xsd:enumeration value="Highest"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XRingSetting">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Use System Default"/>
+			<xsd:enumeration value="Disable"/>
+			<xsd:enumeration value="Flash Only"/>
+			<xsd:enumeration value="Ring Once"/>
+			<xsd:enumeration value="Ring"/>
+			<xsd:enumeration value="Beep Only"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSIPBandwidthModifier">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="TIAS and AS"/>
+			<xsd:enumeration value="TIAS only"/>
+			<xsd:enumeration value="AS only"/>
+			<xsd:enumeration value="CT only"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSIPCodec">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="711ulaw"/>
+			<xsd:enumeration value="711alaw"/>
+			<xsd:enumeration value="G729/G729a"/>
+			<xsd:enumeration value="G729b/G729ab"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSIPIdentityBlend">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Deliver DN only in connected party"/>
+			<xsd:enumeration value="Deliver URI only in connected party, if available"/>
+			<xsd:enumeration value="Deliver URI and DN in connected party, if available"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSIPRel1XXOptions">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Disabled"/>
+			<xsd:enumeration value="Send PRACK if 1xx Contains SDP"/>
+			<xsd:enumeration value="Send PRACK for all 1xx Messages"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSIPReroute">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Never"/>
+			<xsd:enumeration value="Contact Header"/>
+			<xsd:enumeration value="Call-Info Header with purpose=x-cisco-origIP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSIPScriptErrorHandling">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Message Rollback Only"/>
+			<xsd:enumeration value="Disable Script"/>
+			<xsd:enumeration value="Reset Script"/>
+			<xsd:enumeration value="Reset Trunk / Restart Device"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSIPTrunkCallLegSecurity">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="When using both sRTP and TLS"/>
+			<xsd:enumeration value="When using sRTP Only"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XScheduleUnit">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="HOUR"/>
+			<xsd:enumeration value="DAY"/>
+			<xsd:enumeration value="WEEK"/>
+			<xsd:enumeration value="MONTH"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XServerSecurityMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Authenticated"/>
+			<xsd:enumeration value="Encrypted and Authenticated"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XService">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Cisco CallManager"/>
+			<xsd:enumeration value="Cisco Tftp"/>
+			<xsd:enumeration value="Cisco Messaging Interface"/>
+			<xsd:enumeration value="Cisco IP Voice Media Streaming App"/>
+			<xsd:enumeration value="Cisco CTIManager"/>
+			<xsd:enumeration value="Cisco RIS Data Collector"/>
+			<xsd:enumeration value="Cisco Extension Mobility"/>
+			<xsd:enumeration value="Cisco Database Layer Monitor"/>
+			<xsd:enumeration value="Enterprise Wide"/>
+			<xsd:enumeration value="Cisco IP Manager Assistant"/>
+			<xsd:enumeration value="Cisco Extended Functions"/>
+			<xsd:enumeration value="Cisco Serviceability Reporter"/>
+			<xsd:enumeration value="Cisco CTL Provider"/>
+			<xsd:enumeration value="Cisco WebDialer Web Service"/>
+			<xsd:enumeration value="Cisco Dialed Number Analyzer"/>
+			<xsd:enumeration value="Cisco CDR Repository Manager"/>
+			<xsd:enumeration value="Cisco Certificate Authority Proxy Function"/>
+			<xsd:enumeration value="Cisco CDR Agent"/>
+			<xsd:enumeration value="Cisco SOAP - CDRonDemand Service"/>
+			<xsd:enumeration value="Cisco CAR Scheduler"/>
+			<xsd:enumeration value="Cisco CAR Web Service"/>
+			<xsd:enumeration value="Cisco AMC Service"/>
+			<xsd:enumeration value="Cisco Log Partition Monitoring Tool"/>
+			<xsd:enumeration value="Cisco CallManager SNMP Service"/>
+			<xsd:enumeration value="Cisco DirSync"/>
+			<xsd:enumeration value="Cisco AXL Web Service"/>
+			<xsd:enumeration value="Cisco DRF Master"/>
+			<xsd:enumeration value="Cisco DRF Local"/>
+			<xsd:enumeration value="Cisco CallManager Cisco IP Phone Services"/>
+			<xsd:enumeration value="Cisco CCMAdmin Web Service"/>
+			<xsd:enumeration value="Cisco CCMRealm Web Service"/>
+			<xsd:enumeration value="Cisco CCMService Web Service"/>
+			<xsd:enumeration value="Cisco SOAP Web Service"/>
+			<xsd:enumeration value="Cisco RTMT Web Service"/>
+			<xsd:enumeration value="Cisco CCM PD Web Service"/>
+			<xsd:enumeration value="Cisco CCM DBL Web Library"/>
+			<xsd:enumeration value="Cisco CCM NCS Web Library"/>
+			<xsd:enumeration value="Cisco Bulk Provisioning Service"/>
+			<xsd:enumeration value="Cisco Extension Mobility Application"/>
+			<xsd:enumeration value="Cisco License Manager"/>
+			<xsd:enumeration value="Cisco Role-based Security"/>
+			<xsd:enumeration value="Cisco Trace Collection Service"/>
+			<xsd:enumeration value="Cisco Security Agent"/>
+			<xsd:enumeration value="Cisco Trust Verification Service"/>
+			<xsd:enumeration value="Cisco DHCP Monitor Service"/>
+			<xsd:enumeration value="Cisco TAPS Service"/>
+			<xsd:enumeration value="Cisco Tomcat"/>
+			<xsd:enumeration value="Cisco Unified OS Admin Web Service"/>
+			<xsd:enumeration value="Cisco GRT Communication Web Service"/>
+			<xsd:enumeration value="Cisco Unified Reporting Web Service"/>
+			<xsd:enumeration value="Cisco RisBean Library"/>
+			<xsd:enumeration value="Cisco SOAPMessage Service"/>
+			<xsd:enumeration value="Platform Administrative Web Service"/>
+			<xsd:enumeration value="Cisco Change Credential Application"/>
+			<xsd:enumeration value="Cisco CCMUser Web Service"/>
+			<xsd:enumeration value="Cisco Audit Event Service"/>
+			<xsd:enumeration value="SOAP - Diagnostic Portal Database Service"/>
+			<xsd:enumeration value="Cisco SIP Proxy"/>
+			<xsd:enumeration value="Cisco UXL Web Service"/>
+			<xsd:enumeration value="Cisco Config Agent"/>
+			<xsd:enumeration value="Cisco OAM Agent"/>
+			<xsd:enumeration value="Cisco Client Profile Agent"/>
+			<xsd:enumeration value="Cisco Sync Agent"/>
+			<xsd:enumeration value="Cisco SIP Proxy Logger"/>
+			<xsd:enumeration value="Cisco Intercluster Sync Agent"/>
+			<xsd:enumeration value="Cisco XCP Router"/>
+			<xsd:enumeration value="Cisco XCP Text Conference Manager"/>
+			<xsd:enumeration value="Cisco XCP Web Connection Manager"/>
+			<xsd:enumeration value="Cisco XCP Connection Manager"/>
+			<xsd:enumeration value="Cisco XCP SIP Federation Connection Manager"/>
+			<xsd:enumeration value="Cisco XCP XMPP Federation Connection Manager"/>
+			<xsd:enumeration value="Cisco XCP Message Archiver"/>
+			<xsd:enumeration value="Cisco XCP Directory Service"/>
+			<xsd:enumeration value="Cisco XCP Authentication Service"/>
+			<xsd:enumeration value="Cisco IM and Presence Admin"/>
+			<xsd:enumeration value="Cisco Server Recovery Manager"/>
+			<xsd:enumeration value="Cisco XCP Config Manager"/>
+			<xsd:enumeration value="Cisco IM and Presence Data Monitor"/>
+			<xsd:enumeration value="Cisco Presence Datastore"/>
+			<xsd:enumeration value="Cisco Login Datastore"/>
+			<xsd:enumeration value="Cisco Route Datastore"/>
+			<xsd:enumeration value="Cisco SIP Registration Datastore"/>
+			<xsd:enumeration value="Cisco Presence Engine"/>
+			<xsd:enumeration value="Cisco Common User Interface"/>
+			<xsd:enumeration value="Cisco User Data Services"/>
+			<xsd:enumeration value="Cisco External Call Control Service"/>
+			<xsd:enumeration value="Cisco E911 Service"/>
+			<xsd:enumeration value="Cisco Location Bandwidth Manager"/>
+			<xsd:enumeration value="Cisco Dialed Number Analyzer Server"/>
+			<xsd:enumeration value="Cisco Unified Mobile Voice Access Service"/>
+			<xsd:enumeration value="Cisco Intercluster Lookup Service"/>
+			<xsd:enumeration value="Cisco Directory Number Alias Sync"/>
+			<xsd:enumeration value="Cisco Directory Number Alias Lookup"/>
+			<xsd:enumeration value="Self Provisioning IVR"/>
+			<xsd:enumeration value="Cisco RCC Device Selection Service"/>
+			<xsd:enumeration value="Cisco CtlCli"/>
+			<xsd:enumeration value="Cisco Certificate Change Notification Service"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XServiceGrouping">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CM Services"/>
+			<xsd:enumeration value="CTI Services"/>
+			<xsd:enumeration value="CDR Services"/>
+			<xsd:enumeration value="Database and Admin Services"/>
+			<xsd:enumeration value="Performance and Monitoring Services"/>
+			<xsd:enumeration value="Security Services"/>
+			<xsd:enumeration value="Directory Services"/>
+			<xsd:enumeration value="Backup and Restore Services"/>
+			<xsd:enumeration value="System Services"/>
+			<xsd:enumeration value="Soap Services"/>
+			<xsd:enumeration value="Voice Quality Reporter Services"/>
+			<xsd:enumeration value="Platform Services"/>
+			<xsd:enumeration value="IM and Presence Services"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSilenceSuppressionThreshold">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Disable"/>
+			<xsd:enumeration value="-48dbm0"/>
+			<xsd:enumeration value="-45dbm0"/>
+			<xsd:enumeration value="-42dbm0"/>
+			<xsd:enumeration value="-39dbm0"/>
+			<xsd:enumeration value="-36dbm0"/>
+			<xsd:enumeration value="-33dbm0"/>
+			<xsd:enumeration value="-30dbm0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSipAssertedType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Default"/>
+			<xsd:enumeration value="PAI"/>
+			<xsd:enumeration value="PPI"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSipPrivacy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Default"/>
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="ID"/>
+			<xsd:enumeration value="ID Critical"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XSipSessionRefreshMethod">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Invite"/>
+			<xsd:enumeration value="Update"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XStartDialProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Not Set"/>
+			<xsd:enumeration value="Immediate"/>
+			<xsd:enumeration value="Wink Start Feature Group B"/>
+			<xsd:enumeration value="Delay Dial"/>
+			<xsd:enumeration value="Wink Start Feature Group D"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XStatus">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Off"/>
+			<xsd:enumeration value="On"/>
+			<xsd:enumeration value="Default"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTelnetLevel">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Disabled"/>
+			<xsd:enumeration value="Limited"/>
+			<xsd:enumeration value="Enabled"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTerminal">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="-- Not Selected --"/>
+			<xsd:enumeration value="Terminal"/>
+			<xsd:enumeration value="Gateway"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTimeOfDay">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Office Hours"/>
+			<xsd:enumeration value="00:00"/>
+			<xsd:enumeration value="00:15"/>
+			<xsd:enumeration value="00:30"/>
+			<xsd:enumeration value="00:45"/>
+			<xsd:enumeration value="01:00"/>
+			<xsd:enumeration value="01:15"/>
+			<xsd:enumeration value="01:30"/>
+			<xsd:enumeration value="01:45"/>
+			<xsd:enumeration value="02:00"/>
+			<xsd:enumeration value="02:15"/>
+			<xsd:enumeration value="02:30"/>
+			<xsd:enumeration value="02:45"/>
+			<xsd:enumeration value="03:00"/>
+			<xsd:enumeration value="03:15"/>
+			<xsd:enumeration value="03:30"/>
+			<xsd:enumeration value="03:45"/>
+			<xsd:enumeration value="04:00"/>
+			<xsd:enumeration value="04:15"/>
+			<xsd:enumeration value="04:30"/>
+			<xsd:enumeration value="04:45"/>
+			<xsd:enumeration value="05:00"/>
+			<xsd:enumeration value="05:15"/>
+			<xsd:enumeration value="05:30"/>
+			<xsd:enumeration value="05:45"/>
+			<xsd:enumeration value="06:00"/>
+			<xsd:enumeration value="06:15"/>
+			<xsd:enumeration value="06:30"/>
+			<xsd:enumeration value="06:45"/>
+			<xsd:enumeration value="07:00"/>
+			<xsd:enumeration value="07:15"/>
+			<xsd:enumeration value="07:30"/>
+			<xsd:enumeration value="07:45"/>
+			<xsd:enumeration value="08:00"/>
+			<xsd:enumeration value="08:15"/>
+			<xsd:enumeration value="08:30"/>
+			<xsd:enumeration value="08:45"/>
+			<xsd:enumeration value="09:00"/>
+			<xsd:enumeration value="09:15"/>
+			<xsd:enumeration value="09:30"/>
+			<xsd:enumeration value="09:45"/>
+			<xsd:enumeration value="10:00"/>
+			<xsd:enumeration value="10:15"/>
+			<xsd:enumeration value="10:30"/>
+			<xsd:enumeration value="10:45"/>
+			<xsd:enumeration value="11:00"/>
+			<xsd:enumeration value="11:15"/>
+			<xsd:enumeration value="11:30"/>
+			<xsd:enumeration value="11:45"/>
+			<xsd:enumeration value="12:00"/>
+			<xsd:enumeration value="12:15"/>
+			<xsd:enumeration value="12:30"/>
+			<xsd:enumeration value="12:45"/>
+			<xsd:enumeration value="13:00"/>
+			<xsd:enumeration value="13:15"/>
+			<xsd:enumeration value="13:30"/>
+			<xsd:enumeration value="13:45"/>
+			<xsd:enumeration value="14:00"/>
+			<xsd:enumeration value="14:15"/>
+			<xsd:enumeration value="14:30"/>
+			<xsd:enumeration value="14:45"/>
+			<xsd:enumeration value="15:00"/>
+			<xsd:enumeration value="15:15"/>
+			<xsd:enumeration value="15:30"/>
+			<xsd:enumeration value="15:45"/>
+			<xsd:enumeration value="16:00"/>
+			<xsd:enumeration value="16:15"/>
+			<xsd:enumeration value="16:30"/>
+			<xsd:enumeration value="16:45"/>
+			<xsd:enumeration value="17:00"/>
+			<xsd:enumeration value="17:15"/>
+			<xsd:enumeration value="17:30"/>
+			<xsd:enumeration value="17:45"/>
+			<xsd:enumeration value="18:00"/>
+			<xsd:enumeration value="18:15"/>
+			<xsd:enumeration value="18:30"/>
+			<xsd:enumeration value="18:45"/>
+			<xsd:enumeration value="19:00"/>
+			<xsd:enumeration value="19:15"/>
+			<xsd:enumeration value="19:30"/>
+			<xsd:enumeration value="19:45"/>
+			<xsd:enumeration value="20:00"/>
+			<xsd:enumeration value="20:15"/>
+			<xsd:enumeration value="20:30"/>
+			<xsd:enumeration value="20:45"/>
+			<xsd:enumeration value="21:00"/>
+			<xsd:enumeration value="21:15"/>
+			<xsd:enumeration value="21:30"/>
+			<xsd:enumeration value="21:45"/>
+			<xsd:enumeration value="22:00"/>
+			<xsd:enumeration value="22:15"/>
+			<xsd:enumeration value="22:30"/>
+			<xsd:enumeration value="22:45"/>
+			<xsd:enumeration value="23:00"/>
+			<xsd:enumeration value="23:15"/>
+			<xsd:enumeration value="23:30"/>
+			<xsd:enumeration value="23:45"/>
+			<xsd:enumeration value="24:00"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTimeScheduleCategory">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Regular"/>
+			<xsd:enumeration value="Holiday or Vacation"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTimeZone">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Africa/Abidjan"/>
+			<xsd:enumeration value="Africa/Accra"/>
+			<xsd:enumeration value="Africa/Addis_Ababa"/>
+			<xsd:enumeration value="Africa/Algiers"/>
+			<xsd:enumeration value="Africa/Asmara"/>
+			<xsd:enumeration value="Africa/Bamako"/>
+			<xsd:enumeration value="Africa/Bangui"/>
+			<xsd:enumeration value="Africa/Banjul"/>
+			<xsd:enumeration value="Africa/Bissau"/>
+			<xsd:enumeration value="Africa/Blantyre"/>
+			<xsd:enumeration value="Africa/Brazzaville"/>
+			<xsd:enumeration value="Africa/Bujumbura"/>
+			<xsd:enumeration value="Africa/Cairo"/>
+			<xsd:enumeration value="Africa/Casablanca"/>
+			<xsd:enumeration value="Africa/Ceuta"/>
+			<xsd:enumeration value="Africa/Conakry"/>
+			<xsd:enumeration value="Africa/Dakar"/>
+			<xsd:enumeration value="Africa/Dar_es_Salaam"/>
+			<xsd:enumeration value="Africa/Djibouti"/>
+			<xsd:enumeration value="Africa/Douala"/>
+			<xsd:enumeration value="Africa/El_Aaiun"/>
+			<xsd:enumeration value="Africa/Freetown"/>
+			<xsd:enumeration value="Africa/Gaborone"/>
+			<xsd:enumeration value="Africa/Harare"/>
+			<xsd:enumeration value="Africa/Johannesburg"/>
+			<xsd:enumeration value="Africa/Juba"/>
+			<xsd:enumeration value="Africa/Kampala"/>
+			<xsd:enumeration value="Africa/Khartoum"/>
+			<xsd:enumeration value="Africa/Kigali"/>
+			<xsd:enumeration value="Africa/Kinshasa"/>
+			<xsd:enumeration value="Africa/Lagos"/>
+			<xsd:enumeration value="Africa/Libreville"/>
+			<xsd:enumeration value="Africa/Lome"/>
+			<xsd:enumeration value="Africa/Luanda"/>
+			<xsd:enumeration value="Africa/Lubumbashi"/>
+			<xsd:enumeration value="Africa/Lusaka"/>
+			<xsd:enumeration value="Africa/Malabo"/>
+			<xsd:enumeration value="Africa/Maputo"/>
+			<xsd:enumeration value="Africa/Maseru"/>
+			<xsd:enumeration value="Africa/Mbabane"/>
+			<xsd:enumeration value="Africa/Mogadishu"/>
+			<xsd:enumeration value="Africa/Monrovia"/>
+			<xsd:enumeration value="Africa/Nairobi"/>
+			<xsd:enumeration value="Africa/Ndjamena"/>
+			<xsd:enumeration value="Africa/Niamey"/>
+			<xsd:enumeration value="Africa/Nouakchott"/>
+			<xsd:enumeration value="Africa/Ouagadougou"/>
+			<xsd:enumeration value="Africa/Porto-Novo"/>
+			<xsd:enumeration value="Africa/Sao_Tome"/>
+			<xsd:enumeration value="Africa/Tripoli"/>
+			<xsd:enumeration value="Africa/Tunis"/>
+			<xsd:enumeration value="Africa/Windhoek"/>
+			<xsd:enumeration value="America/Adak"/>
+			<xsd:enumeration value="America/Anchorage"/>
+			<xsd:enumeration value="America/Anguilla"/>
+			<xsd:enumeration value="America/Antigua"/>
+			<xsd:enumeration value="America/Araguaina"/>
+			<xsd:enumeration value="America/Argentina/Buenos_Aires"/>
+			<xsd:enumeration value="America/Argentina/Catamarca"/>
+			<xsd:enumeration value="America/Argentina/Cordoba"/>
+			<xsd:enumeration value="America/Argentina/Jujuy"/>
+			<xsd:enumeration value="America/Argentina/La_Rioja"/>
+			<xsd:enumeration value="America/Argentina/Mendoza"/>
+			<xsd:enumeration value="America/Argentina/Rio_Gallegos"/>
+			<xsd:enumeration value="America/Argentina/Salta"/>
+			<xsd:enumeration value="America/Argentina/San_Juan"/>
+			<xsd:enumeration value="America/Argentina/San_Luis"/>
+			<xsd:enumeration value="America/Argentina/Tucuman"/>
+			<xsd:enumeration value="America/Argentina/Ushuaia"/>
+			<xsd:enumeration value="America/Aruba"/>
+			<xsd:enumeration value="America/Asuncion"/>
+			<xsd:enumeration value="America/Atikokan"/>
+			<xsd:enumeration value="America/Bahia"/>
+			<xsd:enumeration value="America/Bahia_Banderas"/>
+			<xsd:enumeration value="America/Barbados"/>
+			<xsd:enumeration value="America/Belem"/>
+			<xsd:enumeration value="America/Belize"/>
+			<xsd:enumeration value="America/Blanc-Sablon"/>
+			<xsd:enumeration value="America/Boa_Vista"/>
+			<xsd:enumeration value="America/Bogota"/>
+			<xsd:enumeration value="America/Boise"/>
+			<xsd:enumeration value="America/Cambridge_Bay"/>
+			<xsd:enumeration value="America/Campo_Grande"/>
+			<xsd:enumeration value="America/Cancun"/>
+			<xsd:enumeration value="America/Caracas"/>
+			<xsd:enumeration value="America/Cayenne"/>
+			<xsd:enumeration value="America/Cayman"/>
+			<xsd:enumeration value="America/Chicago"/>
+			<xsd:enumeration value="America/Chihuahua"/>
+			<xsd:enumeration value="America/Costa_Rica"/>
+			<xsd:enumeration value="America/Creston"/>
+			<xsd:enumeration value="America/Cuiaba"/>
+			<xsd:enumeration value="America/Curacao"/>
+			<xsd:enumeration value="America/Danmarkshavn"/>
+			<xsd:enumeration value="America/Dawson"/>
+			<xsd:enumeration value="America/Dawson_Creek"/>
+			<xsd:enumeration value="America/Denver"/>
+			<xsd:enumeration value="America/Detroit"/>
+			<xsd:enumeration value="America/Dominica"/>
+			<xsd:enumeration value="America/Edmonton"/>
+			<xsd:enumeration value="America/Eirunepe"/>
+			<xsd:enumeration value="America/El_Salvador"/>
+			<xsd:enumeration value="America/Fortaleza"/>
+			<xsd:enumeration value="America/Glace_Bay"/>
+			<xsd:enumeration value="America/Godthab"/>
+			<xsd:enumeration value="America/Goose_Bay"/>
+			<xsd:enumeration value="America/Grand_Turk"/>
+			<xsd:enumeration value="America/Grenada"/>
+			<xsd:enumeration value="America/Guadeloupe"/>
+			<xsd:enumeration value="America/Guatemala"/>
+			<xsd:enumeration value="America/Guayaquil"/>
+			<xsd:enumeration value="America/Guyana"/>
+			<xsd:enumeration value="America/Halifax"/>
+			<xsd:enumeration value="America/Havana"/>
+			<xsd:enumeration value="America/Hermosillo"/>
+			<xsd:enumeration value="America/Indiana/Indianapolis"/>
+			<xsd:enumeration value="America/Indiana/Knox"/>
+			<xsd:enumeration value="America/Indiana/Marengo"/>
+			<xsd:enumeration value="America/Indiana/Petersburg"/>
+			<xsd:enumeration value="America/Indiana/Tell_City"/>
+			<xsd:enumeration value="America/Indiana/Vevay"/>
+			<xsd:enumeration value="America/Indiana/Vincennes"/>
+			<xsd:enumeration value="America/Indiana/Winamac"/>
+			<xsd:enumeration value="America/Inuvik"/>
+			<xsd:enumeration value="America/Iqaluit"/>
+			<xsd:enumeration value="America/Jamaica"/>
+			<xsd:enumeration value="America/Juneau"/>
+			<xsd:enumeration value="America/Kentucky/Louisville"/>
+			<xsd:enumeration value="America/Kentucky/Monticello"/>
+			<xsd:enumeration value="America/Kralendijk"/>
+			<xsd:enumeration value="America/La_Paz"/>
+			<xsd:enumeration value="America/Lima"/>
+			<xsd:enumeration value="America/Los_Angeles"/>
+			<xsd:enumeration value="America/Lower_Princes"/>
+			<xsd:enumeration value="America/Maceio"/>
+			<xsd:enumeration value="America/Managua"/>
+			<xsd:enumeration value="America/Manaus"/>
+			<xsd:enumeration value="America/Marigot"/>
+			<xsd:enumeration value="America/Martinique"/>
+			<xsd:enumeration value="America/Matamoros"/>
+			<xsd:enumeration value="America/Mazatlan"/>
+			<xsd:enumeration value="America/Menominee"/>
+			<xsd:enumeration value="America/Merida"/>
+			<xsd:enumeration value="America/Metlakatla"/>
+			<xsd:enumeration value="America/Mexico_City"/>
+			<xsd:enumeration value="America/Miquelon"/>
+			<xsd:enumeration value="America/Moncton"/>
+			<xsd:enumeration value="America/Monterrey"/>
+			<xsd:enumeration value="America/Montevideo"/>
+			<xsd:enumeration value="America/Montreal"/>
+			<xsd:enumeration value="America/Montserrat"/>
+			<xsd:enumeration value="America/Nassau"/>
+			<xsd:enumeration value="America/New_York"/>
+			<xsd:enumeration value="America/Nipigon"/>
+			<xsd:enumeration value="America/Nome"/>
+			<xsd:enumeration value="America/Noronha"/>
+			<xsd:enumeration value="America/North_Dakota/Beulah"/>
+			<xsd:enumeration value="America/North_Dakota/Center"/>
+			<xsd:enumeration value="America/North_Dakota/New_Salem"/>
+			<xsd:enumeration value="America/Ojinaga"/>
+			<xsd:enumeration value="America/Panama"/>
+			<xsd:enumeration value="America/Pangnirtung"/>
+			<xsd:enumeration value="America/Paramaribo"/>
+			<xsd:enumeration value="America/Phoenix"/>
+			<xsd:enumeration value="America/Port-au-Prince"/>
+			<xsd:enumeration value="America/Port_of_Spain"/>
+			<xsd:enumeration value="America/Porto_Velho"/>
+			<xsd:enumeration value="America/Puerto_Rico"/>
+			<xsd:enumeration value="America/Rainy_River"/>
+			<xsd:enumeration value="America/Rankin_Inlet"/>
+			<xsd:enumeration value="America/Recife"/>
+			<xsd:enumeration value="America/Regina"/>
+			<xsd:enumeration value="America/Resolute"/>
+			<xsd:enumeration value="America/Rio_Branco"/>
+			<xsd:enumeration value="America/Santa_Isabel"/>
+			<xsd:enumeration value="America/Santarem"/>
+			<xsd:enumeration value="America/Santiago"/>
+			<xsd:enumeration value="America/Santo_Domingo"/>
+			<xsd:enumeration value="America/Sao_Paulo"/>
+			<xsd:enumeration value="America/Scoresbysund"/>
+			<xsd:enumeration value="America/Shiprock"/>
+			<xsd:enumeration value="America/Sitka"/>
+			<xsd:enumeration value="America/St_Barthelemy"/>
+			<xsd:enumeration value="America/St_Johns"/>
+			<xsd:enumeration value="America/St_Kitts"/>
+			<xsd:enumeration value="America/St_Lucia"/>
+			<xsd:enumeration value="America/St_Thomas"/>
+			<xsd:enumeration value="America/St_Vincent"/>
+			<xsd:enumeration value="America/Swift_Current"/>
+			<xsd:enumeration value="America/Tegucigalpa"/>
+			<xsd:enumeration value="America/Thule"/>
+			<xsd:enumeration value="America/Thunder_Bay"/>
+			<xsd:enumeration value="America/Tijuana"/>
+			<xsd:enumeration value="America/Toronto"/>
+			<xsd:enumeration value="America/Tortola"/>
+			<xsd:enumeration value="America/Vancouver"/>
+			<xsd:enumeration value="America/Whitehorse"/>
+			<xsd:enumeration value="America/Winnipeg"/>
+			<xsd:enumeration value="America/Yakutat"/>
+			<xsd:enumeration value="America/Yellowknife"/>
+			<xsd:enumeration value="Antarctica/Casey"/>
+			<xsd:enumeration value="Antarctica/Davis"/>
+			<xsd:enumeration value="Antarctica/DumontDUrville"/>
+			<xsd:enumeration value="Antarctica/Macquarie"/>
+			<xsd:enumeration value="Antarctica/Mawson"/>
+			<xsd:enumeration value="Antarctica/McMurdo"/>
+			<xsd:enumeration value="Antarctica/Palmer"/>
+			<xsd:enumeration value="Antarctica/Rothera"/>
+			<xsd:enumeration value="Antarctica/South_Pole"/>
+			<xsd:enumeration value="Antarctica/Syowa"/>
+			<xsd:enumeration value="Antarctica/Vostok"/>
+			<xsd:enumeration value="Arctic/Longyearbyen"/>
+			<xsd:enumeration value="Asia/Aden"/>
+			<xsd:enumeration value="Asia/Almaty"/>
+			<xsd:enumeration value="Asia/Amman"/>
+			<xsd:enumeration value="Asia/Anadyr"/>
+			<xsd:enumeration value="Asia/Aqtau"/>
+			<xsd:enumeration value="Asia/Aqtobe"/>
+			<xsd:enumeration value="Asia/Ashgabat"/>
+			<xsd:enumeration value="Asia/Baghdad"/>
+			<xsd:enumeration value="Asia/Bahrain"/>
+			<xsd:enumeration value="Asia/Baku"/>
+			<xsd:enumeration value="Asia/Bangkok"/>
+			<xsd:enumeration value="Asia/Beirut"/>
+			<xsd:enumeration value="Asia/Bishkek"/>
+			<xsd:enumeration value="Asia/Brunei"/>
+			<xsd:enumeration value="Asia/Choibalsan"/>
+			<xsd:enumeration value="Asia/Chongqing"/>
+			<xsd:enumeration value="Asia/Colombo"/>
+			<xsd:enumeration value="Asia/Damascus"/>
+			<xsd:enumeration value="Asia/Dhaka"/>
+			<xsd:enumeration value="Asia/Dili"/>
+			<xsd:enumeration value="Asia/Dubai"/>
+			<xsd:enumeration value="Asia/Dushanbe"/>
+			<xsd:enumeration value="Asia/Gaza"/>
+			<xsd:enumeration value="Asia/Harbin"/>
+			<xsd:enumeration value="Asia/Hebron"/>
+			<xsd:enumeration value="Asia/Ho_Chi_Minh"/>
+			<xsd:enumeration value="Asia/Hong_Kong"/>
+			<xsd:enumeration value="Asia/Hovd"/>
+			<xsd:enumeration value="Asia/Irkutsk"/>
+			<xsd:enumeration value="Asia/Istanbul"/>
+			<xsd:enumeration value="Asia/Jakarta"/>
+			<xsd:enumeration value="Asia/Jayapura"/>
+			<xsd:enumeration value="Asia/Jerusalem"/>
+			<xsd:enumeration value="Asia/Kabul"/>
+			<xsd:enumeration value="Asia/Kamchatka"/>
+			<xsd:enumeration value="Asia/Karachi"/>
+			<xsd:enumeration value="Asia/Kashgar"/>
+			<xsd:enumeration value="Asia/Kathmandu"/>
+			<xsd:enumeration value="Asia/Kolkata"/>
+			<xsd:enumeration value="Asia/Krasnoyarsk"/>
+			<xsd:enumeration value="Asia/Kuala_Lumpur"/>
+			<xsd:enumeration value="Asia/Kuching"/>
+			<xsd:enumeration value="Asia/Kuwait"/>
+			<xsd:enumeration value="Asia/Macau"/>
+			<xsd:enumeration value="Asia/Magadan"/>
+			<xsd:enumeration value="Asia/Makassar"/>
+			<xsd:enumeration value="Asia/Manila"/>
+			<xsd:enumeration value="Asia/Muscat"/>
+			<xsd:enumeration value="Asia/Nicosia"/>
+			<xsd:enumeration value="Asia/Novokuznetsk"/>
+			<xsd:enumeration value="Asia/Novosibirsk"/>
+			<xsd:enumeration value="Asia/Omsk"/>
+			<xsd:enumeration value="Asia/Oral"/>
+			<xsd:enumeration value="Asia/Phnom_Penh"/>
+			<xsd:enumeration value="Asia/Pontianak"/>
+			<xsd:enumeration value="Asia/Pyongyang"/>
+			<xsd:enumeration value="Asia/Qatar"/>
+			<xsd:enumeration value="Asia/Qyzylorda"/>
+			<xsd:enumeration value="Asia/Rangoon"/>
+			<xsd:enumeration value="Asia/Riyadh"/>
+			<xsd:enumeration value="Asia/Riyadh87"/>
+			<xsd:enumeration value="Asia/Riyadh88"/>
+			<xsd:enumeration value="Asia/Riyadh89"/>
+			<xsd:enumeration value="Asia/Sakhalin"/>
+			<xsd:enumeration value="Asia/Samarkand"/>
+			<xsd:enumeration value="Asia/Seoul"/>
+			<xsd:enumeration value="Asia/Shanghai"/>
+			<xsd:enumeration value="Asia/Singapore"/>
+			<xsd:enumeration value="Asia/Taipei"/>
+			<xsd:enumeration value="Asia/Tashkent"/>
+			<xsd:enumeration value="Asia/Tbilisi"/>
+			<xsd:enumeration value="Asia/Tehran"/>
+			<xsd:enumeration value="Asia/Thimphu"/>
+			<xsd:enumeration value="Asia/Tokyo"/>
+			<xsd:enumeration value="Asia/Ulaanbaatar"/>
+			<xsd:enumeration value="Asia/Urumqi"/>
+			<xsd:enumeration value="Asia/Vientiane"/>
+			<xsd:enumeration value="Asia/Vladivostok"/>
+			<xsd:enumeration value="Asia/Yakutsk"/>
+			<xsd:enumeration value="Asia/Yekaterinburg"/>
+			<xsd:enumeration value="Asia/Yerevan"/>
+			<xsd:enumeration value="Atlantic/Azores"/>
+			<xsd:enumeration value="Atlantic/Bermuda"/>
+			<xsd:enumeration value="Atlantic/Canary"/>
+			<xsd:enumeration value="Atlantic/Cape_Verde"/>
+			<xsd:enumeration value="Atlantic/Faroe"/>
+			<xsd:enumeration value="Atlantic/Madeira"/>
+			<xsd:enumeration value="Atlantic/Reykjavik"/>
+			<xsd:enumeration value="Atlantic/South_Georgia"/>
+			<xsd:enumeration value="Atlantic/St_Helena"/>
+			<xsd:enumeration value="Atlantic/Stanley"/>
+			<xsd:enumeration value="Australia/Adelaide"/>
+			<xsd:enumeration value="Australia/Brisbane"/>
+			<xsd:enumeration value="Australia/Broken_Hill"/>
+			<xsd:enumeration value="Australia/Currie"/>
+			<xsd:enumeration value="Australia/Darwin"/>
+			<xsd:enumeration value="Australia/Eucla"/>
+			<xsd:enumeration value="Australia/Hobart"/>
+			<xsd:enumeration value="Australia/Lindeman"/>
+			<xsd:enumeration value="Australia/Lord_Howe"/>
+			<xsd:enumeration value="Australia/Melbourne"/>
+			<xsd:enumeration value="Australia/Perth"/>
+			<xsd:enumeration value="Australia/Sydney"/>
+			<xsd:enumeration value="CET"/>
+			<xsd:enumeration value="CST6CDT"/>
+			<xsd:enumeration value="EET"/>
+			<xsd:enumeration value="EST"/>
+			<xsd:enumeration value="EST5EDT"/>
+			<xsd:enumeration value="Etc/GMT"/>
+			<xsd:enumeration value="Etc/GMT+0"/>
+			<xsd:enumeration value="Etc/GMT+1"/>
+			<xsd:enumeration value="Etc/GMT+10"/>
+			<xsd:enumeration value="Etc/GMT+11"/>
+			<xsd:enumeration value="Etc/GMT+12"/>
+			<xsd:enumeration value="Etc/GMT+2"/>
+			<xsd:enumeration value="Etc/GMT+3"/>
+			<xsd:enumeration value="Etc/GMT+4"/>
+			<xsd:enumeration value="Etc/GMT+5"/>
+			<xsd:enumeration value="Etc/GMT+6"/>
+			<xsd:enumeration value="Etc/GMT+7"/>
+			<xsd:enumeration value="Etc/GMT+8"/>
+			<xsd:enumeration value="Etc/GMT+9"/>
+			<xsd:enumeration value="Etc/GMT-0"/>
+			<xsd:enumeration value="Etc/GMT-1"/>
+			<xsd:enumeration value="Etc/GMT-10"/>
+			<xsd:enumeration value="Etc/GMT-11"/>
+			<xsd:enumeration value="Etc/GMT-12"/>
+			<xsd:enumeration value="Etc/GMT-13"/>
+			<xsd:enumeration value="Etc/GMT-14"/>
+			<xsd:enumeration value="Etc/GMT-2"/>
+			<xsd:enumeration value="Etc/GMT-3"/>
+			<xsd:enumeration value="Etc/GMT-4"/>
+			<xsd:enumeration value="Etc/GMT-5"/>
+			<xsd:enumeration value="Etc/GMT-6"/>
+			<xsd:enumeration value="Etc/GMT-7"/>
+			<xsd:enumeration value="Etc/GMT-8"/>
+			<xsd:enumeration value="Etc/GMT-9"/>
+			<xsd:enumeration value="Etc/GMT0"/>
+			<xsd:enumeration value="Etc/Greenwich"/>
+			<xsd:enumeration value="Etc/UCT"/>
+			<xsd:enumeration value="Etc/UTC"/>
+			<xsd:enumeration value="Etc/Universal"/>
+			<xsd:enumeration value="Etc/Zulu"/>
+			<xsd:enumeration value="Europe/Amsterdam"/>
+			<xsd:enumeration value="Europe/Andorra"/>
+			<xsd:enumeration value="Europe/Athens"/>
+			<xsd:enumeration value="Europe/Belgrade"/>
+			<xsd:enumeration value="Europe/Berlin"/>
+			<xsd:enumeration value="Europe/Bratislava"/>
+			<xsd:enumeration value="Europe/Brussels"/>
+			<xsd:enumeration value="Europe/Bucharest"/>
+			<xsd:enumeration value="Europe/Budapest"/>
+			<xsd:enumeration value="Europe/Chisinau"/>
+			<xsd:enumeration value="Europe/Copenhagen"/>
+			<xsd:enumeration value="Europe/Dublin"/>
+			<xsd:enumeration value="Europe/Gibraltar"/>
+			<xsd:enumeration value="Europe/Guernsey"/>
+			<xsd:enumeration value="Europe/Helsinki"/>
+			<xsd:enumeration value="Europe/Isle_of_Man"/>
+			<xsd:enumeration value="Europe/Istanbul"/>
+			<xsd:enumeration value="Europe/Jersey"/>
+			<xsd:enumeration value="Europe/Kaliningrad"/>
+			<xsd:enumeration value="Europe/Kiev"/>
+			<xsd:enumeration value="Europe/Lisbon"/>
+			<xsd:enumeration value="Europe/Ljubljana"/>
+			<xsd:enumeration value="Europe/London"/>
+			<xsd:enumeration value="Europe/Luxembourg"/>
+			<xsd:enumeration value="Europe/Madrid"/>
+			<xsd:enumeration value="Europe/Malta"/>
+			<xsd:enumeration value="Europe/Mariehamn"/>
+			<xsd:enumeration value="Europe/Minsk"/>
+			<xsd:enumeration value="Europe/Monaco"/>
+			<xsd:enumeration value="Europe/Moscow"/>
+			<xsd:enumeration value="Europe/Nicosia"/>
+			<xsd:enumeration value="Europe/Oslo"/>
+			<xsd:enumeration value="Europe/Paris"/>
+			<xsd:enumeration value="Europe/Podgorica"/>
+			<xsd:enumeration value="Europe/Prague"/>
+			<xsd:enumeration value="Europe/Riga"/>
+			<xsd:enumeration value="Europe/Rome"/>
+			<xsd:enumeration value="Europe/Samara"/>
+			<xsd:enumeration value="Europe/San_Marino"/>
+			<xsd:enumeration value="Europe/Sarajevo"/>
+			<xsd:enumeration value="Europe/Simferopol"/>
+			<xsd:enumeration value="Europe/Skopje"/>
+			<xsd:enumeration value="Europe/Sofia"/>
+			<xsd:enumeration value="Europe/Stockholm"/>
+			<xsd:enumeration value="Europe/Tallinn"/>
+			<xsd:enumeration value="Europe/Tirane"/>
+			<xsd:enumeration value="Europe/Uzhgorod"/>
+			<xsd:enumeration value="Europe/Vaduz"/>
+			<xsd:enumeration value="Europe/Vatican"/>
+			<xsd:enumeration value="Europe/Vienna"/>
+			<xsd:enumeration value="Europe/Vilnius"/>
+			<xsd:enumeration value="Europe/Volgograd"/>
+			<xsd:enumeration value="Europe/Warsaw"/>
+			<xsd:enumeration value="Europe/Zagreb"/>
+			<xsd:enumeration value="Europe/Zaporozhye"/>
+			<xsd:enumeration value="Europe/Zurich"/>
+			<xsd:enumeration value="HST"/>
+			<xsd:enumeration value="Indian/Antananarivo"/>
+			<xsd:enumeration value="Indian/Chagos"/>
+			<xsd:enumeration value="Indian/Christmas"/>
+			<xsd:enumeration value="Indian/Cocos"/>
+			<xsd:enumeration value="Indian/Comoro"/>
+			<xsd:enumeration value="Indian/Kerguelen"/>
+			<xsd:enumeration value="Indian/Mahe"/>
+			<xsd:enumeration value="Indian/Maldives"/>
+			<xsd:enumeration value="Indian/Mauritius"/>
+			<xsd:enumeration value="Indian/Mayotte"/>
+			<xsd:enumeration value="Indian/Reunion"/>
+			<xsd:enumeration value="MET"/>
+			<xsd:enumeration value="MST"/>
+			<xsd:enumeration value="MST7MDT"/>
+			<xsd:enumeration value="Mideast/Riyadh87"/>
+			<xsd:enumeration value="Mideast/Riyadh88"/>
+			<xsd:enumeration value="Mideast/Riyadh89"/>
+			<xsd:enumeration value="PST8PDT"/>
+			<xsd:enumeration value="Pacific/Apia"/>
+			<xsd:enumeration value="Pacific/Auckland"/>
+			<xsd:enumeration value="Pacific/Chatham"/>
+			<xsd:enumeration value="Pacific/Chuuk"/>
+			<xsd:enumeration value="Pacific/Easter"/>
+			<xsd:enumeration value="Pacific/Efate"/>
+			<xsd:enumeration value="Pacific/Enderbury"/>
+			<xsd:enumeration value="Pacific/Fakaofo"/>
+			<xsd:enumeration value="Pacific/Fiji"/>
+			<xsd:enumeration value="Pacific/Funafuti"/>
+			<xsd:enumeration value="Pacific/Galapagos"/>
+			<xsd:enumeration value="Pacific/Gambier"/>
+			<xsd:enumeration value="Pacific/Guadalcanal"/>
+			<xsd:enumeration value="Pacific/Guam"/>
+			<xsd:enumeration value="Pacific/Honolulu"/>
+			<xsd:enumeration value="Pacific/Johnston"/>
+			<xsd:enumeration value="Pacific/Kiritimati"/>
+			<xsd:enumeration value="Pacific/Kosrae"/>
+			<xsd:enumeration value="Pacific/Kwajalein"/>
+			<xsd:enumeration value="Pacific/Majuro"/>
+			<xsd:enumeration value="Pacific/Marquesas"/>
+			<xsd:enumeration value="Pacific/Midway"/>
+			<xsd:enumeration value="Pacific/Nauru"/>
+			<xsd:enumeration value="Pacific/Niue"/>
+			<xsd:enumeration value="Pacific/Norfolk"/>
+			<xsd:enumeration value="Pacific/Noumea"/>
+			<xsd:enumeration value="Pacific/Pago_Pago"/>
+			<xsd:enumeration value="Pacific/Palau"/>
+			<xsd:enumeration value="Pacific/Pitcairn"/>
+			<xsd:enumeration value="Pacific/Pohnpei"/>
+			<xsd:enumeration value="Pacific/Port_Moresby"/>
+			<xsd:enumeration value="Pacific/Rarotonga"/>
+			<xsd:enumeration value="Pacific/Saipan"/>
+			<xsd:enumeration value="Pacific/Tahiti"/>
+			<xsd:enumeration value="Pacific/Tarawa"/>
+			<xsd:enumeration value="Pacific/Tongatapu"/>
+			<xsd:enumeration value="Pacific/Wake"/>
+			<xsd:enumeration value="Pacific/Wallis"/>
+			<xsd:enumeration value="US/Pacific-New"/>
+			<xsd:enumeration value="WET"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTransport">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="TCP"/>
+			<xsd:enumeration value="UDP"/>
+			<xsd:enumeration value="TLS"/>
+			<xsd:enumeration value="TCP+UDP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTrunk">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Ground Start"/>
+			<xsd:enumeration value="Loop Start"/>
+			<xsd:enumeration value="DID"/>
+			<xsd:enumeration value="POTS"/>
+			<xsd:enumeration value="EANDM"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTrunkDirection">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Inbound"/>
+			<xsd:enumeration value="Outbound"/>
+			<xsd:enumeration value="Bothways"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTrunkLevel">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="AAL(A)"/>
+			<xsd:enumeration value="AAL(D)"/>
+			<xsd:enumeration value="A/TT"/>
+			<xsd:enumeration value="DAL"/>
+			<xsd:enumeration value="ICS"/>
+			<xsd:enumeration value="ISD/TT"/>
+			<xsd:enumeration value="IST"/>
+			<xsd:enumeration value="ONS"/>
+			<xsd:enumeration value="OPS"/>
+			<xsd:enumeration value="S/ATT"/>
+			<xsd:enumeration value="S/DTT"/>
+			<xsd:enumeration value="A/TO"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTrunkPad">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Minus32db"/>
+			<xsd:enumeration value="Minus31db"/>
+			<xsd:enumeration value="Minus30db"/>
+			<xsd:enumeration value="Minus29db"/>
+			<xsd:enumeration value="Minus28db"/>
+			<xsd:enumeration value="Minus27db"/>
+			<xsd:enumeration value="Minus26db"/>
+			<xsd:enumeration value="Minus25db"/>
+			<xsd:enumeration value="Minus24db"/>
+			<xsd:enumeration value="Minus23db"/>
+			<xsd:enumeration value="Minus22db"/>
+			<xsd:enumeration value="Minus21db"/>
+			<xsd:enumeration value="Minus20db"/>
+			<xsd:enumeration value="Minus19db"/>
+			<xsd:enumeration value="Minus18db"/>
+			<xsd:enumeration value="Minus17db"/>
+			<xsd:enumeration value="Minus16db"/>
+			<xsd:enumeration value="Minus15db"/>
+			<xsd:enumeration value="Minus14db"/>
+			<xsd:enumeration value="Minus13db"/>
+			<xsd:enumeration value="Minus12db"/>
+			<xsd:enumeration value="Minus11db"/>
+			<xsd:enumeration value="Minus10db"/>
+			<xsd:enumeration value="Minus9db"/>
+			<xsd:enumeration value="Minus8db"/>
+			<xsd:enumeration value="Minus7db"/>
+			<xsd:enumeration value="Minus6db"/>
+			<xsd:enumeration value="Minus5db"/>
+			<xsd:enumeration value="Minus4db"/>
+			<xsd:enumeration value="Minus3db"/>
+			<xsd:enumeration value="Minus2db"/>
+			<xsd:enumeration value="Minus1db"/>
+			<xsd:enumeration value="NoDbPadding"/>
+			<xsd:enumeration value="Plus1db"/>
+			<xsd:enumeration value="Plus2db"/>
+			<xsd:enumeration value="Plus3db"/>
+			<xsd:enumeration value="Plus4db"/>
+			<xsd:enumeration value="Plus5db"/>
+			<xsd:enumeration value="Plus6db"/>
+			<xsd:enumeration value="Plus7db"/>
+			<xsd:enumeration value="Plus8db"/>
+			<xsd:enumeration value="Plus9db"/>
+			<xsd:enumeration value="Plus10db"/>
+			<xsd:enumeration value="Plus11db"/>
+			<xsd:enumeration value="Plus12db"/>
+			<xsd:enumeration value="Plus13db"/>
+			<xsd:enumeration value="Plus14db"/>
+			<xsd:enumeration value="Plus15db"/>
+			<xsd:enumeration value="Plus16db"/>
+			<xsd:enumeration value="Plus17db"/>
+			<xsd:enumeration value="Plus18db"/>
+			<xsd:enumeration value="Plus19db"/>
+			<xsd:enumeration value="Plus20db"/>
+			<xsd:enumeration value="Plus21db"/>
+			<xsd:enumeration value="Plus22db"/>
+			<xsd:enumeration value="Plus23db"/>
+			<xsd:enumeration value="Plus24db"/>
+			<xsd:enumeration value="Plus25db"/>
+			<xsd:enumeration value="Plus26db"/>
+			<xsd:enumeration value="Plus27db"/>
+			<xsd:enumeration value="Plus28db"/>
+			<xsd:enumeration value="Plus29db"/>
+			<xsd:enumeration value="Plus30db"/>
+			<xsd:enumeration value="Plus31db"/>
+			<xsd:enumeration value="Plus32db"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTrunkSelectionOrder">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Bottom Up"/>
+			<xsd:enumeration value="Top Down"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTrunkService">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None(Default)"/>
+			<xsd:enumeration value="Call Control Discovery"/>
+			<xsd:enumeration value="Extension Mobility Cross Cluster"/>
+			<xsd:enumeration value="Cisco Intercompany Media Engine"/>
+			<xsd:enumeration value="IP Multimedia Subsystem Service Control (ISC)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTrustRole">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SAST"/>
+			<xsd:enumeration value="CallManager"/>
+			<xsd:enumeration value="CallManagerTFTP"/>
+			<xsd:enumeration value="TFTP"/>
+			<xsd:enumeration value="CAPF"/>
+			<xsd:enumeration value="SRST"/>
+			<xsd:enumeration value="Firewall"/>
+			<xsd:enumeration value="Application Server"/>
+			<xsd:enumeration value="Certificate Authority"/>
+			<xsd:enumeration value="Authentication and Authorization"/>
+			<xsd:enumeration value="Signaling and Call Control"/>
+			<xsd:enumeration value="Provisioning Service"/>
+			<xsd:enumeration value="Data Service"/>
+			<xsd:enumeration value="Network Element"/>
+			<xsd:enumeration value="Virtual Private Network"/>
+			<xsd:enumeration value="Serviceability"/>
+			<xsd:enumeration value="Unknown"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XTunneledProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="QSIG"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XUCProduct">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unity"/>
+			<xsd:enumeration value="Unity Connection"/>
+			<xsd:enumeration value="Exchange"/>
+			<xsd:enumeration value="MeetingPlace Classic"/>
+			<xsd:enumeration value="MeetingPlace Express"/>
+			<xsd:enumeration value="WebEx (Conferencing)"/>
+			<xsd:enumeration value="Directory"/>
+			<xsd:enumeration value="Unified CM (IM and Presence)"/>
+			<xsd:enumeration value="WebEx (IM and Presence)"/>
+			<xsd:enumeration value="CTI"/>
+			<xsd:enumeration value="Enhanced Directory"/>
+			<xsd:enumeration value="Telepresence Management System"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XUCService">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Voicemail"/>
+			<xsd:enumeration value="MailStore"/>
+			<xsd:enumeration value="Conferencing"/>
+			<xsd:enumeration value="Directory"/>
+			<xsd:enumeration value="IM and Presence"/>
+			<xsd:enumeration value="CTI"/>
+			<xsd:enumeration value="Video Conference Scheduling Portal"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XURIDisambiguationPolicy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Always treat all dial strings as URI addresses"/>
+			<xsd:enumeration value="Phone number consists of characters 0-9, A-D, *, #, and + (others treated as URI addresses)"/>
+			<xsd:enumeration value="Phone number consists of characters 0-9, *, #, and + (others treated as URI addresses)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XUserAgentServerHeaderInfo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Send Unified CM Version Information as User-Agent Header"/>
+			<xsd:enumeration value="Pass Through Received Information as Contact Header Parameters"/>
+			<xsd:enumeration value="Pass Through Received Information as User-Agent and Server Header"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XUserLocale">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="English United States"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XV150SDPFilter">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="No Filtering"/>
+			<xsd:enumeration value="Remove MER V.150"/>
+			<xsd:enumeration value="Remove Pre-MER V.150"/>
+			<xsd:enumeration value="Use Default Filter"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XVMAvoidancePolicy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Use System Default"/>
+			<xsd:enumeration value="Timer Control"/>
+			<xsd:enumeration value="User Control"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XVPNClientAuthentication">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="User and Password"/>
+			<xsd:enumeration value="Password Only"/>
+			<xsd:enumeration value="Certificate"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XVideoCallTrafficClass">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Immersive"/>
+			<xsd:enumeration value="Desktop"/>
+			<xsd:enumeration value="Mixed"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XViprFilterElement">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Prefix"/>
+			<xsd:enumeration value="Domain"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XWLANProfileChanges">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Allowed"/>
+			<xsd:enumeration value="Disallowed"/>
+			<xsd:enumeration value="Restricted"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XWebPageDisplay">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Expanded"/>
+			<xsd:enumeration value="Collapsed"/>
+			<xsd:enumeration value="Hidden"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XWebPageSection">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Required and Frequently Entered Settings"/>
+			<xsd:enumeration value="Phone Buttons Configuration"/>
+			<xsd:enumeration value="Device Settings"/>
+			<xsd:enumeration value="Device Routing Settings"/>
+			<xsd:enumeration value="Phone Settings"/>
+			<xsd:enumeration value="Protocol Settings"/>
+			<xsd:enumeration value="IP Phone Services Subscription"/>
+			<xsd:enumeration value="Security Settings"/>
+			<xsd:enumeration value="Service Configuration Settings"/>
+			<xsd:enumeration value="Troubleshooting Settings"/>
+			<xsd:enumeration value="Locale Settings"/>
+			<xsd:enumeration value="Multilevel Precedence Preemption (MLPP) Settings"/>
+			<xsd:enumeration value="Do Not Disturb (DND) Settings"/>
+			<xsd:enumeration value="Automatic Alternate Routing (AAR) Settings"/>
+			<xsd:enumeration value="Busy Lamp Field (BLF) Settings"/>
+			<xsd:enumeration value="Music on Hold Settings"/>
+			<xsd:enumeration value="Location Settings"/>
+			<xsd:enumeration value="Directory Number Settings"/>
+			<xsd:enumeration value="Music On Hold (MOH) Settings"/>
+			<xsd:enumeration value="Call Forward Settings"/>
+			<xsd:enumeration value="Park Monitoring Settings"/>
+			<xsd:enumeration value="Multilevel Precedence Preemption (MLPP) Alternate Party Settings"/>
+			<xsd:enumeration value="Hold Reversion Settings"/>
+			<xsd:enumeration value="Enterprise Alternate Number"/>
+			<xsd:enumeration value="+E.164 Alternate Number"/>
+			<xsd:enumeration value="PSTN Failover for Enterprise and +E.164 Alternate Number and URI Dialing"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XWiFiAuthenticationMethod">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="WEP"/>
+			<xsd:enumeration value="PSK"/>
+			<xsd:enumeration value="EAP-FAST"/>
+			<xsd:enumeration value="PEAP-MSCHAPv2"/>
+			<xsd:enumeration value="PEAP-GTC"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XWiFiFrequency">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Auto"/>
+			<xsd:enumeration value="2.4 GHz"/>
+			<xsd:enumeration value="5 GHz"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XYellowAlarm">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Bit2"/>
+			<xsd:enumeration value="F-Bit"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XZeroSuppression">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="B8ZS"/>
+			<xsd:enumeration value="AMI"/>
+			<xsd:enumeration value="HDB3"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XZzdndcontrol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="User"/>
+			<xsd:enumeration value="Admin"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XZzdtmfDbLevel">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="6 dB below nominal"/>
+			<xsd:enumeration value="3 dB below nominal"/>
+			<xsd:enumeration value="Nominal"/>
+			<xsd:enumeration value="3 dB above nominal"/>
+			<xsd:enumeration value="6 dB above nominal"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XZzntpmode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Unicast"/>
+			<xsd:enumeration value="Multicast"/>
+			<xsd:enumeration value="Anycast"/>
+			<xsd:enumeration value="Directed Broadcast"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XZzpreff">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Off"/>
+			<xsd:enumeration value="On"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XZzuserInfo">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="None"/>
+			<xsd:enumeration value="Phone"/>
+			<xsd:enumeration value="IP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XChangeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="AarGroup"/>
+			<xsd:enumeration value="AarGroupMatrix"/>
+			<xsd:enumeration value="AdvertisedPatterns"/>
+			<xsd:enumeration value="Announcement"/>
+			<xsd:enumeration value="Annunciator"/>
+			<xsd:enumeration value="AppServerInfo"/>
+			<xsd:enumeration value="AppUser"/>
+			<xsd:enumeration value="ApplicationDialRules"/>
+			<xsd:enumeration value="ApplicationServer"/>
+			<xsd:enumeration value="ApplicationUserCapfProfile"/>
+			<xsd:enumeration value="AssignedPresenceServers"/>
+			<xsd:enumeration value="AssignedPresenceUsers"/>
+			<xsd:enumeration value="AudioCodecPreferenceList"/>
+			<xsd:enumeration value="BillingServer"/>
+			<xsd:enumeration value="BlockedLearnedPatterns"/>
+			<xsd:enumeration value="CCAProfiles"/>
+			<xsd:enumeration value="CallManager"/>
+			<xsd:enumeration value="CallManagerGroup"/>
+			<xsd:enumeration value="CallPark"/>
+			<xsd:enumeration value="CallPickupGroup"/>
+			<xsd:enumeration value="CalledPartyTracing"/>
+			<xsd:enumeration value="CalledPartyTransformationPattern"/>
+			<xsd:enumeration value="CallerFilterList"/>
+			<xsd:enumeration value="CallingPartyTransformationPattern"/>
+			<xsd:enumeration value="CcdAdvertisingService"/>
+			<xsd:enumeration value="CcdHostedDN"/>
+			<xsd:enumeration value="CcdHostedDNGroup"/>
+			<xsd:enumeration value="CcdRequestingService"/>
+			<xsd:enumeration value="CiscoCatalyst600024PortFXSGateway"/>
+			<xsd:enumeration value="CiscoCatalyst6000E1VoIPGateway"/>
+			<xsd:enumeration value="CiscoCatalyst6000T1VoIPGatewayPri"/>
+			<xsd:enumeration value="CiscoCatalyst6000T1VoIPGatewayT1"/>
+			<xsd:enumeration value="CmcInfo"/>
+			<xsd:enumeration value="CommonDeviceConfig"/>
+			<xsd:enumeration value="CommonPhoneConfig"/>
+			<xsd:enumeration value="ConferenceBridge"/>
+			<xsd:enumeration value="CredentialPolicy"/>
+			<xsd:enumeration value="CredentialPolicyDefault"/>
+			<xsd:enumeration value="Css"/>
+			<xsd:enumeration value="CtiRoutePoint"/>
+			<xsd:enumeration value="CumaServerSecurityProfile"/>
+			<xsd:enumeration value="CustomUserField"/>
+			<xsd:enumeration value="DateTimeGroup"/>
+			<xsd:enumeration value="Ddi"/>
+			<xsd:enumeration value="DefaultDeviceProfile"/>
+			<xsd:enumeration value="DeviceMobility"/>
+			<xsd:enumeration value="DeviceMobilityGroup"/>
+			<xsd:enumeration value="DevicePool"/>
+			<xsd:enumeration value="DeviceProfile"/>
+			<xsd:enumeration value="DhcpServer"/>
+			<xsd:enumeration value="DhcpSubnet"/>
+			<xsd:enumeration value="DialPlan"/>
+			<xsd:enumeration value="DialPlanTag"/>
+			<xsd:enumeration value="DirNumberAliasLookupandSync"/>
+			<xsd:enumeration value="DirectedCallPark"/>
+			<xsd:enumeration value="DirectoryLookupDialRules"/>
+			<xsd:enumeration value="EmccFeatureConfig"/>
+			<xsd:enumeration value="EndUserCapfProfile"/>
+			<xsd:enumeration value="EnterpriseFeatureAccessConfiguration"/>
+			<xsd:enumeration value="ExternalCallControlProfile"/>
+			<xsd:enumeration value="FacInfo"/>
+			<xsd:enumeration value="FallbackProfile"/>
+			<xsd:enumeration value="FeatureControlPolicy"/>
+			<xsd:enumeration value="FeatureGroupTemplate"/>
+			<xsd:enumeration value="FixedMohAudioSource"/>
+			<xsd:enumeration value="Gatekeeper"/>
+			<xsd:enumeration value="Gateway"/>
+			<xsd:enumeration value="GatewayEndpointAnalogAccess"/>
+			<xsd:enumeration value="GatewayEndpointDigitalAccessBri"/>
+			<xsd:enumeration value="GatewayEndpointDigitalAccessPri"/>
+			<xsd:enumeration value="GatewayEndpointDigitalAccessT1"/>
+			<xsd:enumeration value="GatewaySccpEndpoints"/>
+			<xsd:enumeration value="GatewaySubunits"/>
+			<xsd:enumeration value="GeoLocation"/>
+			<xsd:enumeration value="GeoLocationFilter"/>
+			<xsd:enumeration value="GeoLocationPolicy"/>
+			<xsd:enumeration value="H323Gateway"/>
+			<xsd:enumeration value="H323Phone"/>
+			<xsd:enumeration value="H323Trunk"/>
+			<xsd:enumeration value="HandoffConfiguration"/>
+			<xsd:enumeration value="HuntList"/>
+			<xsd:enumeration value="HuntPilot"/>
+			<xsd:enumeration value="ImeClient"/>
+			<xsd:enumeration value="ImeE164Transformation"/>
+			<xsd:enumeration value="ImeEnrolledPattern"/>
+			<xsd:enumeration value="ImeEnrolledPatternGroup"/>
+			<xsd:enumeration value="ImeExclusionNumber"/>
+			<xsd:enumeration value="ImeExclusionNumberGroup"/>
+			<xsd:enumeration value="ImeFirewall"/>
+			<xsd:enumeration value="ImeRouteFilterElement"/>
+			<xsd:enumeration value="ImeRouteFilterGroup"/>
+			<xsd:enumeration value="ImeServer"/>
+			<xsd:enumeration value="ImportedDirectoryUriCatalogs"/>
+			<xsd:enumeration value="InterClusterServiceProfile"/>
+			<xsd:enumeration value="IpPhoneServices"/>
+			<xsd:enumeration value="IvrUserLocale"/>
+			<xsd:enumeration value="LbmGroup"/>
+			<xsd:enumeration value="LbmHubGroup"/>
+			<xsd:enumeration value="LdapDirectory"/>
+			<xsd:enumeration value="LdapFilter"/>
+			<xsd:enumeration value="LdapSyncCustomField"/>
+			<xsd:enumeration value="Line"/>
+			<xsd:enumeration value="LineGroup"/>
+			<xsd:enumeration value="LocalRouteGroup"/>
+			<xsd:enumeration value="Location"/>
+			<xsd:enumeration value="MediaResourceGroup"/>
+			<xsd:enumeration value="MediaResourceList"/>
+			<xsd:enumeration value="MeetMe"/>
+			<xsd:enumeration value="MessageWaiting"/>
+			<xsd:enumeration value="MlppDomain"/>
+			<xsd:enumeration value="MobileSmartClientProfile"/>
+			<xsd:enumeration value="MobileVoiceAccess"/>
+			<xsd:enumeration value="MobilityProfile"/>
+			<xsd:enumeration value="MohAudioSource"/>
+			<xsd:enumeration value="MohServer"/>
+			<xsd:enumeration value="Mtp"/>
+			<xsd:enumeration value="NetworkAccessProfile"/>
+			<xsd:enumeration value="Phone"/>
+			<xsd:enumeration value="PhoneButtonTemplate"/>
+			<xsd:enumeration value="PhoneNtp"/>
+			<xsd:enumeration value="PhoneSecurityProfile"/>
+			<xsd:enumeration value="PhysicalLocation"/>
+			<xsd:enumeration value="PresenceGroup"/>
+			<xsd:enumeration value="PresenceRedundancyGroup"/>
+			<xsd:enumeration value="ProcessNode"/>
+			<xsd:enumeration value="ProcessNodeService"/>
+			<xsd:enumeration value="RecordingProfile"/>
+			<xsd:enumeration value="Region"/>
+			<xsd:enumeration value="RegionMatrix"/>
+			<xsd:enumeration value="RemoteCluster"/>
+			<xsd:enumeration value="RemoteDestination"/>
+			<xsd:enumeration value="RemoteDestinationProfile"/>
+			<xsd:enumeration value="ResourcePriorityNamespace"/>
+			<xsd:enumeration value="ResourcePriorityNamespaceList"/>
+			<xsd:enumeration value="RouteFilter"/>
+			<xsd:enumeration value="RouteGroup"/>
+			<xsd:enumeration value="RouteList"/>
+			<xsd:enumeration value="RoutePartition"/>
+			<xsd:enumeration value="RoutePattern"/>
+			<xsd:enumeration value="RoutePlan"/>
+			<xsd:enumeration value="SIPNormalizationScript"/>
+			<xsd:enumeration value="SafCcdPurgeBlockLearnedRoutes"/>
+			<xsd:enumeration value="SafForwarder"/>
+			<xsd:enumeration value="SafSecurityProfile"/>
+			<xsd:enumeration value="SdpTransparencyProfile"/>
+			<xsd:enumeration value="ServiceParameter"/>
+			<xsd:enumeration value="ServiceProfile"/>
+			<xsd:enumeration value="SipDialRules"/>
+			<xsd:enumeration value="SipProfile"/>
+			<xsd:enumeration value="SipRealm"/>
+			<xsd:enumeration value="SipRoutePattern"/>
+			<xsd:enumeration value="SipTrunk"/>
+			<xsd:enumeration value="SipTrunkSecurityProfile"/>
+			<xsd:enumeration value="SoftKeyTemplate"/>
+			<xsd:enumeration value="Srst"/>
+			<xsd:enumeration value="TimePeriod"/>
+			<xsd:enumeration value="TimeSchedule"/>
+			<xsd:enumeration value="TodAccess"/>
+			<xsd:enumeration value="TransPattern"/>
+			<xsd:enumeration value="Transcoder"/>
+			<xsd:enumeration value="TransformationProfile"/>
+			<xsd:enumeration value="TvsCertificate"/>
+			<xsd:enumeration value="UcService"/>
+			<xsd:enumeration value="UnassignedPresenceServers"/>
+			<xsd:enumeration value="UnassignedPresenceUsers"/>
+			<xsd:enumeration value="UnitsToGateway"/>
+			<xsd:enumeration value="UniversalDeviceTemplate"/>
+			<xsd:enumeration value="UniversalLineTemplate"/>
+			<xsd:enumeration value="User"/>
+			<xsd:enumeration value="UserGroup"/>
+			<xsd:enumeration value="UserPhoneAssociation"/>
+			<xsd:enumeration value="UserProfileProvision"/>
+			<xsd:enumeration value="Vg224"/>
+			<xsd:enumeration value="VohServer"/>
+			<xsd:enumeration value="VoiceMailPilot"/>
+			<xsd:enumeration value="VoiceMailPort"/>
+			<xsd:enumeration value="VoiceMailProfile"/>
+			<xsd:enumeration value="VpnGateway"/>
+			<xsd:enumeration value="VpnGroup"/>
+			<xsd:enumeration value="VpnProfile"/>
+			<xsd:enumeration value="WLANProfile"/>
+			<xsd:enumeration value="WifiHotspot"/>
+			<xsd:enumeration value="WlanProfileGroup"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="XChangeAction">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="a"/>
+			<xsd:enumeration value="r"/>
+			<xsd:enumeration value="u"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

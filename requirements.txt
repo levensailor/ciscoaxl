@@ -1,0 +1,5 @@
+pip==18.0
+setuptools==40.0.0
+suds-jurko==0.6
+urllib3==1.23
+wheel==0.31.1

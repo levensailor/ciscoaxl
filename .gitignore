@@ -1,0 +1,10 @@
+.DS_Store
+.idea
+*.log
+*.conf
+*.env
+/build
+/dist
+/*.egg-info
+/__pycache__
+/pyris/__pycache__
