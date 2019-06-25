@@ -8,7 +8,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+ciscoaxl/__pycache__
 # C extensions
 *.so
 
