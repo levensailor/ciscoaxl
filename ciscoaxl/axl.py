@@ -1,9 +1,9 @@
 """
 Class to interface with cisco ucm axl api.
 Author: Jeff Levensailor
-Version: 1.0.0
+Version: 0.1
 Dependencies:
- - suds-jurko: https://bitbucket.org/jurko/suds
+ - zeep: https://python-zeep.readthedocs.io/en/master/
 
 Links:
  - https://developer.cisco.com/site/axl/
@@ -17596,6 +17596,6721 @@ class axl(object):
         }
         try:
             resp = self.client.addSNMPUser(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+
+    def update_sip_profile(self, **args):
+        """
+        update_sip_profile parameters
+        :param newName: newName
+        :param description: description
+        :param defaultTelephonyEventPayloadType: defaultTelephonyEventPayloadType
+        :param redirectByApplication: redirectByApplication
+        :param ringing180: ringing180
+        :param timerInvite: timerInvite
+        :param timerRegisterDelta: timerRegisterDelta
+        :param timerRegister: timerRegister
+        :param timerT1: timerT1
+        :param timerT2: timerT2
+        :param retryInvite: retryInvite
+        :param retryNotInvite: retryNotInvite
+        :param startMediaPort: startMediaPort
+        :param stopMediaPort: stopMediaPort
+        :param startVideoPort: startVideoPort
+        :param stopVideoPort: stopVideoPort
+        :param dscpForAudioCalls: dscpForAudioCalls
+        :param dscpForVideoCalls: dscpForVideoCalls
+        :param dscpForAudioPortionOfVideoCalls: dscpForAudioPortionOfVideoCalls
+        :param dscpForTelePresenceCalls: dscpForTelePresenceCalls
+        :param dscpForAudioPortionOfTelePresenceCalls: dscpForAudioPortionOfTelePresenceCalls
+        :param callpickupListUri: callpickupListUri
+        :param callpickupGroupUri: callpickupGroupUri
+        :param meetmeServiceUrl: meetmeServiceUrl
+        :param userInfo: userInfo
+        :param dtmfDbLevel: dtmfDbLevel
+        :param callHoldRingback: callHoldRingback
+        :param anonymousCallBlock: anonymousCallBlock
+        :param callerIdBlock: callerIdBlock
+        :param dndControl: dndControl
+        :param telnetLevel: telnetLevel
+        :param timerKeepAlive: timerKeepAlive
+        :param timerSubscribe: timerSubscribe
+        :param timerSubscribeDelta: timerSubscribeDelta
+        :param maxRedirects: maxRedirects
+        :param timerOffHookToFirstDigit: timerOffHookToFirstDigit
+        :param callForwardUri: callForwardUri
+        :param abbreviatedDialUri: abbreviatedDialUri
+        :param confJointEnable: confJointEnable
+        :param rfc2543Hold: rfc2543Hold
+        :param semiAttendedTransfer: semiAttendedTransfer
+        :param enableVad: enableVad
+        :param stutterMsgWaiting: stutterMsgWaiting
+        :param callStats: callStats
+        :param t38Invite: t38Invite
+        :param faxInvite: faxInvite
+        :param rerouteIncomingRequest: rerouteIncomingRequest
+        :param resourcePriorityNamespaceListName: resourcePriorityNamespaceListName
+        :param enableAnatForEarlyOfferCalls: enableAnatForEarlyOfferCalls
+        :param rsvpOverSip: rsvpOverSip
+        :param fallbackToLocalRsvp: fallbackToLocalRsvp
+        :param sipRe11XxEnabled: sipRe11XxEnabled
+        :param gClear: gClear
+        :param sendRecvSDPInMidCallInvite: sendRecvSDPInMidCallInvite
+        :param enableOutboundOptionsPing: enableOutboundOptionsPing
+        :param optionsPingIntervalWhenStatusOK: optionsPingIntervalWhenStatusOK
+        :param optionsPingIntervalWhenStatusNotOK: optionsPingIntervalWhenStatusNotOK
+        :param deliverConferenceBridgeIdentifier: deliverConferenceBridgeIdentifier
+        :param sipOptionsRetryCount: sipOptionsRetryCount
+        :param sipOptionsRetryTimer: sipOptionsRetryTimer
+        :param sipBandwidthModifier: sipBandwidthModifier
+        :param enableUriOutdialSupport: enableUriOutdialSupport
+        :param userAgentServerHeaderInfo: userAgentServerHeaderInfo
+        :param allowPresentationSharingUsingBfcp: allowPresentationSharingUsingBfcp
+        :param scriptParameters: scriptParameters
+        :param isScriptTraceEnabled: isScriptTraceEnabled
+        :param sipNormalizationScript: sipNormalizationScript
+        :param allowiXApplicationMedia: allowiXApplicationMedia
+        :param dialStringInterpretation: dialStringInterpretation
+        :param acceptAudioCodecPreferences: acceptAudioCodecPreferences
+        :param mlppUserAuthorization: mlppUserAuthorization
+        :param isAssuredSipServiceEnabled: isAssuredSipServiceEnabled
+        :param enableExternalQoS: enableExternalQoS
+        :param resourcePriorityNamespace: resourcePriorityNamespace
+        :param useCallerIdCallerNameinUriOutgoingRequest: useCallerIdCallerNameinUriOutgoingRequest
+        :param externalPresentationInfo: externalPresentationInfo
+        :param callingLineIdentification: callingLineIdentification
+        :param rejectAnonymousIncomingCall: rejectAnonymousIncomingCall
+        :param callpickupUri: callpickupUri
+        :param rejectAnonymousOutgoingCall: rejectAnonymousOutgoingCall
+        :param videoCallTrafficClass: videoCallTrafficClass
+        :param sdpTransparency: sdpTransparency
+        :param allowMultipleCodecs: allowMultipleCodecs
+        :param sipSessionRefreshMethod: sipSessionRefreshMethod
+        :param earlyOfferSuppVoiceCall: earlyOfferSuppVoiceCall
+        :param cucmVersionInSipHeader: cucmVersionInSipHeader
+        :param confidentialAccessLevelHeaders: confidentialAccessLevelHeaders
+        :param destRouteString: destRouteString
+        :param inactiveSDPRequired: inactiveSDPRequired
+        :param allowRRAndRSBandwidthModifier: allowRRAndRSBandwidthModifier
+        :param connectCallBeforePlayingAnnouncement: connectCallBeforePlayingAnnouncement
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSipProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_sip_trunk_security_profile(self, **args):
+        """
+        update_sip_trunk_security_profile parameters
+        :param newName: newName
+        :param description: description
+        :param securityMode: securityMode
+        :param incomingTransport: incomingTransport
+        :param outgoingTransport: outgoingTransport
+        :param digestAuthentication: digestAuthentication
+        :param noncePolicyTime: noncePolicyTime
+        :param x509SubjectName: x509SubjectName
+        :param incomingPort: incomingPort
+        :param applLevelAuthentication: applLevelAuthentication
+        :param acceptPresenceSubscription: acceptPresenceSubscription
+        :param acceptOutOfDialogRefer: acceptOutOfDialogRefer
+        :param acceptUnsolicitedNotification: acceptUnsolicitedNotification
+        :param allowReplaceHeader: allowReplaceHeader
+        :param transmitSecurityStatus: transmitSecurityStatus
+        :param sipV150OutboundSdpOfferFiltering: sipV150OutboundSdpOfferFiltering
+        :param allowChargingHeader: allowChargingHeader
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSipTrunkSecurityProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_time_period(self, **args):
+        """
+        update_time_period parameters
+        :param newName: newName
+        :param startTime: startTime
+        :param endTime: endTime
+        :param startDay: startDay
+        :param endDay: endDay
+        :param monthOfYear: monthOfYear
+        :param dayOfMonth: dayOfMonth
+        :param description: description
+        :param dayOfMonthEnd: dayOfMonthEnd
+        :param monthOfYearEnd: monthOfYearEnd
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateTimePeriod(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_time_schedule(self, **args):
+        """
+        update_time_schedule parameters
+        :param newName: newName
+        :param description: description
+        :param timeScheduleCategory: timeScheduleCategory
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateTimeSchedule(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_tod_access(self, **args):
+        """
+        update_tod_access parameters
+        :param newName: newName
+        :param description: description
+        :param members: members
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateTodAccess(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_voice_mail_pilot(self, **args):
+        """
+        update_voice_mail_pilot parameters
+        :param newDirn: newDirn
+        :param description: description
+        :param newCssName: newCssName
+        :param isDefault: isDefault
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVoiceMailPilot(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_process_node(self, **args):
+        """
+        update_process_node parameters
+        :param newName: newName
+        :param description: description
+        :param mac: mac
+        :param ipv6Name: ipv6Name
+        :param lbmHubGroup: lbmHubGroup
+        :param cupDomain: cupDomain
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateProcessNode(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_caller_filter_list(self, **args):
+        """
+        update_caller_filter_list parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCallerFilterList(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_route_partition(self, **args):
+        """
+        update_route_partition parameters
+        :param newName: newName
+        :param description: description
+        :param timeScheduleIdName: timeScheduleIdName
+        :param useOriginatingDeviceTimeZone: useOriginatingDeviceTimeZone
+        :param timeZone: timeZone
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRoutePartition(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_css(self, **args):
+        """
+        update_css parameters
+        :param description: description
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCss(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_call_manager(self, **args):
+        """
+        update_call_manager parameters
+        :param newName: newName
+        :param description: description
+        :param autoRegistration: autoRegistration
+        :param ports: ports
+        :param lbmGroup: lbmGroup
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCallManager(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_expressway_c_configuration(self, **args):
+        """
+        update_expressway_c_configuration parameters
+        :param newHostNameOrIP: newHostNameOrIP
+        :param description: description
+        :param X509SubjectNameorSubjectAlternateName: X509SubjectNameorSubjectAlternateName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateExpresswayCConfiguration(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_media_resource_group(self, **args):
+        """
+        update_media_resource_group parameters
+        :param newName: newName
+        :param description: description
+        :param multicast: multicast
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMediaResourceGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_media_resource_list(self, **args):
+        """
+        update_media_resource_list parameters
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMediaResourceList(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_region(self, **args):
+        """
+        update_region parameters
+        :param newName: newName
+        :param relatedRegions: relatedRegions
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRegion(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_aar_group(self, **args):
+        """
+        update_aar_group parameters
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAarGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_physical_location(self, **args):
+        """
+        update_physical_location parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePhysicalLocation(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_customer(self, **args):
+        """
+        update_customer parameters
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCustomer(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_route_group(self, **args):
+        """
+        update_route_group parameters
+        :param distributionAlgorithm: distributionAlgorithm
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRouteGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_device_pool(self, **args):
+        """
+        update_device_pool parameters
+        :param newName: newName
+        :param autoSearchSpaceName: autoSearchSpaceName
+        :param dateTimeSettingName: dateTimeSettingName
+        :param callManagerGroupName: callManagerGroupName
+        :param mediaResourceListName: mediaResourceListName
+        :param regionName: regionName
+        :param networkLocale: networkLocale
+        :param srstName: srstName
+        :param connectionMonitorDuration: connectionMonitorDuration
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param locationName: locationName
+        :param mobilityCssName: mobilityCssName
+        :param physicalLocationName: physicalLocationName
+        :param deviceMobilityGroupName: deviceMobilityGroupName
+        :param revertPriority: revertPriority
+        :param singleButtonBarge: singleButtonBarge
+        :param joinAcrossLines: joinAcrossLines
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param localRouteGroupName: localRouteGroupName
+        :param geoLocationName: geoLocationName
+        :param geoLocationFilterName: geoLocationFilterName
+        :param callingPartyNationalPrefix: callingPartyNationalPrefix
+        :param callingPartyInternationalPrefix: callingPartyInternationalPrefix
+        :param callingPartyUnknownPrefix: callingPartyUnknownPrefix
+        :param callingPartySubscriberPrefix: callingPartySubscriberPrefix
+        :param adjunctCallingSearchSpace: adjunctCallingSearchSpace
+        :param callingPartyNationalStripDigits: callingPartyNationalStripDigits
+        :param callingPartyInternationalStripDigits: callingPartyInternationalStripDigits
+        :param callingPartyUnknownStripDigits: callingPartyUnknownStripDigits
+        :param callingPartySubscriberStripDigits: callingPartySubscriberStripDigits
+        :param callingPartyNationalTransformationCssName: callingPartyNationalTransformationCssName
+        :param callingPartyInternationalTransformationCssName: callingPartyInternationalTransformationCssName
+        :param callingPartyUnknownTransformationCssName: callingPartyUnknownTransformationCssName
+        :param callingPartySubscriberTransformationCssName: callingPartySubscriberTransformationCssName
+        :param calledPartyNationalPrefix: calledPartyNationalPrefix
+        :param calledPartyInternationalPrefix: calledPartyInternationalPrefix
+        :param calledPartyUnknownPrefix: calledPartyUnknownPrefix
+        :param calledPartySubscriberPrefix: calledPartySubscriberPrefix
+        :param calledPartyNationalStripDigits: calledPartyNationalStripDigits
+        :param calledPartyInternationalStripDigits: calledPartyInternationalStripDigits
+        :param calledPartyUnknownStripDigits: calledPartyUnknownStripDigits
+        :param calledPartySubscriberStripDigits: calledPartySubscriberStripDigits
+        :param calledPartyNationalTransformationCssName: calledPartyNationalTransformationCssName
+        :param calledPartyInternationalTransformationCssName: calledPartyInternationalTransformationCssName
+        :param calledPartyUnknownTransformationCssName: calledPartyUnknownTransformationCssName
+        :param calledPartySubscriberTransformationCssName: calledPartySubscriberTransformationCssName
+        :param imeEnrolledPatternGroupName: imeEnrolledPatternGroupName
+        :param cntdPnTransformationCssName: cntdPnTransformationCssName
+        :param localRouteGroup: localRouteGroup
+        :param redirectingPartyTransformationCSS: redirectingPartyTransformationCSS
+        :param callingPartyTransformationCSS: callingPartyTransformationCSS
+        :param wirelessLanProfileGroup: wirelessLanProfileGroup
+        :param elinGroup: elinGroup
+        :param mraServiceDomain: mraServiceDomain
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDevicePool(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_device_mobility_group(self, **args):
+        """
+        update_device_mobility_group parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDeviceMobilityGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_location(self, **args):
+        """
+        update_location parameters
+        :param newName: newName
+        :param relatedLocations: relatedLocations
+        :param withinAudioBandwidth: withinAudioBandwidth
+        :param withinVideoBandwidth: withinVideoBandwidth
+        :param withinImmersiveKbits: withinImmersiveKbits
+        :param betweenLocations: betweenLocations
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLocation(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_soft_key_template(self, **args):
+        """
+        update_soft_key_template parameters
+        :param newName: newName
+        :param description: description
+        :param isDefault: isDefault
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSoftKeyTemplate(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_transcoder(self, **args):
+        """
+        update_transcoder parameters
+        :param newName: newName
+        :param description: description
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param loadInformation: loadInformation
+        :param vendorConfig: vendorConfig
+        :param isTrustedRelayPoint: isTrustedRelayPoint
+        :param maximumCapacity: maximumCapacity
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateTranscoder(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_common_device_config(self, **args):
+        """
+        update_common_device_config parameters
+        :param newName: newName
+        :param softkeyTemplateName: softkeyTemplateName
+        :param userLocale: userLocale
+        :param networkHoldMohAudioSourceId: networkHoldMohAudioSourceId
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndicationStatus: mlppIndicationStatus
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param preemption: preemption
+        :param ipAddressingMode: ipAddressingMode
+        :param ipAddressingModePreferenceControl: ipAddressingModePreferenceControl
+        :param allowAutoConfigurationForPhones: allowAutoConfigurationForPhones
+        :param useImeForOutboundCalls: useImeForOutboundCalls
+        :param confidentialAccess: confidentialAccess
+        :param allowDuplicateAddressDetection: allowDuplicateAddressDetection
+        :param acceptRedirectMessages: acceptRedirectMessages
+        :param replyMulticastEchoRequest: replyMulticastEchoRequest
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCommonDeviceConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_resource_priority_namespace(self, **args):
+        """
+        update_resource_priority_namespace parameters
+        :param newNamespace: newNamespace
+        :param description: description
+        :param isDefault: isDefault
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateResourcePriorityNamespace(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_resource_priority_namespace_list(self, **args):
+        """
+        update_resource_priority_namespace_list parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateResourcePriorityNamespaceList(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_device_mobility(self, **args):
+        """
+        update_device_mobility parameters
+        :param newName: newName
+        :param subNetDetails: subNetDetails
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDeviceMobility(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cmc_info(self, **args):
+        """
+        update_cmc_info parameters
+        :param newCode: newCode
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCmcInfo(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_credential_policy(self, **args):
+        """
+        update_credential_policy parameters
+        :param newName: newName
+        :param failedLogon: failedLogon
+        :param resetFailedLogonAttempts: resetFailedLogonAttempts
+        :param lockoutDuration: lockoutDuration
+        :param credChangeDuration: credChangeDuration
+        :param credExpiresAfter: credExpiresAfter
+        :param minCredLength: minCredLength
+        :param prevCredStoredNum: prevCredStoredNum
+        :param inactiveDaysAllowed: inactiveDaysAllowed
+        :param expiryWarningDays: expiryWarningDays
+        :param trivialCredCheck: trivialCredCheck
+        :param minCharsToChange: minCharsToChange
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCredentialPolicy(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_fac_info(self, **args):
+        """
+        update_fac_info parameters
+        :param newName: newName
+        :param code: code
+        :param authorizationLevel: authorizationLevel
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateFacInfo(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_hunt_list(self, **args):
+        """
+        update_hunt_list parameters
+        :param description: description
+        :param callManagerGroupName: callManagerGroupName
+        :param routeListEnabled: routeListEnabled
+        :param voiceMailUsage: voiceMailUsage
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateHuntList(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ivr_user_locale(self, **args):
+        """
+        update_ivr_user_locale parameters
+        :param newUserLocale: newUserLocale
+        :param orderIndex: orderIndex
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateIvrUserLocale(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_line_group(self, **args):
+        """
+        update_line_group parameters
+        :param distributionAlgorithm: distributionAlgorithm
+        :param rnaReversionTimeOut: rnaReversionTimeOut
+        :param huntAlgorithmNoAnswer: huntAlgorithmNoAnswer
+        :param huntAlgorithmBusy: huntAlgorithmBusy
+        :param huntAlgorithmNotAvailable: huntAlgorithmNotAvailable
+        :param newName: newName
+        :param autoLogOffHunt: autoLogOffHunt
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLineGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_recording_profile(self, **args):
+        """
+        update_recording_profile parameters
+        :param newName: newName
+        :param recordingCssName: recordingCssName
+        :param recorderDestination: recorderDestination
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRecordingProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_route_filter(self, **args):
+        """
+        update_route_filter parameters
+        :param newName: newName
+        :param dialPlanName: dialPlanName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRouteFilter(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_call_manager_group(self, **args):
+        """
+        update_call_manager_group parameters
+        :param newName: newName
+        :param tftpDefault: tftpDefault
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCallManagerGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_user_group(self, **args):
+        """
+        update_user_group parameters
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateUserGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_process_node_service(self, **args):
+        """
+        update_process_node_service parameters
+        :param traceLevel: traceLevel
+        :param userCategories: userCategories
+        :param enable: enable
+        :param numFiles: numFiles
+        :param maxFileSize: maxFileSize
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateProcessNodeService(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_moh_audio_source(self, **args):
+        """
+        update_moh_audio_source parameters
+        :param newName: newName
+        :param sourceFile: sourceFile
+        :param multicast: multicast
+        :param mohFileStatus: mohFileStatus
+        :param initialAnnouncement: initialAnnouncement
+        :param periodicAnnouncement: periodicAnnouncement
+        :param periodicAnnouncementInterval: periodicAnnouncementInterval
+        :param localeAnnouncement: localeAnnouncement
+        :param initialAnnouncementPlayed: initialAnnouncementPlayed
+        :param isExternalSource: isExternalSource
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMohAudioSource(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_dhcp_server(self, **args):
+        """
+        update_dhcp_server parameters
+        :param newProcessNodeName: newProcessNodeName
+        :param primaryDnsIpAddress: primaryDnsIpAddress
+        :param secondaryDnsIpAddress: secondaryDnsIpAddress
+        :param primaryTftpServerIpAddress: primaryTftpServerIpAddress
+        :param secondaryTftpServerIpAddress: secondaryTftpServerIpAddress
+        :param bootstrapServerIpAddress: bootstrapServerIpAddress
+        :param domainName: domainName
+        :param tftpServerName: tftpServerName
+        :param arpCacheTimeout: arpCacheTimeout
+        :param ipAddressLeaseTime: ipAddressLeaseTime
+        :param renewalTime: renewalTime
+        :param rebindingTime: rebindingTime
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDhcpServer(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_dhcp_subnet(self, **args):
+        """
+        update_dhcp_subnet parameters
+        :param newDhcpServerName: newDhcpServerName
+        :param newSubnetIpAddress: newSubnetIpAddress
+        :param primaryStartIpAddress: primaryStartIpAddress
+        :param primaryEndIpAddress: primaryEndIpAddress
+        :param secondaryStartIpAddress: secondaryStartIpAddress
+        :param secondaryEndIpAddress: secondaryEndIpAddress
+        :param primaryRouterIpAddress: primaryRouterIpAddress
+        :param secondaryRouterIpAddress: secondaryRouterIpAddress
+        :param subnetMask: subnetMask
+        :param domainName: domainName
+        :param primaryDnsIpAddress: primaryDnsIpAddress
+        :param secondaryDnsIpAddress: secondaryDnsIpAddress
+        :param tftpServerName: tftpServerName
+        :param primaryTftpServerIpAddress: primaryTftpServerIpAddress
+        :param secondaryTftpServerIpAddress: secondaryTftpServerIpAddress
+        :param bootstrapServerIpAddress: bootstrapServerIpAddress
+        :param arpCacheTimeout: arpCacheTimeout
+        :param ipAddressLeaseTime: ipAddressLeaseTime
+        :param renewalTime: renewalTime
+        :param rebindingTime: rebindingTime
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDhcpSubnet(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_call_park(self, **args):
+        """
+        update_call_park parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param callManagerName: callManagerName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCallPark(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_directed_call_park(self, **args):
+        """
+        update_directed_call_park parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param retrievalPrefix: retrievalPrefix
+        :param reversionPattern: reversionPattern
+        :param revertCssName: revertCssName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDirectedCallPark(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_meet_me(self, **args):
+        """
+        update_meet_me parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param minimumSecurityLevel: minimumSecurityLevel
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMeetMe(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_conference_now(self, **args):
+        """
+        update_conference_now parameters
+        :param newConferenceNowNumber: newConferenceNowNumber
+        :param newRoutePartitionName: newRoutePartitionName
+        :param description: description
+        :param maxWaitTimeForHost: maxWaitTimeForHost
+        :param MohAudioSourceId: MohAudioSourceId
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateConferenceNow(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_mobile_voice_access(self, **args):
+        """
+        update_mobile_voice_access parameters
+        :param newPattern: newPattern
+        :param routePartitionName: routePartitionName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMobileVoiceAccess(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_route_list(self, **args):
+        """
+        update_route_list parameters
+        :param newName: newName
+        :param description: description
+        :param callManagerGroupName: callManagerGroupName
+        :param routeListEnabled: routeListEnabled
+        :param runOnEveryNode: runOnEveryNode
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRouteList(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_user(self, **args):
+        """
+        update_user parameters
+        :param firstName: firstName
+        :param displayName: displayName
+        :param middleName: middleName
+        :param lastName: lastName
+        :param emMaxLoginTime: emMaxLoginTime
+        :param newUserid: newUserid
+        :param password: password
+        :param pin: pin
+        :param mailid: mailid
+        :param department: department
+        :param manager: manager
+        :param userLocale: userLocale
+        :param associatedDevices: associatedDevices
+        :param primaryExtension: primaryExtension
+        :param associatedPc: associatedPc
+        :param associatedGroups: associatedGroups
+        :param enableCti: enableCti
+        :param digestCredentials: digestCredentials
+        :param phoneProfiles: phoneProfiles
+        :param defaultProfile: defaultProfile
+        :param presenceGroupName: presenceGroupName
+        :param subscribeCallingSearchSpaceName: subscribeCallingSearchSpaceName
+        :param enableMobility: enableMobility
+        :param enableMobileVoiceAccess: enableMobileVoiceAccess
+        :param maxDeskPickupWaitTime: maxDeskPickupWaitTime
+        :param remoteDestinationLimit: remoteDestinationLimit
+        :param passwordCredentials: passwordCredentials
+        :param pinCredentials: pinCredentials
+        :param enableEmcc: enableEmcc
+        :param ctiControlledDeviceProfiles: ctiControlledDeviceProfiles
+        :param patternPrecedence: patternPrecedence
+        :param numericUserId: numericUserId
+        :param mlppPassword: mlppPassword
+        :param customUserFields: customUserFields
+        :param homeCluster: homeCluster
+        :param imAndPresenceEnable: imAndPresenceEnable
+        :param serviceProfile: serviceProfile
+        :param lineAppearanceAssociationForPresences: lineAppearanceAssociationForPresences
+        :param directoryUri: directoryUri
+        :param telephoneNumber: telephoneNumber
+        :param title: title
+        :param mobileNumber: mobileNumber
+        :param homeNumber: homeNumber
+        :param pagerNumber: pagerNumber
+        :param selfService: selfService
+        :param userProfile: userProfile
+        :param calendarPresence: calendarPresence
+        :param ldapDirectoryName: ldapDirectoryName
+        :param userIdentity: userIdentity
+        :param nameDialing: nameDialing
+        :param ipccExtension: ipccExtension
+        :param ipccRoutePartition: ipccRoutePartition
+        :param convertUserAccount: convertUserAccount
+        :param enableUserToHostConferenceNow: enableUserToHostConferenceNow
+        :param attendeesAccessCode: attendeesAccessCode
+        :param zeroHop: zeroHop
+        :param customerName: customerName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateUser(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_app_user(self, **args):
+        """
+        update_app_user parameters
+        :param newUserid: newUserid
+        :param password: password
+        :param passwordCredentials: passwordCredentials
+        :param digestCredentials: digestCredentials
+        :param presenceGroupName: presenceGroupName
+        :param acceptPresenceSubscription: acceptPresenceSubscription
+        :param acceptOutOfDialogRefer: acceptOutOfDialogRefer
+        :param acceptUnsolicitedNotification: acceptUnsolicitedNotification
+        :param allowReplaceHeader: allowReplaceHeader
+        :param associatedDevices: associatedDevices
+        :param associatedGroups: associatedGroups
+        :param ctiControlledDeviceProfiles: ctiControlledDeviceProfiles
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAppUser(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_sip_realm(self, **args):
+        """
+        update_sip_realm parameters
+        :param newRealm: newRealm
+        :param userid: userid
+        :param digestCredentials: digestCredentials
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSipRealm(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_phone_ntp(self, **args):
+        """
+        update_phone_ntp parameters
+        :param newIpAddress: newIpAddress
+        :param newIpv6Address: newIpv6Address
+        :param description: description
+        :param mode: mode
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePhoneNtp(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_date_time_group(self, **args):
+        """
+        update_date_time_group parameters
+        :param newName: newName
+        :param timeZone: timeZone
+        :param separator: separator
+        :param dateformat: dateformat
+        :param timeFormat: timeFormat
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDateTimeGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_presence_group(self, **args):
+        """
+        update_presence_group parameters
+        :param newName: newName
+        :param description: description
+        :param presenceGroups: presenceGroups
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePresenceGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_geo_location(self, **args):
+        """
+        update_geo_location parameters
+        :param newName: newName
+        :param country: country
+        :param description: description
+        :param nationalSubDivision: nationalSubDivision
+        :param district: district
+        :param communityName: communityName
+        :param cityDivision: cityDivision
+        :param neighbourhood: neighbourhood
+        :param street: street
+        :param leadingStreetDirection: leadingStreetDirection
+        :param trailingStreetSuffix: trailingStreetSuffix
+        :param streetSuffix: streetSuffix
+        :param houseNumber: houseNumber
+        :param houseNumberSuffix: houseNumberSuffix
+        :param landmark: landmark
+        :param location: location
+        :param floor: floor
+        :param occupantName: occupantName
+        :param postalCode: postalCode
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGeoLocation(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_srst(self, **args):
+        """
+        update_srst parameters
+        :param newName: newName
+        :param port: port
+        :param ipAddress: ipAddress
+        :param ipv6Address: ipv6Address
+        :param SipNetwork: SipNetwork
+        :param SipPort: SipPort
+        :param isSecure: isSecure
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSrst(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_mlpp_domain(self, **args):
+        """
+        update_mlpp_domain parameters
+        :param newDomainName: newDomainName
+        :param domainId: domainId
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMlppDomain(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cuma_server_security_profile(self, **args):
+        """
+        update_cuma_server_security_profile parameters
+        :param newName: newName
+        :param description: description
+        :param securityMode: securityMode
+        :param transportType: transportType
+        :param x509SubjectName: x509SubjectName
+        :param serverIpHostName: serverIpHostName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCumaServerSecurityProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_application_server(self, **args):
+        """
+        update_application_server parameters
+        :param newName: newName
+        :param ipAddress: ipAddress
+        :param url: url
+        :param endUserUrl: endUserUrl
+        :param processNodeName: processNodeName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateApplicationServer(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_application_user_capf_profile(self, **args):
+        """
+        update_application_user_capf_profile parameters
+        :param certificateOperation: certificateOperation
+        :param authenticationMode: authenticationMode
+        :param authenticationString: authenticationString
+        :param keySize: keySize
+        :param keyOrder: keyOrder
+        :param ecKeySize: ecKeySize
+        :param operationCompletion: operationCompletion
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateApplicationUserCapfProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_end_user_capf_profile(self, **args):
+        """
+        update_end_user_capf_profile parameters
+        :param certificationOperation: certificationOperation
+        :param authenticationMode: authenticationMode
+        :param authenticationString: authenticationString
+        :param keySize: keySize
+        :param keyOrder: keyOrder
+        :param ecKeySize: ecKeySize
+        :param operationCompletion: operationCompletion
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateEndUserCapfProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_service_parameter(self, **args):
+        """
+        update_service_parameter parameters
+        :param value: value
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateServiceParameter(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_geo_location_filter(self, **args):
+        """
+        update_geo_location_filter parameters
+        :param newName: newName
+        :param description: description
+        :param useCountry: useCountry
+        :param useNationalSubDivision: useNationalSubDivision
+        :param useDistrict: useDistrict
+        :param useCommunityName: useCommunityName
+        :param useCityDivision: useCityDivision
+        :param useNeighbourhood: useNeighbourhood
+        :param useStreet: useStreet
+        :param useLeadingStreetDirection: useLeadingStreetDirection
+        :param useTrailingStreetSuffix: useTrailingStreetSuffix
+        :param useStreetSuffix: useStreetSuffix
+        :param useHouseNumber: useHouseNumber
+        :param useHouseNumberSuffix: useHouseNumberSuffix
+        :param useLandmark: useLandmark
+        :param useLocation: useLocation
+        :param useFloor: useFloor
+        :param useOccupantName: useOccupantName
+        :param usePostalCode: usePostalCode
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGeoLocationFilter(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_voice_mail_profile(self, **args):
+        """
+        update_voice_mail_profile parameters
+        :param newName: newName
+        :param description: description
+        :param isDefault: isDefault
+        :param voiceMailboxMask: voiceMailboxMask
+        :param voiceMailPilot: voiceMailPilot
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVoiceMailProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_voice_mail_port(self, **args):
+        """
+        update_voice_mail_port parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param locationName: locationName
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param securityProfileName: securityProfileName
+        :param geoLocationName: geoLocationName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param dnPattern: dnPattern
+        :param routePartition: routePartition
+        :param dnCallingSearchSpace: dnCallingSearchSpace
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param callerIdDisplay: callerIdDisplay
+        :param callerIdDisplayAscii: callerIdDisplayAscii
+        :param externalMask: externalMask
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVoiceMailPort(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_gatekeeper(self, **args):
+        """
+        update_gatekeeper parameters
+        :param newName: newName
+        :param description: description
+        :param rrqTimeToLive: rrqTimeToLive
+        :param retryTimeout: retryTimeout
+        :param enableDevice: enableDevice
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGatekeeper(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_phone_button_template(self, **args):
+        """
+        update_phone_button_template parameters
+        :param newName: newName
+        :param buttons: buttons
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePhoneButtonTemplate(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_common_phone_config(self, **args):
+        """
+        update_common_phone_config parameters
+        :param newName: newName
+        :param description: description
+        :param unlockPwd: unlockPwd
+        :param dndOption: dndOption
+        :param dndAlertingType: dndAlertingType
+        :param backgroundImage: backgroundImage
+        :param phonePersonalization: phonePersonalization
+        :param phoneServiceDisplay: phoneServiceDisplay
+        :param sshUserId: sshUserId
+        :param sshPwd: sshPwd
+        :param vendorConfig: vendorConfig
+        :param alwaysUsePrimeLine: alwaysUsePrimeLine
+        :param alwaysUsePrimeLineForVoiceMessage: alwaysUsePrimeLineForVoiceMessage
+        :param vpnGroupName: vpnGroupName
+        :param vpnProfileName: vpnProfileName
+        :param featureControlPolicy: featureControlPolicy
+        :param wifiHotspotProfile: wifiHotspotProfile
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCommonPhoneConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_message_waiting(self, **args):
+        """
+        update_message_waiting parameters
+        :param newPattern: newPattern
+        :param newRoutePartitionName: newRoutePartitionName
+        :param description: description
+        :param messageWaitingIndicator: messageWaitingIndicator
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMessageWaiting(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ip_phone_services(self, **args):
+        """
+        update_ip_phone_services parameters
+        :param newServiceName: newServiceName
+        :param asciiServiceName: asciiServiceName
+        :param serviceDescription: serviceDescription
+        :param serviceUrl: serviceUrl
+        :param secureServiceUrl: secureServiceUrl
+        :param serviceCategory: serviceCategory
+        :param serviceType: serviceType
+        :param serviceVendor: serviceVendor
+        :param serviceVersion: serviceVersion
+        :param enabled: enabled
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateIpPhoneServices(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cti_route_point(self, **args):
+        """
+        update_cti_route_point parameters
+        :param newName: newName
+        :param description: description
+        :param protocol: protocol
+        :param protocolSide: protocolSide
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param networkHoldMohAudioSourceId: networkHoldMohAudioSourceId
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param userLocale: userLocale
+        :param lines: lines
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCtiRoutePoint(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_trans_pattern(self, **args):
+        """
+        update_trans_pattern parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param blockEnable: blockEnable
+        :param calledPartyTransformationMask: calledPartyTransformationMask
+        :param callingPartyTransformationMask: callingPartyTransformationMask
+        :param useCallingPartyPhoneMask: useCallingPartyPhoneMask
+        :param callingPartyPrefixDigits: callingPartyPrefixDigits
+        :param newDialPlanName: newDialPlanName
+        :param digitDiscardInstructionName: digitDiscardInstructionName
+        :param patternUrgency: patternUrgency
+        :param prefixDigitsOut: prefixDigitsOut
+        :param newRouteFilterName: newRouteFilterName
+        :param callingLinePresentationBit: callingLinePresentationBit
+        :param callingNamePresentationBit: callingNamePresentationBit
+        :param connectedLinePresentationBit: connectedLinePresentationBit
+        :param connectedNamePresentationBit: connectedNamePresentationBit
+        :param patternPrecedence: patternPrecedence
+        :param provideOutsideDialtone: provideOutsideDialtone
+        :param callingPartyNumberingPlan: callingPartyNumberingPlan
+        :param callingPartyNumberType: callingPartyNumberType
+        :param calledPartyNumberingPlan: calledPartyNumberingPlan
+        :param calledPartyNumberType: calledPartyNumberType
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param resourcePriorityNamespaceName: resourcePriorityNamespaceName
+        :param routeNextHopByCgpn: routeNextHopByCgpn
+        :param routeClass: routeClass
+        :param callInterceptProfileName: callInterceptProfileName
+        :param releaseClause: releaseClause
+        :param useOriginatorCss: useOriginatorCss
+        :param dontWaitForIDTOnSubsequentHops: dontWaitForIDTOnSubsequentHops
+        :param isEmergencyServiceNumber: isEmergencyServiceNumber
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateTransPattern(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_calling_party_transformation_pattern(self, **args):
+        """
+        update_calling_party_transformation_pattern parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param callingPartyTransformationMask: callingPartyTransformationMask
+        :param useCallingPartyPhoneMask: useCallingPartyPhoneMask
+        :param newDialPlanName: newDialPlanName
+        :param digitDiscardInstructionName: digitDiscardInstructionName
+        :param callingPartyPrefixDigits: callingPartyPrefixDigits
+        :param newRouteFilterName: newRouteFilterName
+        :param callingLinePresentationBit: callingLinePresentationBit
+        :param callingPartyNumberingPlan: callingPartyNumberingPlan
+        :param callingPartyNumberType: callingPartyNumberType
+        :param mlppPreemptionDisabled: mlppPreemptionDisabled
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCallingPartyTransformationPattern(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_sip_route_pattern(self, **args):
+        """
+        update_sip_route_pattern parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param blockEnable: blockEnable
+        :param callingPartyTransformationMask: callingPartyTransformationMask
+        :param useCallingPartyPhoneMask: useCallingPartyPhoneMask
+        :param callingPartyPrefixDigits: callingPartyPrefixDigits
+        :param callingLinePresentationBit: callingLinePresentationBit
+        :param callingNamePresentationBit: callingNamePresentationBit
+        :param connectedLinePresentationBit: connectedLinePresentationBit
+        :param connectedNamePresentationBit: connectedNamePresentationBit
+        :param sipTrunkName: sipTrunkName
+        :param dnOrPatternIpv6: dnOrPatternIpv6
+        :param routeOnUserPart: routeOnUserPart
+        :param useCallerCss: useCallerCss
+        :param domainRoutingCssName: domainRoutingCssName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSipRoutePattern(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_hunt_pilot(self, **args):
+        """
+        update_hunt_pilot parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param blockEnable: blockEnable
+        :param calledPartyTransformationMask: calledPartyTransformationMask
+        :param callingPartyTransformationMask: callingPartyTransformationMask
+        :param useCallingPartyPhoneMask: useCallingPartyPhoneMask
+        :param callingPartyPrefixDigits: callingPartyPrefixDigits
+        :param dialPlanName: dialPlanName
+        :param digitDiscardInstructionName: digitDiscardInstructionName
+        :param patternUrgency: patternUrgency
+        :param prefixDigitsOut: prefixDigitsOut
+        :param routeFilterName: routeFilterName
+        :param callingLinePresentationBit: callingLinePresentationBit
+        :param callingNamePresentationBit: callingNamePresentationBit
+        :param connectedLinePresentationBit: connectedLinePresentationBit
+        :param connectedNamePresentationBit: connectedNamePresentationBit
+        :param patternPrecedence: patternPrecedence
+        :param provideOutsideDialtone: provideOutsideDialtone
+        :param callingPartyNumberingPlan: callingPartyNumberingPlan
+        :param callingPartyNumberType: callingPartyNumberType
+        :param calledPartyNumberingPlan: calledPartyNumberingPlan
+        :param calledPartyNumberType: calledPartyNumberType
+        :param huntListName: huntListName
+        :param parkMonForwardNoRetrieve: parkMonForwardNoRetrieve
+        :param alertingName: alertingName
+        :param asciiAlertingName: asciiAlertingName
+        :param e164Mask: e164Mask
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param forwardHuntNoAnswer: forwardHuntNoAnswer
+        :param forwardHuntBusy: forwardHuntBusy
+        :param callPickupGroupName: callPickupGroupName
+        :param maxHuntduration: maxHuntduration
+        :param releaseClause: releaseClause
+        :param displayConnectedNumber: displayConnectedNumber
+        :param queueCalls: queueCalls
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateHuntPilot(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_route_pattern(self, **args):
+        """
+        update_route_pattern parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param blockEnable: blockEnable
+        :param calledPartyTransformationMask: calledPartyTransformationMask
+        :param callingPartyTransformationMask: callingPartyTransformationMask
+        :param useCallingPartyPhoneMask: useCallingPartyPhoneMask
+        :param callingPartyPrefixDigits: callingPartyPrefixDigits
+        :param newDialPlanName: newDialPlanName
+        :param digitDiscardInstructionName: digitDiscardInstructionName
+        :param networkLocation: networkLocation
+        :param patternUrgency: patternUrgency
+        :param prefixDigitsOut: prefixDigitsOut
+        :param newRouteFilterName: newRouteFilterName
+        :param callingLinePresentationBit: callingLinePresentationBit
+        :param callingNamePresentationBit: callingNamePresentationBit
+        :param connectedLinePresentationBit: connectedLinePresentationBit
+        :param connectedNamePresentationBit: connectedNamePresentationBit
+        :param supportOverlapSending: supportOverlapSending
+        :param patternPrecedence: patternPrecedence
+        :param releaseClause: releaseClause
+        :param allowDeviceOverride: allowDeviceOverride
+        :param provideOutsideDialtone: provideOutsideDialtone
+        :param callingPartyNumberingPlan: callingPartyNumberingPlan
+        :param callingPartyNumberType: callingPartyNumberType
+        :param calledPartyNumberingPlan: calledPartyNumberingPlan
+        :param calledPartyNumberType: calledPartyNumberType
+        :param destination: destination
+        :param authorizationCodeRequired: authorizationCodeRequired
+        :param authorizationLevelRequired: authorizationLevelRequired
+        :param clientCodeRequired: clientCodeRequired
+        :param isdnNsfInfoElement: isdnNsfInfoElement
+        :param resourcePriorityNamespaceName: resourcePriorityNamespaceName
+        :param routeClass: routeClass
+        :param enableDccEnforcement: enableDccEnforcement
+        :param blockedCallPercentage: blockedCallPercentage
+        :param externalCallControl: externalCallControl
+        :param isEmergencyServiceNumber: isEmergencyServiceNumber
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRoutePattern(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_application_dial_rules(self, **args):
+        """
+        update_application_dial_rules parameters
+        :param newName: newName
+        :param description: description
+        :param numberBeginWith: numberBeginWith
+        :param numberOfDigits: numberOfDigits
+        :param digitsToBeRemoved: digitsToBeRemoved
+        :param prefixPattern: prefixPattern
+        :param priority: priority
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateApplicationDialRules(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_directory_lookup_dial_rules(self, **args):
+        """
+        update_directory_lookup_dial_rules parameters
+        :param newName: newName
+        :param description: description
+        :param numberBeginWith: numberBeginWith
+        :param numberOfDigits: numberOfDigits
+        :param digitsToBeRemoved: digitsToBeRemoved
+        :param prefixPattern: prefixPattern
+        :param priority: priority
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDirectoryLookupDialRules(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_phone_security_profile(self, **args):
+        """
+        update_phone_security_profile parameters
+        :param newName: newName
+        :param description: description
+        :param deviceSecurityMode: deviceSecurityMode
+        :param authenticationMode: authenticationMode
+        :param keySize: keySize
+        :param keyOrder: keyOrder
+        :param ecKeySize: ecKeySize
+        :param tftpEncryptedConfig: tftpEncryptedConfig
+        :param EnableOAuthAuthentication: EnableOAuthAuthentication
+        :param nonceValidityTime: nonceValidityTime
+        :param transportType: transportType
+        :param sipPhonePort: sipPhonePort
+        :param enableDigestAuthentication: enableDigestAuthentication
+        :param excludeDigestCredentials: excludeDigestCredentials
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePhoneSecurityProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_sip_dial_rules(self, **args):
+        """
+        update_sip_dial_rules parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSipDialRules(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_conference_bridge(self, **args):
+        """
+        update_conference_bridge parameters
+        :param newName: newName
+        :param description: description
+        :param product: product
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param locationName: locationName
+        :param loadInformation: loadInformation
+        :param vendorConfig: vendorConfig
+        :param maximumCapacity: maximumCapacity
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param securityProfileName: securityProfileName
+        :param destinationAddress: destinationAddress
+        :param mcuConferenceBridgeSipPort: mcuConferenceBridgeSipPort
+        :param sipProfile: sipProfile
+        :param srtpAllowed: srtpAllowed
+        :param normalizationScript: normalizationScript
+        :param enableTrace: enableTrace
+        :param normalizationScriptInfos: normalizationScriptInfos
+        :param userName: userName
+        :param password: password
+        :param httpPort: httpPort
+        :param useHttps: useHttps
+        :param addresses: addresses
+        :param conferenceBridgePrefix: conferenceBridgePrefix
+        :param allowCFBControlOfCallSecurityIcon: allowCFBControlOfCallSecurityIcon
+        :param overrideSIPTrunkAddress: overrideSIPTrunkAddress
+        :param sipTrunkName: sipTrunkName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateConferenceBridge(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_annunciator(self, **args):
+        """
+        update_annunciator parameters
+        :param newName: newName
+        :param description: description
+        :param devicePoolName: devicePoolName
+        :param locationName: locationName
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAnnunciator(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_interactive_voice_response(self, **args):
+        """
+        update_interactive_voice_response parameters
+        :param newName: newName
+        :param description: description
+        :param devicePoolName: devicePoolName
+        :param locationName: locationName
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateInteractiveVoiceResponse(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_mtp(self, **args):
+        """
+        update_mtp parameters
+        :param newName: newName
+        :param description: description
+        :param devicePoolName: devicePoolName
+        :param trustedRelayPoint: trustedRelayPoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMtp(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_fixed_moh_audio_source(self, **args):
+        """
+        update_fixed_moh_audio_source parameters
+        :param newName: newName
+        :param multicast: multicast
+        :param enable: enable
+        :param initialAnnouncement: initialAnnouncement
+        :param periodicAnnouncement: periodicAnnouncement
+        :param periodicAnnouncementInterval: periodicAnnouncementInterval
+        :param localeAnnouncement: localeAnnouncement
+        :param initialAnnouncementPlayed: initialAnnouncementPlayed
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateFixedMohAudioSource(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_aar_group_matrix(self, **args):
+        """
+        update_aar_group_matrix parameters
+        :param prefixDigit: prefixDigit
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAarGroupMatrix(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_remote_destination_profile(self, **args):
+        """
+        update_remote_destination_profile parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param networkHoldMohAudioSourceId: networkHoldMohAudioSourceId
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param lines: lines
+        :param callInfoPrivacyStatus: callInfoPrivacyStatus
+        :param userId: userId
+        :param ignorePresentationIndicators: ignorePresentationIndicators
+        :param rerouteCallingSearchSpaceName: rerouteCallingSearchSpaceName
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param userLocale: userLocale
+        :param networkLocale: networkLocale
+        :param primaryPhoneName: primaryPhoneName
+        :param dndOption: dndOption
+        :param dndStatus: dndStatus
+        :param mobileSmartClientProfileName: mobileSmartClientProfileName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRemoteDestinationProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_line(self, **args):
+        """
+        update_line parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param aarDestinationMask: aarDestinationMask
+        :param aarKeepCallHistory: aarKeepCallHistory
+        :param aarVoiceMailEnabled: aarVoiceMailEnabled
+        :param callForwardAll: callForwardAll
+        :param callForwardBusy: callForwardBusy
+        :param callForwardBusyInt: callForwardBusyInt
+        :param callForwardNoAnswer: callForwardNoAnswer
+        :param callForwardNoAnswerInt: callForwardNoAnswerInt
+        :param callForwardNoCoverage: callForwardNoCoverage
+        :param callForwardNoCoverageInt: callForwardNoCoverageInt
+        :param callForwardOnFailure: callForwardOnFailure
+        :param callForwardAlternateParty: callForwardAlternateParty
+        :param callForwardNotRegistered: callForwardNotRegistered
+        :param callForwardNotRegisteredInt: callForwardNotRegisteredInt
+        :param callPickupGroupName: callPickupGroupName
+        :param autoAnswer: autoAnswer
+        :param networkHoldMohAudioSourceId: networkHoldMohAudioSourceId
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param callingIdPresentationWhenDiverted: callingIdPresentationWhenDiverted
+        :param alertingName: alertingName
+        :param asciiAlertingName: asciiAlertingName
+        :param presenceGroupName: presenceGroupName
+        :param shareLineAppearanceCssName: shareLineAppearanceCssName
+        :param voiceMailProfileName: voiceMailProfileName
+        :param patternPrecedence: patternPrecedence
+        :param releaseClause: releaseClause
+        :param hrDuration: hrDuration
+        :param hrInterval: hrInterval
+        :param cfaCssPolicy: cfaCssPolicy
+        :param defaultActivatedDeviceName: defaultActivatedDeviceName
+        :param parkMonForwardNoRetrieveDn: parkMonForwardNoRetrieveDn
+        :param parkMonForwardNoRetrieveIntDn: parkMonForwardNoRetrieveIntDn
+        :param parkMonForwardNoRetrieveVmEnabled: parkMonForwardNoRetrieveVmEnabled
+        :param parkMonForwardNoRetrieveIntVmEnabled: parkMonForwardNoRetrieveIntVmEnabled
+        :param parkMonForwardNoRetrieveCssName: parkMonForwardNoRetrieveCssName
+        :param parkMonForwardNoRetrieveIntCssName: parkMonForwardNoRetrieveIntCssName
+        :param parkMonReversionTimer: parkMonReversionTimer
+        :param partyEntranceTone: partyEntranceTone
+        :param directoryURIs: directoryURIs
+        :param allowCtiControlFlag: allowCtiControlFlag
+        :param rejectAnonymousCall: rejectAnonymousCall
+        :param patternUrgency: patternUrgency
+        :param confidentialAccess: confidentialAccess
+        :param externalCallControlProfile: externalCallControlProfile
+        :param enterpriseAltNum: enterpriseAltNum
+        :param e164AltNum: e164AltNum
+        :param pstnFailover: pstnFailover
+        :param callControlAgentProfile: callControlAgentProfile
+        :param useEnterpriseAltNum: useEnterpriseAltNum
+        :param useE164AltNum: useE164AltNum
+        :param active: active
+        :param externalPresentationInfo: externalPresentationInfo
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLine(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_default_device_profile(self, **args):
+        """
+        update_default_device_profile parameters
+        :param description: description
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param userLocale: userLocale
+        :param phoneButtonTemplate: phoneButtonTemplate
+        :param softkeyTemplate: softkeyTemplate
+        :param privacy: privacy
+        :param singleButtonBarge: singleButtonBarge
+        :param joinAcrossLines: joinAcrossLines
+        :param ignorePi: ignorePi
+        :param dndStatus: dndStatus
+        :param dndRingSetting: dndRingSetting
+        :param dndOption: dndOption
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndication: mlppIndication
+        :param preemption: preemption
+        :param alwaysUsePrimeLine: alwaysUsePrimeLine
+        :param alwaysUsePrimeLineForVoiceMessage: alwaysUsePrimeLineForVoiceMessage
+        :param emccCallingSearchSpace: emccCallingSearchSpace
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDefaultDeviceProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_h323_phone(self, **args):
+        """
+        update_h323_phone parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param commonPhoneConfigName: commonPhoneConfigName
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param traceFlag: traceFlag
+        :param mlppDomainId: mlppDomainId
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param retryVideoCallAsAudio: retryVideoCallAsAudio
+        :param remoteDevice: remoteDevice
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param alwaysUsePrimeLine: alwaysUsePrimeLine
+        :param alwaysUsePrimeLineForVoiceMessage: alwaysUsePrimeLineForVoiceMessage
+        :param srtpAllowed: srtpAllowed
+        :param unattendedPort: unattendedPort
+        :param subscribeCallingSearchSpaceName: subscribeCallingSearchSpaceName
+        :param waitForFarEndH245TerminalSet: waitForFarEndH245TerminalSet
+        :param mtpRequired: mtpRequired
+        :param mtpPreferredCodec: mtpPreferredCodec
+        :param callerIdDn: callerIdDn
+        :param callingPartySelection: callingPartySelection
+        :param callingLineIdPresentation: callingLineIdPresentation
+        :param displayIEDelivery: displayIEDelivery
+        :param redirectOutboundNumberIe: redirectOutboundNumberIe
+        :param redirectInboundNumberIe: redirectInboundNumberIe
+        :param presenceGroupName: presenceGroupName
+        :param hlogStatus: hlogStatus
+        :param ownerUserName: ownerUserName
+        :param signalingPort: signalingPort
+        :param gateKeeperInfo: gateKeeperInfo
+        :param lines: lines
+        :param ignorePresentationIndicators: ignorePresentationIndicators
+        :param elinGroup: elinGroup
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateH323Phone(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_moh_server(self, **args):
+        """
+        update_moh_server parameters
+        :param newName: newName
+        :param description: description
+        :param devicePoolName: devicePoolName
+        :param locationName: locationName
+        :param maxUnicastConnections: maxUnicastConnections
+        :param maxMulticastConnections: maxMulticastConnections
+        :param fixedAudioSourceDevice: fixedAudioSourceDevice
+        :param runFlag: runFlag
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param isMultiCastEnabled: isMultiCastEnabled
+        :param baseMulticastIpaddress: baseMulticastIpaddress
+        :param baseMulticastPort: baseMulticastPort
+        :param multicastIncrementOnIp: multicastIncrementOnIp
+        :param audioSources: audioSources
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMohServer(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_h323_trunk(self, **args):
+        """
+        update_h323_trunk parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param networkLocation: networkLocation
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param traceFlag: traceFlag
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndicationStatus: mlppIndicationStatus
+        :param preemption: preemption
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param retryVideoCallAsAudio: retryVideoCallAsAudio
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param rdnTransformationCssName: rdnTransformationCssName
+        :param useDevicePoolRdnTransformCss: useDevicePoolRdnTransformCss
+        :param geoLocationName: geoLocationName
+        :param geoLocationFilterName: geoLocationFilterName
+        :param sendGeoLocation: sendGeoLocation
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param useDevicePoolCdpnTransformCss: useDevicePoolCdpnTransformCss
+        :param packetCaptureMode: packetCaptureMode
+        :param packetCaptureDuration: packetCaptureDuration
+        :param srtpAllowed: srtpAllowed
+        :param unattendedPort: unattendedPort
+        :param waitForFarEndH245TerminalSet: waitForFarEndH245TerminalSet
+        :param mtpRequired: mtpRequired
+        :param callerIdDn: callerIdDn
+        :param callingPartySelection: callingPartySelection
+        :param callingLineIdPresentation: callingLineIdPresentation
+        :param displayIEDelivery: displayIEDelivery
+        :param redirectOutboundNumberIe: redirectOutboundNumberIe
+        :param redirectInboundNumberIe: redirectInboundNumberIe
+        :param enableInboundFaststart: enableInboundFaststart
+        :param enableOutboundFaststart: enableOutboundFaststart
+        :param codecForOutboundFaststart: codecForOutboundFaststart
+        :param allowH235PassThrough: allowH235PassThrough
+        :param tunneledProtocol: tunneledProtocol
+        :param asn1RoseOidEncoding: asn1RoseOidEncoding
+        :param qsigVariant: qsigVariant
+        :param transmitUtf8: transmitUtf8
+        :param signalingPort: signalingPort
+        :param nationalPrefix: nationalPrefix
+        :param internationalPrefix: internationalPrefix
+        :param unknownPrefix: unknownPrefix
+        :param subscriberPrefix: subscriberPrefix
+        :param sigDigits: sigDigits
+        :param prefixDn: prefixDn
+        :param calledPartyIeNumberType: calledPartyIeNumberType
+        :param callingPartyIeNumberType: callingPartyIeNumberType
+        :param calledNumberingPlan: calledNumberingPlan
+        :param callingNumberingPlan: callingNumberingPlan
+        :param pathReplacementSupport: pathReplacementSupport
+        :param ictPassingPrecedenceLevelThroughUuie: ictPassingPrecedenceLevelThroughUuie
+        :param ictSecurityAccessLevel: ictSecurityAccessLevel
+        :param isSafEnabled: isSafEnabled
+        :param callingPartyNationalStripDigits: callingPartyNationalStripDigits
+        :param callingPartyInternationalStripDigits: callingPartyInternationalStripDigits
+        :param callingPartyUnknownStripDigits: callingPartyUnknownStripDigits
+        :param callingPartySubscriberStripDigits: callingPartySubscriberStripDigits
+        :param callingPartyNationalTransformationCssName: callingPartyNationalTransformationCssName
+        :param callingPartyInternationalTransformationCssName: callingPartyInternationalTransformationCssName
+        :param callingPartyUnknownTransformationCssName: callingPartyUnknownTransformationCssName
+        :param callingPartySubscriberTransformationCssName: callingPartySubscriberTransformationCssName
+        :param calledPartyNationalPrefix: calledPartyNationalPrefix
+        :param calledPartyInternationalPrefix: calledPartyInternationalPrefix
+        :param calledPartyUnknownPrefix: calledPartyUnknownPrefix
+        :param calledPartySubscriberPrefix: calledPartySubscriberPrefix
+        :param pstnAccess: pstnAccess
+        :param imeE164TransformationName: imeE164TransformationName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param useDevicePoolCgpnTransformCssNatl: useDevicePoolCgpnTransformCssNatl
+        :param useDevicePoolCgpnTransformCssIntl: useDevicePoolCgpnTransformCssIntl
+        :param useDevicePoolCgpnTransformCssUnkn: useDevicePoolCgpnTransformCssUnkn
+        :param useDevicePoolCgpnTransformCssSubs: useDevicePoolCgpnTransformCssSubs
+        :param useDevicePoolCalledCssNatl: useDevicePoolCalledCssNatl
+        :param useDevicePoolCalledCssIntl: useDevicePoolCalledCssIntl
+        :param useDevicePoolCalledCssUnkn: useDevicePoolCalledCssUnkn
+        :param useDevicePoolCalledCssSubs: useDevicePoolCalledCssSubs
+        :param calledPartyNationalStripDigits: calledPartyNationalStripDigits
+        :param calledPartyInternationalStripDigits: calledPartyInternationalStripDigits
+        :param calledPartyUnknownStripDigits: calledPartyUnknownStripDigits
+        :param calledPartySubscriberStripDigits: calledPartySubscriberStripDigits
+        :param calledPartyNationalTransformationCssName: calledPartyNationalTransformationCssName
+        :param calledPartyInternationalTransformationCssName: calledPartyInternationalTransformationCssName
+        :param calledPartyUnknownTransformationCssName: calledPartyUnknownTransformationCssName
+        :param calledPartySubscriberTransformationCssName: calledPartySubscriberTransformationCssName
+        :param runOnEveryNode: runOnEveryNode
+        :param useDevicePoolCntdPnTransformationCss: useDevicePoolCntdPnTransformationCss
+        :param cntdPnTransformationCssName: cntdPnTransformationCssName
+        :param confidentialAccess: confidentialAccess
+        :param connectCallBeforePlayingAnnouncement: connectCallBeforePlayingAnnouncement
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateH323Trunk(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_phone(self, **args):
+        """
+        update_phone parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param commonPhoneConfigName: commonPhoneConfigName
+        :param networkLocation: networkLocation
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param networkHoldMohAudioSourceId: networkHoldMohAudioSourceId
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param loadInformation: loadInformation
+        :param vendorConfig: vendorConfig
+        :param versionStamp: versionStamp
+        :param traceFlag: traceFlag
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndicationStatus: mlppIndicationStatus
+        :param preemption: preemption
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param retryVideoCallAsAudio: retryVideoCallAsAudio
+        :param securityProfileName: securityProfileName
+        :param sipProfileName: sipProfileName
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param geoLocationFilterName: geoLocationFilterName
+        :param sendGeoLocation: sendGeoLocation
+        :param phoneTemplateName: phoneTemplateName
+        :param speeddials: speeddials
+        :param busyLampFields: busyLampFields
+        :param primaryPhoneName: primaryPhoneName
+        :param ringSettingIdleBlfAudibleAlert: ringSettingIdleBlfAudibleAlert
+        :param ringSettingBusyBlfAudibleAlert: ringSettingBusyBlfAudibleAlert
+        :param blfDirectedCallParks: blfDirectedCallParks
+        :param addOnModules: addOnModules
+        :param userLocale: userLocale
+        :param networkLocale: networkLocale
+        :param idleTimeout: idleTimeout
+        :param authenticationUrl: authenticationUrl
+        :param directoryUrl: directoryUrl
+        :param idleUrl: idleUrl
+        :param informationUrl: informationUrl
+        :param messagesUrl: messagesUrl
+        :param proxyServerUrl: proxyServerUrl
+        :param servicesUrl: servicesUrl
+        :param services: services
+        :param softkeyTemplateName: softkeyTemplateName
+        :param defaultProfileName: defaultProfileName
+        :param enableExtensionMobility: enableExtensionMobility
+        :param singleButtonBarge: singleButtonBarge
+        :param joinAcrossLines: joinAcrossLines
+        :param builtInBridgeStatus: builtInBridgeStatus
+        :param callInfoPrivacyStatus: callInfoPrivacyStatus
+        :param hlogStatus: hlogStatus
+        :param ownerUserName: ownerUserName
+        :param ignorePresentationIndicators: ignorePresentationIndicators
+        :param packetCaptureMode: packetCaptureMode
+        :param packetCaptureDuration: packetCaptureDuration
+        :param subscribeCallingSearchSpaceName: subscribeCallingSearchSpaceName
+        :param rerouteCallingSearchSpaceName: rerouteCallingSearchSpaceName
+        :param allowCtiControlFlag: allowCtiControlFlag
+        :param presenceGroupName: presenceGroupName
+        :param unattendedPort: unattendedPort
+        :param requireDtmfReception: requireDtmfReception
+        :param rfc2833Disabled: rfc2833Disabled
+        :param certificateOperation: certificateOperation
+        :param authenticationMode: authenticationMode
+        :param keySize: keySize
+        :param keyOrder: keyOrder
+        :param ecKeySize: ecKeySize
+        :param authenticationString: authenticationString
+        :param upgradeFinishTime: upgradeFinishTime
+        :param deviceMobilityMode: deviceMobilityMode
+        :param remoteDevice: remoteDevice
+        :param dndOption: dndOption
+        :param dndRingSetting: dndRingSetting
+        :param dndStatus: dndStatus
+        :param isActive: isActive
+        :param mobilityUserIdName: mobilityUserIdName
+        :param phoneSuite: phoneSuite
+        :param phoneServiceDisplay: phoneServiceDisplay
+        :param isProtected: isProtected
+        :param mtpRequired: mtpRequired
+        :param mtpPreferedCodec: mtpPreferedCodec
+        :param dialRulesName: dialRulesName
+        :param sshUserId: sshUserId
+        :param sshPwd: sshPwd
+        :param digestUser: digestUser
+        :param outboundCallRollover: outboundCallRollover
+        :param hotlineDevice: hotlineDevice
+        :param secureInformationUrl: secureInformationUrl
+        :param secureDirectoryUrl: secureDirectoryUrl
+        :param secureMessageUrl: secureMessageUrl
+        :param secureServicesUrl: secureServicesUrl
+        :param secureAuthenticationUrl: secureAuthenticationUrl
+        :param secureIdleUrl: secureIdleUrl
+        :param alwaysUsePrimeLine: alwaysUsePrimeLine
+        :param alwaysUsePrimeLineForVoiceMessage: alwaysUsePrimeLineForVoiceMessage
+        :param featureControlPolicy: featureControlPolicy
+        :param deviceTrustMode: deviceTrustMode
+        :param earlyOfferSupportForVoiceCall: earlyOfferSupportForVoiceCall
+        :param requireThirdPartyRegistration: requireThirdPartyRegistration
+        :param blockIncomingCallsWhenRoaming: blockIncomingCallsWhenRoaming
+        :param homeNetworkId: homeNetworkId
+        :param AllowPresentationSharingUsingBfcp: AllowPresentationSharingUsingBfcp
+        :param confidentialAccess: confidentialAccess
+        :param requireOffPremiseLocation: requireOffPremiseLocation
+        :param allowiXApplicableMedia: allowiXApplicableMedia
+        :param cgpnIngressDN: cgpnIngressDN
+        :param useDevicePoolCgpnIngressDN: useDevicePoolCgpnIngressDN
+        :param msisdn: msisdn
+        :param enableCallRoutingToRdWhenNoneIsActive: enableCallRoutingToRdWhenNoneIsActive
+        :param wifiHotspotProfile: wifiHotspotProfile
+        :param wirelessLanProfileGroup: wirelessLanProfileGroup
+        :param elinGroup: elinGroup
+        :param enableActivationID: enableActivationID
+        :param mraServiceDomain: mraServiceDomain
+        :param allowMraMode: allowMraMode
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePhone(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_h323_gateway(self, **args):
+        """
+        update_h323_gateway parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param networkLocation: networkLocation
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param loadInformation: loadInformation
+        :param tunneledProtocol: tunneledProtocol
+        :param asn1RoseOidEncoding: asn1RoseOidEncoding
+        :param qsigVariant: qsigVariant
+        :param vendorConfig: vendorConfig
+        :param pathReplacementSupport: pathReplacementSupport
+        :param traceFlag: traceFlag
+        :param mlppDomainId: mlppDomainId
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param retryVideoCallAsAudio: retryVideoCallAsAudio
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param geoLocationFilterName: geoLocationFilterName
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param useDevicePoolCdpnTransformCss: useDevicePoolCdpnTransformCss
+        :param packetCaptureMode: packetCaptureMode
+        :param packetCaptureDuration: packetCaptureDuration
+        :param srtpAllowed: srtpAllowed
+        :param waitForFarEndH245TerminalSet: waitForFarEndH245TerminalSet
+        :param mtpRequired: mtpRequired
+        :param callerIdDn: callerIdDn
+        :param callingPartySelection: callingPartySelection
+        :param callingLineIdPresentation: callingLineIdPresentation
+        :param enableInboundFaststart: enableInboundFaststart
+        :param enableOutboundFaststart: enableOutboundFaststart
+        :param codecForOutboundFaststart: codecForOutboundFaststart
+        :param transmitUtf8: transmitUtf8
+        :param signalingPort: signalingPort
+        :param allowH235PassThrough: allowH235PassThrough
+        :param sigDigits: sigDigits
+        :param prefixDn: prefixDn
+        :param calledPartyIeNumberType: calledPartyIeNumberType
+        :param callingPartyIeNumberType: callingPartyIeNumberType
+        :param calledNumberingPlan: calledNumberingPlan
+        :param callingNumberingPlan: callingNumberingPlan
+        :param callingPartyNationalPrefix: callingPartyNationalPrefix
+        :param callingPartyInternationalPrefix: callingPartyInternationalPrefix
+        :param callingPartyUnknownPrefix: callingPartyUnknownPrefix
+        :param callingPartySubscriberPrefix: callingPartySubscriberPrefix
+        :param callingPartyNationalStripDigits: callingPartyNationalStripDigits
+        :param callingPartyInternationalStripDigits: callingPartyInternationalStripDigits
+        :param callingPartyUnknownStripDigits: callingPartyUnknownStripDigits
+        :param callingPartySubscriberStripDigits: callingPartySubscriberStripDigits
+        :param callingPartyNationalTransformationCssName: callingPartyNationalTransformationCssName
+        :param callingPartyInternationalTransformationCssName: callingPartyInternationalTransformationCssName
+        :param callingPartyUnknownTransformationCssName: callingPartyUnknownTransformationCssName
+        :param callingPartySubscriberTransformationCssName: callingPartySubscriberTransformationCssName
+        :param calledPartyNationalPrefix: calledPartyNationalPrefix
+        :param calledPartyInternationalPrefix: calledPartyInternationalPrefix
+        :param calledPartyUnknownPrefix: calledPartyUnknownPrefix
+        :param calledPartySubscriberPrefix: calledPartySubscriberPrefix
+        :param calledPartyNationalStripDigits: calledPartyNationalStripDigits
+        :param calledPartyInternationalStripDigits: calledPartyInternationalStripDigits
+        :param calledPartyUnknownStripDigits: calledPartyUnknownStripDigits
+        :param calledPartySubscriberStripDigits: calledPartySubscriberStripDigits
+        :param calledPartyNationalTransformationCssName: calledPartyNationalTransformationCssName
+        :param calledPartyInternationalTransformationCssName: calledPartyInternationalTransformationCssName
+        :param calledPartyUnknownTransformationCssName: calledPartyUnknownTransformationCssName
+        :param calledPartySubscriberTransformationCssName: calledPartySubscriberTransformationCssName
+        :param pstnAccess: pstnAccess
+        :param imeE164TransformationName: imeE164TransformationName
+        :param displayIeDelivery: displayIeDelivery
+        :param redirectOutboundNumberIe: redirectOutboundNumberIe
+        :param redirectInboundNumberIe: redirectInboundNumberIe
+        :param useDevicePoolCgpnTransformCssNatl: useDevicePoolCgpnTransformCssNatl
+        :param useDevicePoolCgpnTransformCssIntl: useDevicePoolCgpnTransformCssIntl
+        :param useDevicePoolCgpnTransformCssUnkn: useDevicePoolCgpnTransformCssUnkn
+        :param useDevicePoolCgpnTransformCssSubs: useDevicePoolCgpnTransformCssSubs
+        :param useDevicePoolCalledCssNatl: useDevicePoolCalledCssNatl
+        :param useDevicePoolCalledCssIntl: useDevicePoolCalledCssIntl
+        :param useDevicePoolCalledCssUnkn: useDevicePoolCalledCssUnkn
+        :param useDevicePoolCalledCssSubs: useDevicePoolCalledCssSubs
+        :param useDevicePoolCntdPnTransformationCss: useDevicePoolCntdPnTransformationCss
+        :param cntdPnTransformationCssName: cntdPnTransformationCssName
+        :param confidentialAccess: confidentialAccess
+        :param redirectingPartyTransformationCSS: redirectingPartyTransformationCSS
+        :param connectCallBeforePlayingAnnouncement: connectCallBeforePlayingAnnouncement
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateH323Gateway(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_device_profile(self, **args):
+        """
+        update_device_profile parameters
+        :param newName: newName
+        :param description: description
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param vendorConfig: vendorConfig
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndicationStatus: mlppIndicationStatus
+        :param preemption: preemption
+        :param lines: lines
+        :param phoneTemplateName: phoneTemplateName
+        :param speeddials: speeddials
+        :param busyLampFields: busyLampFields
+        :param blfDirectedCallParks: blfDirectedCallParks
+        :param addOnModules: addOnModules
+        :param userLocale: userLocale
+        :param singleButtonBarge: singleButtonBarge
+        :param joinAcrossLines: joinAcrossLines
+        :param loginUserId: loginUserId
+        :param ignorePresentationIndicators: ignorePresentationIndicators
+        :param dndOption: dndOption
+        :param dndRingSetting: dndRingSetting
+        :param dndStatus: dndStatus
+        :param emccCallingSearchSpace: emccCallingSearchSpace
+        :param alwaysUsePrimeLine: alwaysUsePrimeLine
+        :param alwaysUsePrimeLineForVoiceMessage: alwaysUsePrimeLineForVoiceMessage
+        :param softkeyTemplateName: softkeyTemplateName
+        :param callInfoPrivacyStatus: callInfoPrivacyStatus
+        :param services: services
+        :param featureControlPolicy: featureControlPolicy
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDeviceProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_remote_destination(self, **args):
+        """
+        update_remote_destination parameters
+        :param newName: newName
+        :param newDestination: newDestination
+        :param answerTooSoonTimer: answerTooSoonTimer
+        :param answerTooLateTimer: answerTooLateTimer
+        :param delayBeforeRingingCell: delayBeforeRingingCell
+        :param ownerUserId: ownerUserId
+        :param enableUnifiedMobility: enableUnifiedMobility
+        :param remoteDestinationProfileName: remoteDestinationProfileName
+        :param enableExtendAndConnect: enableExtendAndConnect
+        :param ctiRemoteDeviceName: ctiRemoteDeviceName
+        :param dualModeDeviceName: dualModeDeviceName
+        :param isMobilePhone: isMobilePhone
+        :param enableMobileConnect: enableMobileConnect
+        :param lineAssociations: lineAssociations
+        :param timeZone: timeZone
+        :param todAccessName: todAccessName
+        :param mobileSmartClientName: mobileSmartClientName
+        :param mobilityProfileName: mobilityProfileName
+        :param singleNumberReachVoicemail: singleNumberReachVoicemail
+        :param dialViaOfficeReverseVoicemail: dialViaOfficeReverseVoicemail
+        :param accessListName: accessListName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRemoteDestination(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_vg224(self, **args):
+        """
+        update_vg224 parameters
+        :param newDomainName: newDomainName
+        :param description: description
+        :param callManagerGroupName: callManagerGroupName
+        :param vendorConfig: vendorConfig
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVg224(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_gateway(self, **args):
+        """
+        update_gateway parameters
+        :param newDomainName: newDomainName
+        :param description: description
+        :param product: product
+        :param protocol: protocol
+        :param callManagerGroupName: callManagerGroupName
+        :param vendorConfig: vendorConfig
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGateway(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_gateway_endpoint_analog_access(self, **args):
+        """
+        update_gateway_endpoint_analog_access parameters
+        :param endpoint: endpoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGatewayEndpointAnalogAccess(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_gateway_endpoint_digital_access_pri(self, **args):
+        """
+        update_gateway_endpoint_digital_access_pri parameters
+        :param endpoint: endpoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGatewayEndpointDigitalAccessPri(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_gateway_endpoint_digital_access_bri(self, **args):
+        """
+        update_gateway_endpoint_digital_access_bri parameters
+        :param endpoint: endpoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGatewayEndpointDigitalAccessBri(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_gateway_endpoint_digital_access_t1(self, **args):
+        """
+        update_gateway_endpoint_digital_access_t1 parameters
+        :param endpoint: endpoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGatewayEndpointDigitalAccessT1(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cisco_catalyst600024_port_fxs_gateway(self, **args):
+        """
+        update_cisco_catalyst600024_port_fxs_gateway parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param networkLocale: networkLocale
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param loadInformation: loadInformation
+        :param vendorConfig: vendorConfig
+        :param traceFlag: traceFlag
+        :param mlppDomainId: mlppDomainId
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param ports: ports
+        :param portSelectionOrder: portSelectionOrder
+        :param transmitUtf8: transmitUtf8
+        :param geoLocationFilterName: geoLocationFilterName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCiscoCatalyst600024PortFXSGateway(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cisco_catalyst6000_e1_vo_ip_gateway(self, **args):
+        """
+        update_cisco_catalyst6000_e1_vo_ip_gateway parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param networkLocation: networkLocation
+        :param locationName: locationName
+        :param networkLocale: networkLocale
+        :param mediaResourceListName: mediaResourceListName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param loadInformation: loadInformation
+        :param vendorConfig: vendorConfig
+        :param mlppDomainId: mlppDomainId
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param redirectInboundNumberIe: redirectInboundNumberIe
+        :param calledPlan: calledPlan
+        :param calledPri: calledPri
+        :param callerIdDn: callerIdDn
+        :param callingPartySelection: callingPartySelection
+        :param callingPlan: callingPlan
+        :param callingPri: callingPri
+        :param chanIe: chanIe
+        :param clockReference: clockReference
+        :param dChannelEnable: dChannelEnable
+        :param channelSelectionOrder: channelSelectionOrder
+        :param displayIE: displayIE
+        :param pcmType: pcmType
+        :param csuParam: csuParam
+        :param firstDelay: firstDelay
+        :param interfaceIdPresent: interfaceIdPresent
+        :param interfaceId: interfaceId
+        :param intraDelay: intraDelay
+        :param mcdnEnable: mcdnEnable
+        :param redirectOutboundNumberIe: redirectOutboundNumberIe
+        :param numDigitsToStrip: numDigitsToStrip
+        :param passingPrecedenceLevelThrough: passingPrecedenceLevelThrough
+        :param prefix: prefix
+        :param callingLinePresentationBit: callingLinePresentationBit
+        :param connectedLineIdPresentation: connectedLineIdPresentation
+        :param priProtocol: priProtocol
+        :param securityAccessLevel: securityAccessLevel
+        :param sendCallingNameInFacilityIe: sendCallingNameInFacilityIe
+        :param sendExLeadingCharInDispIe: sendExLeadingCharInDispIe
+        :param sendRestart: sendRestart
+        :param setupNonIsdnPi: setupNonIsdnPi
+        :param sigDigits: sigDigits
+        :param span: span
+        :param statusPoll: statusPoll
+        :param smdiBasePort: smdiBasePort
+        :param packetCaptureMode: packetCaptureMode
+        :param packetCaptureDuration: packetCaptureDuration
+        :param transmitUtf8: transmitUtf8
+        :param v150: v150
+        :param asn1RoseOidEncoding: asn1RoseOidEncoding
+        :param QSIGVariant: QSIGVariant
+        :param unattendedPort: unattendedPort
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param useDevicePoolCdpnTransformCss: useDevicePoolCdpnTransformCss
+        :param nationalPrefix: nationalPrefix
+        :param internationalPrefix: internationalPrefix
+        :param unknownPrefix: unknownPrefix
+        :param subscriberPrefix: subscriberPrefix
+        :param geoLocationFilterName: geoLocationFilterName
+        :param nationalStripDigits: nationalStripDigits
+        :param internationalStripDigits: internationalStripDigits
+        :param unknownStripDigits: unknownStripDigits
+        :param subscriberStripDigits: subscriberStripDigits
+        :param nationalTransformationCssName: nationalTransformationCssName
+        :param internationalTransformationCssName: internationalTransformationCssName
+        :param unknownTransformationCssName: unknownTransformationCssName
+        :param subscriberTransformationCssName: subscriberTransformationCssName
+        :param useDevicePoolCgpnTransformCssNatl: useDevicePoolCgpnTransformCssNatl
+        :param useDevicePoolCgpnTransformCssIntl: useDevicePoolCgpnTransformCssIntl
+        :param useDevicePoolCgpnTransformCssUnkn: useDevicePoolCgpnTransformCssUnkn
+        :param useDevicePoolCgpnTransformCssSubs: useDevicePoolCgpnTransformCssSubs
+        :param pstnAccess: pstnAccess
+        :param imeE164TransformationName: imeE164TransformationName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCiscoCatalyst6000E1VoIPGateway(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cisco_catalyst6000_t1_vo_ip_gateway_pri(self, **args):
+        """
+        update_cisco_catalyst6000_t1_vo_ip_gateway_pri parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param networkLocation: networkLocation
+        :param locationName: locationName
+        :param networkLocale: networkLocale
+        :param mediaResourceListName: mediaResourceListName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param loadInformation: loadInformation
+        :param vendorConfig: vendorConfig
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndicationStatus: mlppIndicationStatus
+        :param mlppPreemption: mlppPreemption
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param redirectInboundNumberIe: redirectInboundNumberIe
+        :param calledPlan: calledPlan
+        :param calledPri: calledPri
+        :param callerIdDn: callerIdDn
+        :param callingPartySelection: callingPartySelection
+        :param callingPlan: callingPlan
+        :param callingPri: callingPri
+        :param chanIe: chanIe
+        :param clockReference: clockReference
+        :param dChannelEnable: dChannelEnable
+        :param channelSelectionOrder: channelSelectionOrder
+        :param displayIE: displayIE
+        :param pcmType: pcmType
+        :param csuParam: csuParam
+        :param firstDelay: firstDelay
+        :param interfaceIdPresent: interfaceIdPresent
+        :param interfaceId: interfaceId
+        :param intraDelay: intraDelay
+        :param mcdnEnable: mcdnEnable
+        :param redirectOutboundNumberIe: redirectOutboundNumberIe
+        :param numDigitsToStrip: numDigitsToStrip
+        :param passingPrecedenceLevelThrough: passingPrecedenceLevelThrough
+        :param prefix: prefix
+        :param callingLinePresentationBit: callingLinePresentationBit
+        :param connectedLineIdPresentation: connectedLineIdPresentation
+        :param priProtocol: priProtocol
+        :param securityAccessLevel: securityAccessLevel
+        :param sendCallingNameInFacilityIe: sendCallingNameInFacilityIe
+        :param sendExLeadingCharInDispIe: sendExLeadingCharInDispIe
+        :param sendRestart: sendRestart
+        :param setupNonIsdnPi: setupNonIsdnPi
+        :param sigDigits: sigDigits
+        :param span: span
+        :param statusPoll: statusPoll
+        :param smdiBasePort: smdiBasePort
+        :param packetCaptureMode: packetCaptureMode
+        :param packetCaptureDuration: packetCaptureDuration
+        :param transmitUtf8: transmitUtf8
+        :param v150: v150
+        :param asn1RoseOidEncoding: asn1RoseOidEncoding
+        :param QSIGVariant: QSIGVariant
+        :param unattendedPort: unattendedPort
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param useDevicePoolCdpnTransformCss: useDevicePoolCdpnTransformCss
+        :param nationalPrefix: nationalPrefix
+        :param internationalPrefix: internationalPrefix
+        :param unknownPrefix: unknownPrefix
+        :param subscriberPrefix: subscriberPrefix
+        :param geoLocationFilterName: geoLocationFilterName
+        :param nationalStripDigits: nationalStripDigits
+        :param internationalStripDigits: internationalStripDigits
+        :param unknownStripDigits: unknownStripDigits
+        :param subscriberStripDigits: subscriberStripDigits
+        :param nationalTransformationCssName: nationalTransformationCssName
+        :param internationalTransformationCssName: internationalTransformationCssName
+        :param unknownTransformationCssName: unknownTransformationCssName
+        :param subscriberTransformationCssName: subscriberTransformationCssName
+        :param useDevicePoolCgpnTransformCssNatl: useDevicePoolCgpnTransformCssNatl
+        :param useDevicePoolCgpnTransformCssIntl: useDevicePoolCgpnTransformCssIntl
+        :param useDevicePoolCgpnTransformCssUnkn: useDevicePoolCgpnTransformCssUnkn
+        :param useDevicePoolCgpnTransformCssSubs: useDevicePoolCgpnTransformCssSubs
+        :param pstnAccess: pstnAccess
+        :param imeE164TransformationName: imeE164TransformationName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCiscoCatalyst6000T1VoIPGatewayPri(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cisco_catalyst6000_t1_vo_ip_gateway_t1(self, **args):
+        """
+        update_cisco_catalyst6000_t1_vo_ip_gateway_t1 parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param networkLocation: networkLocation
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param loadInformation: loadInformation
+        :param vendorConfig: vendorConfig
+        :param traceFlag: traceFlag
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndicationStatus: mlppIndicationStatus
+        :param preemption: preemption
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param retryVideoCallAsAudio: retryVideoCallAsAudio
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param sendGeoLocation: sendGeoLocation
+        :param ports: ports
+        :param trunkSelectionOrder: trunkSelectionOrder
+        :param clockReference: clockReference
+        :param csuParam: csuParam
+        :param digitSending: digitSending
+        :param pcmType: pcmType
+        :param fdlChannel: fdlChannel
+        :param yellowAlarm: yellowAlarm
+        :param zeroSupression: zeroSupression
+        :param smdiBasePort: smdiBasePort
+        :param handleDtmfPrecedenceSignals: handleDtmfPrecedenceSignals
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param useDevicePoolCdpnTransformCss: useDevicePoolCdpnTransformCss
+        :param geoLocationFilterName: geoLocationFilterName
+        :param pstnAccess: pstnAccess
+        :param imeE164TransformationName: imeE164TransformationName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCiscoCatalyst6000T1VoIPGatewayT1(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_call_pickup_group(self, **args):
+        """
+        update_call_pickup_group parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param pickupNotification: pickupNotification
+        :param pickupNotificationTimer: pickupNotificationTimer
+        :param callInfoForPickupNotification: callInfoForPickupNotification
+        :param newName: newName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCallPickupGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_geo_location_policy(self, **args):
+        """
+        update_geo_location_policy parameters
+        :param newName: newName
+        :param country: country
+        :param description: description
+        :param nationalSubDivision: nationalSubDivision
+        :param district: district
+        :param communityName: communityName
+        :param cityDivision: cityDivision
+        :param neighbourhood: neighbourhood
+        :param street: street
+        :param leadingStreetDirection: leadingStreetDirection
+        :param trailingStreetSuffix: trailingStreetSuffix
+        :param streetSuffix: streetSuffix
+        :param houseNumber: houseNumber
+        :param houseNumberSuffix: houseNumberSuffix
+        :param landmark: landmark
+        :param location: location
+        :param floor: floor
+        :param occupantName: occupantName
+        :param postalCode: postalCode
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGeoLocationPolicy(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_sip_trunk(self, **args):
+        """
+        update_sip_trunk parameters
+        :param newName: newName
+        :param description: description
+        :param callingSearchSpaceName: callingSearchSpaceName
+        :param devicePoolName: devicePoolName
+        :param commonDeviceConfigName: commonDeviceConfigName
+        :param networkLocation: networkLocation
+        :param locationName: locationName
+        :param mediaResourceListName: mediaResourceListName
+        :param networkHoldMohAudioSourceId: networkHoldMohAudioSourceId
+        :param userHoldMohAudioSourceId: userHoldMohAudioSourceId
+        :param automatedAlternateRoutingCssName: automatedAlternateRoutingCssName
+        :param aarNeighborhoodName: aarNeighborhoodName
+        :param packetCaptureMode: packetCaptureMode
+        :param packetCaptureDuration: packetCaptureDuration
+        :param mlppDomainId: mlppDomainId
+        :param mlppIndicationStatus: mlppIndicationStatus
+        :param preemption: preemption
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param retryVideoCallAsAudio: retryVideoCallAsAudio
+        :param securityProfileName: securityProfileName
+        :param sipProfileName: sipProfileName
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param useDevicePoolCgpnTransformCss: useDevicePoolCgpnTransformCss
+        :param geoLocationName: geoLocationName
+        :param geoLocationFilterName: geoLocationFilterName
+        :param sendGeoLocation: sendGeoLocation
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param useDevicePoolCdpnTransformCss: useDevicePoolCdpnTransformCss
+        :param unattendedPort: unattendedPort
+        :param transmitUtf8: transmitUtf8
+        :param subscribeCallingSearchSpaceName: subscribeCallingSearchSpaceName
+        :param rerouteCallingSearchSpaceName: rerouteCallingSearchSpaceName
+        :param referCallingSearchSpaceName: referCallingSearchSpaceName
+        :param mtpRequired: mtpRequired
+        :param presenceGroupName: presenceGroupName
+        :param unknownPrefix: unknownPrefix
+        :param destAddrIsSrv: destAddrIsSrv
+        :param tkSipCodec: tkSipCodec
+        :param sigDigits: sigDigits
+        :param connectedNamePresentation: connectedNamePresentation
+        :param connectedPartyIdPresentation: connectedPartyIdPresentation
+        :param callingPartySelection: callingPartySelection
+        :param callingname: callingname
+        :param callingLineIdPresentation: callingLineIdPresentation
+        :param prefixDn: prefixDn
+        :param externalPresentationInfo: externalPresentationInfo
+        :param acceptInboundRdnis: acceptInboundRdnis
+        :param acceptOutboundRdnis: acceptOutboundRdnis
+        :param srtpAllowed: srtpAllowed
+        :param srtpFallbackAllowed: srtpFallbackAllowed
+        :param isPaiEnabled: isPaiEnabled
+        :param sipPrivacy: sipPrivacy
+        :param isRpidEnabled: isRpidEnabled
+        :param sipAssertedType: sipAssertedType
+        :param trustReceivedIdentity: trustReceivedIdentity
+        :param dtmfSignalingMethod: dtmfSignalingMethod
+        :param routeClassSignalling: routeClassSignalling
+        :param sipTrunkType: sipTrunkType
+        :param pstnAccess: pstnAccess
+        :param imeE164TransformationName: imeE164TransformationName
+        :param useImePublicIpPort: useImePublicIpPort
+        :param useDevicePoolCntdPnTransformationCss: useDevicePoolCntdPnTransformationCss
+        :param cntdPnTransformationCssName: cntdPnTransformationCssName
+        :param useDevicePoolCgpnTransformCssUnkn: useDevicePoolCgpnTransformCssUnkn
+        :param rdnTransformationCssName: rdnTransformationCssName
+        :param useDevicePoolRdnTransformCss: useDevicePoolRdnTransformCss
+        :param useOrigCallingPartyPresOnDivert: useOrigCallingPartyPresOnDivert
+        :param sipNormalizationScriptName: sipNormalizationScriptName
+        :param runOnEveryNode: runOnEveryNode
+        :param unknownStripDigits: unknownStripDigits
+        :param cgpnTransformationUnknownCssName: cgpnTransformationUnknownCssName
+        :param tunneledProtocol: tunneledProtocol
+        :param asn1RoseOidEncoding: asn1RoseOidEncoding
+        :param qsigVariant: qsigVariant
+        :param pathReplacementSupport: pathReplacementSupport
+        :param enableQsigUtf8: enableQsigUtf8
+        :param scriptParameters: scriptParameters
+        :param scriptTraceEnabled: scriptTraceEnabled
+        :param trunkTrafficSecure: trunkTrafficSecure
+        :param callingAndCalledPartyInfoFormat: callingAndCalledPartyInfoFormat
+        :param useCallerIdCallerNameinUriOutgoingRequest: useCallerIdCallerNameinUriOutgoingRequest
+        :param service: service
+        :param parameterLabel: parameterLabel
+        :param originatingParameterValue: originatingParameterValue
+        :param terminatingParameterValue: terminatingParameterValue
+        :param outboundUriRoutingInstructions: outboundUriRoutingInstructions
+        :param requestUriDomainName: requestUriDomainName
+        :param enableCiscoRecordingQsigTunneling: enableCiscoRecordingQsigTunneling
+        :param recordingInformation: recordingInformation
+        :param calledPartyUnknownTransformationCssName: calledPartyUnknownTransformationCssName
+        :param calledPartyUnknownPrefix: calledPartyUnknownPrefix
+        :param calledPartyUnknownStripDigits: calledPartyUnknownStripDigits
+        :param useDevicePoolCalledCssUnkn: useDevicePoolCalledCssUnkn
+        :param confidentialAccess: confidentialAccess
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSipTrunk(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_region_matrix(self, **args):
+        """
+        update_region_matrix parameters
+        :param bandwidth: bandwidth
+        :param videoBandwidth: videoBandwidth
+        :param codecPreference: codecPreference
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRegionMatrix(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_called_party_transformation_pattern(self, **args):
+        """
+        update_called_party_transformation_pattern parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param newRoutePartitionName: newRoutePartitionName
+        :param calledPartyTransformationMask: calledPartyTransformationMask
+        :param newDialPlanName: newDialPlanName
+        :param digitDiscardInstructionName: digitDiscardInstructionName
+        :param newRouteFilterName: newRouteFilterName
+        :param calledPartyPrefixDigits: calledPartyPrefixDigits
+        :param calledPartyNumberingPlan: calledPartyNumberingPlan
+        :param calledPartyNumberType: calledPartyNumberType
+        :param mlppPreemptionDisabled: mlppPreemptionDisabled
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCalledPartyTransformationPattern(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_external_call_control_profile(self, **args):
+        """
+        update_external_call_control_profile parameters
+        :param newName: newName
+        :param primaryUri: primaryUri
+        :param secondaryUri: secondaryUri
+        :param enableLoadBalancing: enableLoadBalancing
+        :param routingRequestTimer: routingRequestTimer
+        :param diversionReroutingCssName: diversionReroutingCssName
+        :param callTreatmentOnFailure: callTreatmentOnFailure
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateExternalCallControlProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_saf_security_profile(self, **args):
+        """
+        update_saf_security_profile parameters
+        :param newName: newName
+        :param description: description
+        :param userid: userid
+        :param password: password
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSafSecurityProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_saf_forwarder(self, **args):
+        """
+        update_saf_forwarder parameters
+        :param newName: newName
+        :param description: description
+        :param clientLabel: clientLabel
+        :param safSecurityProfile: safSecurityProfile
+        :param ipAddress: ipAddress
+        :param port: port
+        :param enableTcpKeepAlive: enableTcpKeepAlive
+        :param safReconnectInterval: safReconnectInterval
+        :param safNotificationsWindowSize: safNotificationsWindowSize
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSafForwarder(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ccd_hosted_dn(self, **args):
+        """
+        update_ccd_hosted_dn parameters
+        :param newHostedPattern: newHostedPattern
+        :param description: description
+        :param CcdHostedDnGroup: CcdHostedDnGroup
+        :param pstnFailoverStripDigits: pstnFailoverStripDigits
+        :param pstnFailoverPrependDigits: pstnFailoverPrependDigits
+        :param usePstnFailover: usePstnFailover
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCcdHostedDN(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ccd_hosted_dn_group(self, **args):
+        """
+        update_ccd_hosted_dn_group parameters
+        :param newName: newName
+        :param description: description
+        :param pstnFailoverStripDigits: pstnFailoverStripDigits
+        :param pstnFailoverPrependDigits: pstnFailoverPrependDigits
+        :param usePstnFailover: usePstnFailover
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCcdHostedDNGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ccd(self, **args):
+        """
+        update_ccd parameters
+        :param newName: newName
+        :param description: description
+        :param isActivated: isActivated
+        :param routePartitionName: routePartitionName
+        :param learnedPatternPrefix: learnedPatternPrefix
+        :param pstnPrefix: pstnPrefix
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCcd(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_inter_cluster_service_profile(self, **args):
+        """
+        update_inter_cluster_service_profile parameters
+        :param isActivated: isActivated
+        :param sipTrunkName: sipTrunkName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateInterClusterServiceProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_remote_cluster(self, **args):
+        """
+        update_remote_cluster parameters
+        :param emcc: emcc
+        :param pstnAccess: pstnAccess
+        :param rsvpAgent: rsvpAgent
+        :param tftp: tftp
+        :param lbm: lbm
+        :param uds: uds
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRemoteCluster(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ccd_advertising_service(self, **args):
+        """
+        update_ccd_advertising_service parameters
+        :param newName: newName
+        :param description: description
+        :param isActivated: isActivated
+        :param hostDnGroup: hostDnGroup
+        :param safSipTrunk: safSipTrunk
+        :param safH323Trunk: safH323Trunk
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCcdAdvertisingService(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ldap_directory(self, **args):
+        """
+        update_ldap_directory parameters
+        :param newName: newName
+        :param ldapDn: ldapDn
+        :param ldapPassword: ldapPassword
+        :param userSearchBase: userSearchBase
+        :param repeatable: repeatable
+        :param intervalValue: intervalValue
+        :param scheduleUnit: scheduleUnit
+        :param nextExecTime: nextExecTime
+        :param servers: servers
+        :param ldapFilter: ldapFilter
+        :param synchronize: synchronize
+        :param ldapFilterForGroups: ldapFilterForGroups
+        :param featureGroupTemplate: featureGroupTemplate
+        :param applyMask: applyMask
+        :param mask: mask
+        :param applyPoolList: applyPoolList
+        :param addDns: addDns
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLdapDirectory(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_emcc_feature_config(self, **args):
+        """
+        update_emcc_feature_config parameters
+        :param value: value
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateEmccFeatureConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_saf_ccd_purge_block_learned_routes(self, **args):
+        """
+        update_saf_ccd_purge_block_learned_routes parameters
+        :param newLearnedPattern: newLearnedPattern
+        :param newLearnedPatternPrefix: newLearnedPatternPrefix
+        :param newCallControlIdentity: newCallControlIdentity
+        :param newIpAddress: newIpAddress
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSafCcdPurgeBlockLearnedRoutes(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_vpn_gateway(self, **args):
+        """
+        update_vpn_gateway parameters
+        :param newName: newName
+        :param description: description
+        :param url: url
+        :param certificates: certificates
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVpnGateway(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_vpn_group(self, **args):
+        """
+        update_vpn_group parameters
+        :param newName: newName
+        :param description: description
+        :param vpnGateways: vpnGateways
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVpnGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_vpn_profile(self, **args):
+        """
+        update_vpn_profile parameters
+        :param newName: newName
+        :param description: description
+        :param autoNetworkDetection: autoNetworkDetection
+        :param mtu: mtu
+        :param failToConnect: failToConnect
+        :param clientAuthentication: clientAuthentication
+        :param pwdPersistant: pwdPersistant
+        :param enableHostIdCheck: enableHostIdCheck
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVpnProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_server(self, **args):
+        """
+        update_ime_server parameters
+        :param newName: newName
+        :param description: description
+        :param ipAddress: ipAddress
+        :param port: port
+        :param deviceSecurityMode: deviceSecurityMode
+        :param applicationUser: applicationUser
+        :param reconnectInterval: reconnectInterval
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeServer(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_route_filter_group(self, **args):
+        """
+        update_ime_route_filter_group parameters
+        :param newName: newName
+        :param description: description
+        :param groupTrustSetting: groupTrustSetting
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeRouteFilterGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_route_filter_element(self, **args):
+        """
+        update_ime_route_filter_element parameters
+        :param newName: newName
+        :param description: description
+        :param elementType: elementType
+        :param imeRouteFilterGroupName: imeRouteFilterGroupName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeRouteFilterElement(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_client(self, **args):
+        """
+        update_ime_client parameters
+        :param newName: newName
+        :param description: description
+        :param domain: domain
+        :param isActivated: isActivated
+        :param sipTrunkName: sipTrunkName
+        :param primaryImeServerName: primaryImeServerName
+        :param secondaryImeServerName: secondaryImeServerName
+        :param learnedRouteFilterGroupName: learnedRouteFilterGroupName
+        :param exclusionNumberGroupName: exclusionNumberGroupName
+        :param firewallName: firewallName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeClient(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_enrolled_pattern(self, **args):
+        """
+        update_ime_enrolled_pattern parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param imeEnrolledPatternGroupName: imeEnrolledPatternGroupName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeEnrolledPattern(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_enrolled_pattern_group(self, **args):
+        """
+        update_ime_enrolled_pattern_group parameters
+        :param newName: newName
+        :param description: description
+        :param fallbackProfileName: fallbackProfileName
+        :param isPatternAllAlias: isPatternAllAlias
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeEnrolledPatternGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_exclusion_number(self, **args):
+        """
+        update_ime_exclusion_number parameters
+        :param newPattern: newPattern
+        :param description: description
+        :param imeExclusionNumberGroupName: imeExclusionNumberGroupName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeExclusionNumber(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_exclusion_number_group(self, **args):
+        """
+        update_ime_exclusion_number_group parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeExclusionNumberGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_firewall(self, **args):
+        """
+        update_ime_firewall parameters
+        :param newName: newName
+        :param description: description
+        :param ipAddress: ipAddress
+        :param port: port
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeFirewall(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_e164_transformation(self, **args):
+        """
+        update_ime_e164_transformation parameters
+        :param newName: newName
+        :param description: description
+        :param cgpnTransformationCssName: cgpnTransformationCssName
+        :param isCgpnPreTransformation: isCgpnPreTransformation
+        :param cdpnTransformationCssName: cdpnTransformationCssName
+        :param isCdpnPreTransformation: isCdpnPreTransformation
+        :param incomingCgpnTransformationProfileName: incomingCgpnTransformationProfileName
+        :param incomingCdpnTransformationProfileName: incomingCdpnTransformationProfileName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeE164Transformation(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_transformation_profile(self, **args):
+        """
+        update_transformation_profile parameters
+        :param newName: newName
+        :param description: description
+        :param nationalStripDigits: nationalStripDigits
+        :param internationalStripDigits: internationalStripDigits
+        :param unknownStripDigits: unknownStripDigits
+        :param subscriberStripDigits: subscriberStripDigits
+        :param nationalPrefix: nationalPrefix
+        :param internationalPrefix: internationalPrefix
+        :param unknownPrefix: unknownPrefix
+        :param subscriberPrefix: subscriberPrefix
+        :param nationalCssName: nationalCssName
+        :param internationalCssName: internationalCssName
+        :param unknownCssName: unknownCssName
+        :param subscriberCssName: subscriberCssName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateTransformationProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_fallback_profile(self, **args):
+        """
+        update_fallback_profile parameters
+        :param newName: newName
+        :param description: description
+        :param advertisedFallbackDirectoryE164Number: advertisedFallbackDirectoryE164Number
+        :param qosSensistivityLevel: qosSensistivityLevel
+        :param callCss: callCss
+        :param callAnswerTimer: callAnswerTimer
+        :param directoryNumberPartition: directoryNumberPartition
+        :param directoryNumber: directoryNumber
+        :param numberOfDigitsForCallerIDPartialMatch: numberOfDigitsForCallerIDPartialMatch
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateFallbackProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ldap_filter(self, **args):
+        """
+        update_ldap_filter parameters
+        :param newName: newName
+        :param filter: filter
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLdapFilter(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_app_server_info(self, **args):
+        """
+        update_app_server_info parameters
+        :param appServerName: appServerName
+        :param appServerContent: appServerContent
+        :param content: content
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAppServerInfo(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_tvs_certificate(self, **args):
+        """
+        update_tvs_certificate parameters
+        :param timeToLive: timeToLive
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateTvsCertificate(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_feature_control_policy(self, **args):
+        """
+        update_feature_control_policy parameters
+        :param newName: newName
+        :param description: description
+        :param features: features
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateFeatureControlPolicy(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_mobility_profile(self, **args):
+        """
+        update_mobility_profile parameters
+        :param newName: newName
+        :param description: description
+        :param mobileClientCallingOption: mobileClientCallingOption
+        :param dvofServiceAccessNumber: dvofServiceAccessNumber
+        :param dirn: dirn
+        :param dvorCallerId: dvorCallerId
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMobilityProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_enterprise_feature_access_configuration(self, **args):
+        """
+        update_enterprise_feature_access_configuration parameters
+        :param newPattern: newPattern
+        :param newRoutePartitionName: newRoutePartitionName
+        :param description: description
+        :param isDefaultEafNumber: isDefaultEafNumber
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateEnterpriseFeatureAccessConfiguration(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_handoff_configuration(self, **args):
+        """
+        update_handoff_configuration parameters
+        :param newPattern: newPattern
+        :param newRoutePartitionName: newRoutePartitionName
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateHandoffConfiguration(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_sip_normalization_script(self, **args):
+        """
+        update_sip_normalization_script parameters
+        :param newName: newName
+        :param description: description
+        :param content: content
+        :param scriptExecutionErrorRecoveryAction: scriptExecutionErrorRecoveryAction
+        :param systemResourceErrorRecoveryAction: systemResourceErrorRecoveryAction
+        :param maxMemoryThreshold: maxMemoryThreshold
+        :param maxLuaInstructionsThreshold: maxLuaInstructionsThreshold
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSIPNormalizationScript(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_custom_user_field(self, **args):
+        """
+        update_custom_user_field parameters
+        :param newField: newField
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCustomUserField(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_gateway_sccp_endpoints(self, **args):
+        """
+        update_gateway_sccp_endpoints parameters
+        :param endpoint: endpoint
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateGatewaySccpEndpoints(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_lbm_group(self, **args):
+        """
+        update_lbm_group parameters
+        :param newName: newName
+        :param Description: Description
+        :param ProcessnodeActive: ProcessnodeActive
+        :param ProcessnodeStandby: ProcessnodeStandby
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLbmGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_announcement(self, **args):
+        """
+        update_announcement parameters
+        :param newName: newName
+        :param description: description
+        :param announcementFile: announcementFile
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAnnouncement(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_service_profile(self, **args):
+        """
+        update_service_profile parameters
+        :param newName: newName
+        :param description: description
+        :param isDefault: isDefault
+        :param serviceProfileInfos: serviceProfileInfos
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateServiceProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ldap_sync_custom_field(self, **args):
+        """
+        update_ldap_sync_custom_field parameters
+        :param ldapUserField: ldapUserField
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLdapSyncCustomField(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_audio_codec_preference_list(self, **args):
+        """
+        update_audio_codec_preference_list parameters
+        :param newName: newName
+        :param description: description
+        :param codecsInList: codecsInList
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAudioCodecPreferenceList(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_uc_service(self, **args):
+        """
+        update_uc_service parameters
+        :param newName: newName
+        :param description: description
+        :param hostnameorip: hostnameorip
+        :param port: port
+        :param protocol: protocol
+        :param ucServiceXml: ucServiceXml
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateUcService(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_lbm_hub_group(self, **args):
+        """
+        update_lbm_hub_group parameters
+        :param newName: newName
+        :param description: description
+        :param member1: member1
+        :param member2: member2
+        :param member3: member3
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLbmHubGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_imported_directory_uri_catalogs(self, **args):
+        """
+        update_imported_directory_uri_catalogs parameters
+        :param newName: newName
+        :param description: description
+        :param routeString: routeString
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImportedDirectoryUriCatalogs(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_voh_server(self, **args):
+        """
+        update_voh_server parameters
+        :param newName: newName
+        :param description: description
+        :param sipTrunkName: sipTrunkName
+        :param defaultVideoStreamId: defaultVideoStreamId
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateVohServer(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_sdp_transparency_profile(self, **args):
+        """
+        update_sdp_transparency_profile parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSdpTransparencyProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_feature_group_template(self, **args):
+        """
+        update_feature_group_template parameters
+        :param newName: newName
+        :param description: description
+        :param homeCluster: homeCluster
+        :param imAndUcPresenceEnable: imAndUcPresenceEnable
+        :param serviceProfile: serviceProfile
+        :param enableUserToHostConferenceNow: enableUserToHostConferenceNow
+        :param allowCTIControl: allowCTIControl
+        :param enableEMCC: enableEMCC
+        :param enableMobility: enableMobility
+        :param enableMobileVoiceAccess: enableMobileVoiceAccess
+        :param maxDeskPickupWait: maxDeskPickupWait
+        :param remoteDestinationLimit: remoteDestinationLimit
+        :param BLFPresenceGp: BLFPresenceGp
+        :param subscribeCallingSearch: subscribeCallingSearch
+        :param userLocale: userLocale
+        :param userProfile: userProfile
+        :param meetingInformation: meetingInformation
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateFeatureGroupTemplate(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_dir_number_alias_lookupand_sync(self, **args):
+        """
+        update_dir_number_alias_lookupand_sync parameters
+        :param ldapConfigName: ldapConfigName
+        :param ldapManagerDisgName: ldapManagerDisgName
+        :param ldapPassword: ldapPassword
+        :param ldapUserSearch: ldapUserSearch
+        :param ldapDirectoryServerUsage: ldapDirectoryServerUsage
+        :param keepAliveSearch: keepAliveSearch
+        :param keepAliveTime: keepAliveTime
+        :param sipAliasSuffix: sipAliasSuffix
+        :param enableCachingofRecords: enableCachingofRecords
+        :param servers: servers
+        :param cacheSizeforAliasLookup: cacheSizeforAliasLookup
+        :param cacheAgeforAliasLookup: cacheAgeforAliasLookup
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDirNumberAliasLookupandSync(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_advertised_patterns(self, **args):
+        """
+        update_advertised_patterns parameters
+        :param description: description
+        :param newPattern: newPattern
+        :param patternType: patternType
+        :param hostedRoutePSTNRule: hostedRoutePSTNRule
+        :param pstnFailStrip: pstnFailStrip
+        :param pstnFailPrepend: pstnFailPrepend
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateAdvertisedPatterns(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_blocked_learned_patterns(self, **args):
+        """
+        update_blocked_learned_patterns parameters
+        :param description: description
+        :param newPattern: newPattern
+        :param prefix: prefix
+        :param clusterId: clusterId
+        :param patternType: patternType
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateBlockedLearnedPatterns(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cca_profiles(self, **args):
+        """
+        update_cca_profiles parameters
+        :param newCcaId: newCcaId
+        :param primarySoftSwitchId: primarySoftSwitchId
+        :param secondarySoftSwitchId: secondarySoftSwitchId
+        :param objectClass: objectClass
+        :param subscriberType: subscriberType
+        :param sipAliasSuffix: sipAliasSuffix
+        :param sipUserNameSuffix: sipUserNameSuffix
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCCAProfiles(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_universal_device_template(self, **args):
+        """
+        update_universal_device_template parameters
+        :param newName: newName
+        :param deviceDescription: deviceDescription
+        :param devicePool: devicePool
+        :param deviceSecurityProfile: deviceSecurityProfile
+        :param sipProfile: sipProfile
+        :param phoneButtonTemplate: phoneButtonTemplate
+        :param sipDialRules: sipDialRules
+        :param callingSearchSpace: callingSearchSpace
+        :param callingPartyTransformationCSSForInboundCalls: callingPartyTransformationCSSForInboundCalls
+        :param callingPartyTransformationCSSForOutboundCalls: callingPartyTransformationCSSForOutboundCalls
+        :param reroutingCallingSearchSpace: reroutingCallingSearchSpace
+        :param subscribeCallingSearchSpaceName: subscribeCallingSearchSpaceName
+        :param useDevicePoolCallingPartyTransformationCSSforInboundCalls: useDevicePoolCallingPartyTransformationCSSforInboundCalls
+        :param useDevicePoolCallingPartyTransformationCSSforOutboundCalls: useDevicePoolCallingPartyTransformationCSSforOutboundCalls
+        :param commonPhoneProfile: commonPhoneProfile
+        :param commonDeviceConfiguration: commonDeviceConfiguration
+        :param softkeyTemplate: softkeyTemplate
+        :param featureControlPolicy: featureControlPolicy
+        :param phonePersonalization: phonePersonalization
+        :param mtpPreferredOriginatingCodec: mtpPreferredOriginatingCodec
+        :param outboundCallRollover: outboundCallRollover
+        :param mediaTerminationPointRequired: mediaTerminationPointRequired
+        :param unattendedPort: unattendedPort
+        :param requiredDtmfReception: requiredDtmfReception
+        :param rfc2833Disabled: rfc2833Disabled
+        :param speeddials: speeddials
+        :param lines: lines
+        :param blfDirectedCallParks: blfDirectedCallParks
+        :param busyLampFields: busyLampFields
+        :param useTrustedRelayPoint: useTrustedRelayPoint
+        :param protectedDevice: protectedDevice
+        :param certificateOperation: certificateOperation
+        :param authenticationMode: authenticationMode
+        :param authenticationString: authenticationString
+        :param keySize: keySize
+        :param keyOrder: keyOrder
+        :param ecKeySize: ecKeySize
+        :param servicesProvisioning: servicesProvisioning
+        :param packetCaptureMode: packetCaptureMode
+        :param packetCaptureDuration: packetCaptureDuration
+        :param secureShellUser: secureShellUser
+        :param secureShellPassword: secureShellPassword
+        :param userLocale: userLocale
+        :param networkLocale: networkLocale
+        :param mlppDomain: mlppDomain
+        :param mlppIndication: mlppIndication
+        :param mlppPreemption: mlppPreemption
+        :param doNotDisturb: doNotDisturb
+        :param dndOption: dndOption
+        :param dndIncomingCallAlert: dndIncomingCallAlert
+        :param aarGroup: aarGroup
+        :param aarCallingSearchSpace: aarCallingSearchSpace
+        :param blfPresenceGroup: blfPresenceGroup
+        :param blfAudibleAlertSettingPhoneBusy: blfAudibleAlertSettingPhoneBusy
+        :param blfAudibleAlertSettingPhoneIdle: blfAudibleAlertSettingPhoneIdle
+        :param userHoldMohAudioSource: userHoldMohAudioSource
+        :param networkHoldMohAudioSource: networkHoldMohAudioSource
+        :param location: location
+        :param geoLocation: geoLocation
+        :param deviceMobilityMode: deviceMobilityMode
+        :param mediaResourceGroupList: mediaResourceGroupList
+        :param remoteDevice: remoteDevice
+        :param hotlineDevice: hotlineDevice
+        :param retryVideoCallAsAudio: retryVideoCallAsAudio
+        :param requireOffPremiseLocation: requireOffPremiseLocation
+        :param ownerUserId: ownerUserId
+        :param mobilityUserId: mobilityUserId
+        :param joinAcrossLines: joinAcrossLines
+        :param alwaysUsePrimeLine: alwaysUsePrimeLine
+        :param alwaysUsePrimeLineForVoiceMessage: alwaysUsePrimeLineForVoiceMessage
+        :param singleButtonBarge: singleButtonBarge
+        :param builtInBridge: builtInBridge
+        :param allowControlOfDeviceFromCti: allowControlOfDeviceFromCti
+        :param ignorePresentationIndicators: ignorePresentationIndicators
+        :param enableExtensionMobility: enableExtensionMobility
+        :param privacy: privacy
+        :param loggedIntoHuntGroup: loggedIntoHuntGroup
+        :param proxyServer: proxyServer
+        :param servicesUrl: servicesUrl
+        :param idle: idle
+        :param idleTimer: idleTimer
+        :param secureDirUrl: secureDirUrl
+        :param messages: messages
+        :param secureIdleUrl: secureIdleUrl
+        :param authenticationServer: authenticationServer
+        :param directory: directory
+        :param secureServicesUrl: secureServicesUrl
+        :param information: information
+        :param secureMessagesUrl: secureMessagesUrl
+        :param secureInformationUrl: secureInformationUrl
+        :param secureAuthenticationUrl: secureAuthenticationUrl
+        :param confidentialAccess: confidentialAccess
+        :param services: services
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateUniversalDeviceTemplate(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_user_profile_provision(self, **args):
+        """
+        update_user_profile_provision parameters
+        :param newName: newName
+        :param description: description
+        :param deskPhones: deskPhones
+        :param mobileDevices: mobileDevices
+        :param profile: profile
+        :param universalLineTemplate: universalLineTemplate
+        :param allowProvision: allowProvision
+        :param limitProvision: limitProvision
+        :param defaultUserProfile: defaultUserProfile
+        :param enableMra: enableMra
+        :param mraPolicy_Desktop: mraPolicy_Desktop
+        :param mraPolicy_Mobile: mraPolicy_Mobile
+        :param allowProvisionEMMaxLoginTime: allowProvisionEMMaxLoginTime
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateUserProfileProvision(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_presence_redundancy_group(self, **args):
+        """
+        update_presence_redundancy_group parameters
+        :param newName: newName
+        :param description: description
+        :param server1: server1
+        :param server2: server2
+        :param haEnabled: haEnabled
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePresenceRedundancyGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_wifi_hotspot(self, **args):
+        """
+        update_wifi_hotspot parameters
+        :param newName: newName
+        :param description: description
+        :param ssidPrefix: ssidPrefix
+        :param userModifiable: userModifiable
+        :param frequencyBand: frequencyBand
+        :param authenticationMethod: authenticationMethod
+        :param hostName: hostName
+        :param port: port
+        :param sharedSecret: sharedSecret
+        :param pskPassPhrase: pskPassPhrase
+        :param wepKey: wepKey
+        :param passwordDescription: passwordDescription
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateWifiHotspot(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_wlan_profile_group(self, **args):
+        """
+        update_wlan_profile_group parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateWlanProfileGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_wlan_profile(self, **args):
+        """
+        update_wlan_profile parameters
+        :param newName: newName
+        :param description: description
+        :param ssid: ssid
+        :param frequencyBand: frequencyBand
+        :param userModifiable: userModifiable
+        :param authMethod: authMethod
+        :param userName: userName
+        :param password: password
+        :param pskPassphrase: pskPassphrase
+        :param wepKey: wepKey
+        :param passwordDescription: passwordDescription
+        :param networkAccessProfile: networkAccessProfile
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateWLANProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_universal_line_template(self, **args):
+        """
+        update_universal_line_template parameters
+        :param newName: newName
+        :param urgentPriority: urgentPriority
+        :param lineDescription: lineDescription
+        :param routePartition: routePartition
+        :param voiceMailProfile: voiceMailProfile
+        :param callingSearchSpace: callingSearchSpace
+        :param alertingName: alertingName
+        :param extCallControlProfile: extCallControlProfile
+        :param blfPresenceGroup: blfPresenceGroup
+        :param callPickupGroup: callPickupGroup
+        :param partyEntranceTone: partyEntranceTone
+        :param autoAnswer: autoAnswer
+        :param rejectAnonymousCall: rejectAnonymousCall
+        :param userHoldMohAudioSource: userHoldMohAudioSource
+        :param networkHoldMohAudioSource: networkHoldMohAudioSource
+        :param aarDestinationMask: aarDestinationMask
+        :param aarGroup: aarGroup
+        :param retainDestInCallFwdHistory: retainDestInCallFwdHistory
+        :param forwardDestAllCalls: forwardDestAllCalls
+        :param primaryCssForwardingAllCalls: primaryCssForwardingAllCalls
+        :param secondaryCssForwardingAllCalls: secondaryCssForwardingAllCalls
+        :param CssActivationPolicy: CssActivationPolicy
+        :param fwdDestExtCallsWhenNotRetrieved: fwdDestExtCallsWhenNotRetrieved
+        :param cssFwdExtCallsWhenNotRetrieved: cssFwdExtCallsWhenNotRetrieved
+        :param fwdDestInternalCallsWhenNotRetrieved: fwdDestInternalCallsWhenNotRetrieved
+        :param cssFwdInternalCallsWhenNotRetrieved: cssFwdInternalCallsWhenNotRetrieved
+        :param parkMonitorReversionTime: parkMonitorReversionTime
+        :param target: target
+        :param mlppCss: mlppCss
+        :param mlppNoAnsRingDuration: mlppNoAnsRingDuration
+        :param confidentialAccess: confidentialAccess
+        :param holdReversionRingDuration: holdReversionRingDuration
+        :param holdReversionNotificationInterval: holdReversionNotificationInterval
+        :param busyIntCallsDestination: busyIntCallsDestination
+        :param busyIntCallsCss: busyIntCallsCss
+        :param busyExtCallsDestination: busyExtCallsDestination
+        :param busyExtCallsCss: busyExtCallsCss
+        :param noAnsIntCallsDestination: noAnsIntCallsDestination
+        :param noAnsIntCallsCss: noAnsIntCallsCss
+        :param noAnsExtCallsDestination: noAnsExtCallsDestination
+        :param noAnsExtCallsCss: noAnsExtCallsCss
+        :param noCoverageIntCallsDestination: noCoverageIntCallsDestination
+        :param noCoverageIntCallsCss: noCoverageIntCallsCss
+        :param noCoverageExtCallsDestination: noCoverageExtCallsDestination
+        :param noCoverageExtCallsCss: noCoverageExtCallsCss
+        :param unregisteredIntCallsDestination: unregisteredIntCallsDestination
+        :param unregisteredIntCallsCss: unregisteredIntCallsCss
+        :param unregisteredExtCallsDestination: unregisteredExtCallsDestination
+        :param unregisteredExtCallsCss: unregisteredExtCallsCss
+        :param ctiFailureDestination: ctiFailureDestination
+        :param ctiFailureCss: ctiFailureCss
+        :param callControlAgentProfile: callControlAgentProfile
+        :param noAnswerRingDuration: noAnswerRingDuration
+        :param enterpriseAltNum: enterpriseAltNum
+        :param e164AltNum: e164AltNum
+        :param advertisedFailoverNumber: advertisedFailoverNumber
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateUniversalLineTemplate(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_network_access_profile(self, **args):
+        """
+        update_network_access_profile parameters
+        :param newName: newName
+        :param description: description
+        :param vpnRequired: vpnRequired
+        :param proxySettings: proxySettings
+        :param proxyHostname: proxyHostname
+        :param proxyPort: proxyPort
+        :param proxyRequiresAuthentication: proxyRequiresAuthentication
+        :param provideSharedCredentials: provideSharedCredentials
+        :param username: username
+        :param password: password
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateNetworkAccessProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_http_profile(self, **args):
+        """
+        update_http_profile parameters
+        :param newName: newName
+        :param userName: userName
+        :param password: password
+        :param requestTimeout: requestTimeout
+        :param retryCount: retryCount
+        :param webServiceRootUri: webServiceRootUri
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateHttpProfile(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_elin_group(self, **args):
+        """
+        update_elin_group parameters
+        :param newName: newName
+        :param description: description
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateElinGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_secure_config(self, **args):
+        """
+        update_secure_config parameters
+        :param value: value
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSecureConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_infrastructure_device(self, **args):
+        """
+        update_infrastructure_device parameters
+        :param newName: newName
+        :param ipv4Address: ipv4Address
+        :param ipv6Address: ipv6Address
+        :param bssidWithMask: bssidWithMask
+        :param wapLocation: wapLocation
+        :param isActive: isActive
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateInfrastructureDevice(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ldap_search(self, **args):
+        """
+        update_ldap_search parameters
+        :param enableDirectorySearch: enableDirectorySearch
+        :param distinguishedName: distinguishedName
+        :param password: password
+        :param userSearchBase1: userSearchBase1
+        :param userSearchBase2: userSearchBase2
+        :param userSearchBase3: userSearchBase3
+        :param ldapFilterForUser: ldapFilterForUser
+        :param ldapFilterForGroups: ldapFilterForGroups
+        :param enableRecursiveSearch: enableRecursiveSearch
+        :param primary: primary
+        :param secondary: secondary
+        :param tertiary: tertiary
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLdapSearch(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_wireless_access_point_controllers(self, **args):
+        """
+        update_wireless_access_point_controllers parameters
+        :param newName: newName
+        :param description: description
+        :param snmpVersion: snmpVersion
+        :param snmpUserIdOrCommunityString: snmpUserIdOrCommunityString
+        :param snmpAuthenticationProtocol: snmpAuthenticationProtocol
+        :param snmpAuthenticationPassword: snmpAuthenticationPassword
+        :param snmpPrivacyProtocol: snmpPrivacyProtocol
+        :param snmpPrivacyPassword: snmpPrivacyPassword
+        :param syncNow: syncNow
+        :param resyncInterval: resyncInterval
+        :param nextSyncTime: nextSyncTime
+        :param scheduleUnit: scheduleUnit
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateWirelessAccessPointControllers(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_device_defaults(self, **args):
+        """
+        update_device_defaults parameters
+        :param LoadInformation: LoadInformation
+        :param InactiveLoadInformation: InactiveLoadInformation
+        :param DevicePoolName: DevicePoolName
+        :param PhoneButtonTemplate: PhoneButtonTemplate
+        :param VersionStamp: VersionStamp
+        :param PreferActCodeOverAutoReg: PreferActCodeOverAutoReg
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateDeviceDefaults(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_mra_service_domain(self, **args):
+        """
+        update_mra_service_domain parameters
+        :param newName: newName
+        :param isDefault: isDefault
+        :param serviceDomains: serviceDomains
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMraServiceDomain(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_cisco_cloud_onboarding(self, **args):
+        """
+        update_cisco_cloud_onboarding parameters
+        :param voucherExists: voucherExists
+        :param enablePushNotifications: enablePushNotifications
+        :param enableHttpProxy: enableHttpProxy
+        :param httpProxyAddress: httpProxyAddress
+        :param proxyUsername: proxyUsername
+        :param proxyPassword: proxyPassword
+        :param enableTrustCACertificate: enableTrustCACertificate
+        :param allowAnalyticsCollection: allowAnalyticsCollection
+        :param enableTroubleshooting: enableTroubleshooting
+        :param alarmSendEncryptedData: alarmSendEncryptedData
+        :param orgId: orgId
+        :param alarmPushIntervalSecs: alarmPushIntervalSecs
+        :param alarmEncryptKey: alarmEncryptKey
+        :param serviceAddress: serviceAddress
+        :param onboardingRegistrationStatus: onboardingRegistrationStatus
+        :param email: email
+        :param partnerEmail: partnerEmail
+        :param orgName: orgName
+        :param customerOneTimePassword: customerOneTimePassword
+        :param alarmSeverity: alarmSeverity
+        :param alarmPushNowToggle: alarmPushNowToggle
+        :param enableGDSCommunication: enableGDSCommunication
+        :param mraActivationDomain: mraActivationDomain
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCiscoCloudOnboarding(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_mobility(self, **args):
+        """
+        update_mobility parameters
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateMobility(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_enterprise_phone_config(self, **args):
+        """
+        update_enterprise_phone_config parameters
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateEnterprisePhoneConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ldap_system(self, **args):
+        """
+        update_ldap_system parameters
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLdapSystem(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ldap_authentication(self, **args):
+        """
+        update_ldap_authentication parameters
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLdapAuthentication(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_feature_config(self, **args):
+        """
+        update_ime_feature_config parameters
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeFeatureConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_fallback_feature_config(self, **args):
+        """
+        update_fallback_feature_config parameters
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateFallbackFeatureConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ime_learned_routes(self, **args):
+        """
+        update_ime_learned_routes parameters
+        :param adminEnabled: adminEnabled
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateImeLearnedRoutes(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_soft_key_set(self, **args):
+        """
+        update_soft_key_set parameters
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSoftKeySet(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_syslog_configuration(self, **args):
+        """
+        update_syslog_configuration parameters
+        :param alarmConfigs: alarmConfigs
+        :param EndPointAlarm: EndPointAlarm
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSyslogConfiguration(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_inter_cluster_directory_uri(self, **args):
+        """
+        update_inter_cluster_directory_uri parameters
+        :param exchangeDirectoryUri: exchangeDirectoryUri
+        :param routeString: routeString
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateInterClusterDirectoryUri(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ils_config(self, **args):
+        """
+        update_ils_config parameters
+        :param role: role
+        :param registrationServer: registrationServer
+        :param activateIls: activateIls
+        :param synchronizeClustersEvery: synchronizeClustersEvery
+        :param activatedServers: activatedServers
+        :param deactivatedServers: deactivatedServers
+        :param useTls: useTls
+        :param enableUsePassword: enableUsePassword
+        :param usePassword: usePassword
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateIlsConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_snmp_community_string(self, **args):
+        """
+        update_snmp_community_string parameters
+        :param communityName: communityName
+        :param newValues: newValues
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSNMPCommunityString(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_snmp_user(self, **args):
+        """
+        update_snmp_user parameters
+        :param user: user
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSNMPUser(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_snmpmib2_list(self, **args):
+        """
+        update_snmpmib2_list parameters
+        :param sysLocation: sysLocation
+        :param sysContact: sysContact
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSNMPMIB2List(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_ccd_feature_config(self, **args):
+        """
+        update_ccd_feature_config parameters
+        :param ccdParam: ccdParam
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCcdFeatureConfig(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_billing_server(self, **args):
+        """
+        update_billing_server parameters
+        :param uuid: uuid
+        :param userId: userId
+        :param password: password
+        :param resendOnFailure: resendOnFailure
+        :param billingServerProtocol: billingServerProtocol
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateBillingServer(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_route_partitions_for_learned_patterns(self, **args):
+        """
+        update_route_partitions_for_learned_patterns parameters
+        :param partitionForEnterpriseANo: partitionForEnterpriseANo
+        :param partitionForE164ANo: partitionForE164ANo
+        :param partitionForEnterprisePatterns: partitionForEnterprisePatterns
+        :param partitionForE164Pattern: partitionForE164Pattern
+        :param markLearnedEntAltNumbers: markLearnedEntAltNumbers
+        :param markLearnedE164AltNumbers: markLearnedE164AltNumbers
+        :param markFixedLengthEntPatterns: markFixedLengthEntPatterns
+        :param markVariableLengthEntPatterns: markVariableLengthEntPatterns
+        :param markFixedLengthE164Patterns: markFixedLengthE164Patterns
+        :param markVariableLengthE164Patterns: markVariableLengthE164Patterns
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateRoutePartitionsForLearnedPatterns(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_local_route_group(self, **args):
+        """
+        update_local_route_group parameters
+        :param localRouteGroup: localRouteGroup
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateLocalRouteGroup(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_page_layout_preferences(self, **args):
+        """
+        update_page_layout_preferences parameters
+        :param pageName: pageName
+        :param pageSections: pageSections
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updatePageLayoutPreferences(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_credential_policy_default(self, **args):
+        """
+        update_credential_policy_default parameters
+        :param credentialUser: credentialUser
+        :param credentialType: credentialType
+        :param credPolicyName: credPolicyName
+        :param newCredPolicyName: newCredPolicyName
+        :param credentials: credentials
+        :param confirmCredentials: confirmCredentials
+        :param credUserCantChange: credUserCantChange
+        :param credUserMustChange: credUserMustChange
+        :param credDoesNotExpire: credDoesNotExpire
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateCredentialPolicyDefault(**args)
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        
+    def update_self_provisioning(self, **args):
+        """
+        update_self_provisioning parameters
+        :param requireAuthentication: requireAuthentication
+        :param allowAuthentication: allowAuthentication
+        :param authenticationCode: authenticationCode
+        :param ctiRoutePoint: ctiRoutePoint
+        :param applicationUser: applicationUser
+        :return: API Response message
+        """
+        result = {
+            'success': False,
+            'response': '',
+            'error': '',
+        }
+        try:
+            resp = self.client.updateSelfProvisioning(**args)
 
             if resp['return']:
                 result['success'] = True

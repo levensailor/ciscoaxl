@@ -74,7 +74,7 @@ def create_params_new(reqs):
     res = ''
     for each in reqs:
         res = res+':param '+each+': '+each+'\n\t'
-    return res+':return: result list of dictionaries'
+    return res+':return: API Response message'
 
 def create_def_list(name, params, returning):
     # print(name)
@@ -138,6 +138,36 @@ def get_res_from_req(req):
 
             if req in child.attrib['name'][:-3] and 'Res' in child.attrib['name']:
                 return find_return(child)
+
+def create_def_update(child, reqs):
+    params = create_params_new(reqs)
+    rec = f'''def {camel_to_snake(child)}(self, **args):
+    """
+    {camel_to_snake(child)} parameters
+    {params}
+    """
+    result = {{
+        'success': False,
+        'response': '',
+        'error': '',
+    }}
+    try:
+        resp = self.client.update{child[6:]}(**args)
+
+        if resp['return']:
+            result['success'] = True
+            result['response'] = resp['return']
+        return result
+
+    except Fault as error:
+        result['error'] = error
+        return result
+    '''
+    with open('update.txt', 'a') as filehandle:  
+        filehandle.write(rec)
+        filehandle.write('\n')
+        filehandle.close()
+
 
 def create_def_add(child, reqs):
     params = create_params_new(reqs)
@@ -275,13 +305,22 @@ def parse_add(child):
                                     #elem_name = c.attrib['name']
                                     add_params = get_add_params(elem_type)
                                     create_def_add(child.attrib['name'].split('Req')[0], add_params)
-                                    # for d in c:
-                                    #     if 'complexType' in d.tag:
-                                    #         for e in d:
-                                    #             if 'sequence' in e.tag:
-                                    #                 for f in e:
-                                    #                     if 'element' in f.tag:
-                                    #                         create_def_get(child.attrib['name'].split('Res')[0], f.attrib['name'])
+
+def parse_update(child):
+    update_params = []
+    for sub in child:
+        if 'complexContent' in sub.tag:
+            for a in sub:
+                if 'extension' in a.tag:
+                    for b in a:
+                        if 'sequence' in b.tag:
+                            for c in b:
+                                if 'element' in c.tag:
+                                    print(c.attrib['name'])
+                                    #elem_type = c.attrib['type'].split('axlapi:')[1]
+                                    #elem_name = c.attrib['name']
+                                    update_params.append(c.attrib['name'])
+    create_def_update(child.attrib['name'].split('Req')[0], update_params)
 
 def parse_remove(child):
     for sub in child:
@@ -325,6 +364,7 @@ for child in root:
         #     parse_remove(child)
         # if 'List' in child.attrib['name'][:4] and 'Req' in child.attrib['name']:
         #     parse_list(child)
-
-        if 'Add' in child.attrib['name'][:3] and 'Req' in child.attrib['name']:
-            parse_add(child)
+        # if 'Add' in child.attrib['name'][:3] and 'Req' in child.attrib['name']:
+        #     parse_add(child)
+        if 'Update' in child.attrib['name'][:6] and 'Req' in child.attrib['name']:
+            parse_update(child)

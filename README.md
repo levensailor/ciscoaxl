@@ -13,14 +13,10 @@ pip install ciscoaxl
 from ciscoaxl import axl
 
 cucm = os.getenv('cucm', '10.10.20.1')
-username = os.getenv('username', 'administrator')
-password = os.getenv('password', 'ciscopsdt')
+username = os.getenv('cucm_username', 'administrator')
+password = os.getenv('cucm_password', 'ciscopsdt')
 version = os.getenv('version', '12.5')
-
-cwd  = os.path.abspath(os.path.dirname('.'))
-sys.path.append(cwd)
-wsdl = 'file://'+cwd+'/schema/'+version+'/AXLAPI.wsdl'
-ucm = axl(username=username,password=password,wsdl=wsdl,cucm=cucm,cucm_version=version)
+ucm = axl(username=cucm_username,password=cucm_password,cucm=cucm,cucm_version=version)
 ```
 
 ## Users
