@@ -259,4 +259,3 @@ for child in root:
 
         if 'List' in child.attrib['name'][:4] and 'Req' in child.attrib['name']:
             parse_list(child)
-
