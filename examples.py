@@ -53,9 +53,13 @@ Phones
 
 #---Get Specific Phone
 
-this_phone = ucm.get_phone(name='SEP7426ACF360E1')
-if this_phone['success']:
-    print(this_phone['response'])
+# this_phone = ucm.get_phone(name='SEP7426ACF360E1')
+# if this_phone['success']:
+#     print(this_phone['response'])
+
+this_profile = ucm.list_sip_profile()
+if this_profile['success']:
+    print(this_profile['response'])
 
 # print(ucm.list_route_plan('2901'))
 

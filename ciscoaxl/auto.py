@@ -68,8 +68,70 @@ def create_params(reqs):
     res = ''
     for each in reqs:
         res = res+':param '+each.attrib['name']+': '+each.attrib['name']+'\n'
-    return res+':return: result dictionary'
+    return res+':return: result list of dictionaries'
 
+def create_def_list(name, params, returning):
+    # print(name)
+    # print(reqs)
+    # params = create_params(reqs)
+    rec = f'''def {camel_to_snake(name)}(self, name=''):
+        """
+        {camel_to_snake(name)} parameters
+        :param uuid: uuid
+        {params}
+        """
+        result = {{
+            'success': False,
+            'response': '',
+            'error': '',
+        }}
+        try:
+            resp = self.client.list{name[4:]}(
+                {{'name': '%'+name}}, returnedTags={returning}
+            )
+
+            if resp['return']:
+                result['success'] = True
+                result['response'] = resp['return']['{get_res_from_req(name)}']
+            return result
+
+        except Fault as error:
+            result['error'] = error
+            return result
+        '''
+    with open('list.txt', 'a') as filehandle:  
+        filehandle.write(rec)
+        filehandle.write('\n')
+        filehandle.close()
+
+def find_return(child):
+    for sub in child:
+        if 'complexContent' in sub.tag:
+            for a in sub:
+                if 'extension' in a.tag:
+                    for b in a:
+                        if 'sequence' in b.tag:
+                            for c in b:
+                                if 'element' in c.tag:
+                                    for d in c:
+                                        if 'complexType' in d.tag:
+                                            for e in d:
+                                                if 'sequence' in e.tag:
+                                                    for f in e:
+                                                        if 'element' in f.tag:
+                                                            #print(f.attrib['name'])
+                                                            return f.attrib['name']
+                                        #create_def_list(child.attrib['name'].split('Req')[0], c)
+def get_res_from_req(req):
+    for child in root:
+        if 'complexType' in child.tag:
+        # if 'Get' in child.attrib['name'][:3] and 'Res' in child.attrib['name']:
+        #     parse_get(child)
+        # if 'Remove' in child.attrib['name'][:6] and 'Req' in child.attrib['name']:
+        #     parse_remove(child)
+
+            if req in child.attrib['name'][:-3] and 'Res' in child.attrib['name']:
+                return find_return(child)
 
 def create_def_remove(child, reqs):
     params = create_params(reqs)
@@ -101,6 +163,58 @@ def create_def_remove(child, reqs):
         filehandle.write(rec)
         filehandle.write('\n')
         filehandle.close()
+
+def get_res(name):
+    returned={}
+    for child in root:
+        if 'complexType' in child.tag:
+            if 'L'+name[4:] in child.attrib['name']:
+                for sub in child:
+                    if 'sequence' in sub.tag:
+                        for a in sub:
+                            if 'element' in a.tag:
+                                returned[a.attrib['name']] = ''
+                                #print(a.attrib['name'])
+
+    return returned
+
+            #print(child.attrib) 
+            # and 'L'+name[4:] in child.attrib:
+            # print(child)
+            # for sub in child:
+            #     print(sub)
+            #     if sub.attrib['name'] is 'L'+name[4:]:
+            #         print(sub)
+def parse_list(child):
+    #print(child.attrib['name'].split('Req')[0])
+    params = ''
+    req_params = ''
+    for sub in child:
+        if 'sequence' in sub.tag:
+            for a in sub:
+                if 'element' in a.tag:
+                    for b in a:
+                        if 'complexType' in b.tag:
+                            for c in b:
+                                if 'sequence' in c.tag:
+                                    for d in c:
+                                        if 'element' in d.tag:
+                                            # print(d.attrib['name'])
+                                            # for each in d:
+                                            #     print(each)
+                                            params = params+':param '+d.attrib['name']+': '+d.attrib['name']+'\n\t\t'
+    returning = get_res(child.attrib['name'].split('Req')[0])
+    create_def_list(child.attrib['name'].split('Req')[0], params.strip(), returning)
+    #print(child.attrib['name'].split('Req')[0],'\n',res)
+                                #return res+':return: result list of dictionaries'
+                                #create_def_list(child.attrib['name'].split('Req')[0], res)
+                                        #if 'element' in d.tag:
+                                            
+                                            #print(d.attrib['name'])
+                                                #print(e.attrib['name'])
+                                        #print(d)
+                                    #print(c.attrib['name'])
+                            #create_def_remove(child.attrib['name'].split('Req')[0], b)
 
 def parse_remove(child):
     for sub in child:
@@ -140,6 +254,9 @@ for child in root:
     if 'complexType' in child.tag:
         # if 'Get' in child.attrib['name'][:3] and 'Res' in child.attrib['name']:
         #     parse_get(child)
-        if 'Remove' in child.attrib['name'][:6] and 'Req' in child.attrib['name']:
-            parse_remove(child)
+        # if 'Remove' in child.attrib['name'][:6] and 'Req' in child.attrib['name']:
+        #     parse_remove(child)
+
+        if 'List' in child.attrib['name'][:4] and 'Req' in child.attrib['name']:
+            parse_list(child)
 
