@@ -59,9 +59,8 @@ Phones
 
 
 
-this_profile = ucm.list_sip_profile()
-if this_profile['success']:
-    print(this_profile['response'])
+st = ucm.list_sip_trunk()
+print(st['response'])
 
 # print(ucm.list_route_plan('2901'))
 

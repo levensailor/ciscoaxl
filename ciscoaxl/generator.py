@@ -39,7 +39,7 @@ def create_def_get(name, returned):
                 return result
             '''
 
-    with open('get.txt', 'a') as filehandle:  
+    with open('get123.txt', 'a') as filehandle:  
         filehandle.write(rec)
         filehandle.write('\n')
         filehandle.close()
@@ -358,13 +358,13 @@ def parse_remove(child):
 
 for child in root:
     if 'complexType' in child.tag:
-        # if 'Get' in child.attrib['name'][:3] and 'Res' in child.attrib['name']:
-        #     parse_get(child)
+        if 'Get' in child.attrib['name'][:3] and 'Res' in child.attrib['name']:
+            parse_get(child)
         # if 'Remove' in child.attrib['name'][:6] and 'Req' in child.attrib['name']:
         #     parse_remove(child)
         # if 'List' in child.attrib['name'][:4] and 'Req' in child.attrib['name']:
         #     parse_list(child)
         # if 'Add' in child.attrib['name'][:3] and 'Req' in child.attrib['name']:
         #     parse_add(child)
-        if 'Update' in child.attrib['name'][:6] and 'Req' in child.attrib['name']:
-            parse_update(child)
+        # if 'Update' in child.attrib['name'][:6] and 'Req' in child.attrib['name']:
+        #     parse_update(child)
