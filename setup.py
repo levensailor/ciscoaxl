@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="ciscoaxl",
-    version="0.111",
+    version="0.121",
     author="Jeff Levensailor",
     author_email="jeff@levensailor.com",
     description="Cisco CUCM AXL Library. Simple to use.",

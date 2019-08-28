@@ -1664,7 +1664,7 @@ class axl(object):
         """
         paginated = []
         try:
-            resp = self.client.listPhone(
+            return self.client.listPhone(
                     {'name': '%'}, returnedTags={
                         'name': '',
                         'product': '',

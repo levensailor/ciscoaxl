@@ -29,30 +29,23 @@ for user in ucm.get_users():
 
 #### Get Specific User
 ```python
-this_user = ucm.get_user(user_id='mscott')
-if this_user['success']:
-    print(this_user['response'])
+user = ucm.get_user(user_id='mscott')
+print(user.email)
 ```
 
 #### Add User
 ```python
-this_add_user = ucm.add_user(user_id='jlevensailor', last_name='Levensailor', first_name='Jeff')
-if this_add_user['success']:
-    print(this_add_user['response'])
+ucm.add_user(user_id='jlevensailor', last_name='Levensailor', first_name='Jeff')
 ```
 
 #### Delete User
 ```python
-this_delete_user = ucm.delete_user(user_id='jlevensailor')
-if this_delete_user['success']:
-    print(this_delete_user['response'])
+ucm.delete_user(user_id='jlevensailor')
 ```
 
 #### Update User
 ```python
-this_update_user = ucm.update_user(user_id='jlevensailor', password='Lagavulin16', pin='5432')
-if this_update_user['success']:
-    print(this_update_user['response'])
+ucm.update_user(user_id='jlevensailor', password='Lagavulin16', pin='5432')
 ```
 
 ## Phones
@@ -67,15 +60,14 @@ for phone in ucm.get_phones():
 #### Get Specific Phone
 
 ```python
-this_phone = ucm.get_user(user_id='lsimpson')
-if this_phone['success']:
-    print(this_phone['response'])
+phone = ucm.get_phone(name='SEP001122445566')
+print(phone.name)
 ```
 
 #### Add Phone
 
 ```python
-this_add_phone = ucm.add_phone(
+ucm.add_phone(
     name='SEP0023AF482340',
     description='Robert - 1102',
     product='Cisco 8861',
@@ -89,16 +81,12 @@ this_add_phone = ucm.add_phone(
         ('1102', 'ABQ_PT', 'Robert Smith', 'Robert Smith', 'Robert Smith - 1102', '+1408202XXXX')
     ]
 )
-if this_add_phone['success']:
-    print(this_add_phone['response'])
 ```
 
 #### Delete Phone
 
 ```python
-this_delete_phone = ucm.delete_phone('SEP004433220043')
-if this_delete_phone['success']:
-    print(this_delete_phone['response'])
+ucm.delete_phone('SEP004433220043')
 ```
 
 ## Translations and Transformations
@@ -108,19 +96,15 @@ if this_delete_phone['success']:
 
 ```python
 for trans in ucm.get_translations():
-        this_trans = ucm.get_translation(uuid=trans._uuid)
-        if this_trans['success']:
-            mask = this_trans['response'].calledPartyTransformationMask
-            if mask == "3001":
-                print(this_trans['response'].pattern)
+    detailed = ucm.get_translation(uuid=trans.uuid)
+    print(detailed.description)
 ```
 
 #### Get Specific Translation Pattern
 
 ```python
-this_trans = ucm.get_translation(pattern='2XXX', partition='xlates-pt')
-if this_trans['success']:
-    print(this_trans['response'].description)
+trans = ucm.get_translation(pattern='2XXX', partition='xlates-pt')
+print(trans.description)
 ```
 
 #### Add Translation Pattern
@@ -129,25 +113,19 @@ if this_trans['success']:
 ported = ['12324625544', '12324625545', '12324625546']
 
 for num in ported:
-    this_add_trans = ucm.add_translation(pattern=num, partition='pstn_pt',calledPartyTransformationMask='1102', callingSearchSpaceName='GW_CSS')
-    if this_add_trans['success']:
-        print(this_add_trans['response'])
+    ucm.add_translation(pattern=num, partition='pstn_pt',calledPartyTransformationMask='1102', callingSearchSpaceName='GW_CSS')
 ```
 
 #### Delete Translation Pattern
 
 ```python
-this_delete_trans = ucm.delete_translation(pattern='34567', partition='xlates-pt')
-if this_delete_trans['success']:
-    print(this_delete_trans['response'])
+ucm.delete_translation(pattern='34567', partition='xlates-pt')
 ```
 
 #### Update Translation Pattern
 
 ```python
-this_update_trans = ucm.update_translation(pattern='1234', partition='xlates-pt', newPattern='4567')
-if this_update_trans['success']:
-    print(this_update_trans['response'])
+ucm.update_translation(pattern='1234', partition='xlates-pt', newPattern='4567')
 ```
 
 ## Device Pools
@@ -157,39 +135,32 @@ if this_update_trans['success']:
 
 ```python
 for dp in ucm.get_device_pools():
-    print(dp)
+    print(dp.name)
 ```
 
 #### Get Specific Device Pool
 
 ```python
-this_dp = ucm.get_device_pool(name='RTP_DP')
-if this_dp['success']:
-    print(this_dp['response'])
+dp = ucm.get_device_pool(name='RTP_DP')
+print(dp.name)
 ```
 
 #### Add Device Pool
 
 ```python
-this_add_dp = ucm.add_device_pool(device_pool='Hollywood_DP')
-if this_add_dp['success']:
-    print(this_add_dp['response'])
+ucm.add_device_pool(device_pool='Hollywood_DP')
 ```
 
 #### Delete Device Pool
 
 ```python
-this_delete_dp = ucm.delete_device_pool(device_pool='Hollywood_DP')
-if this_delete_dp['success']:
-    print(this_delete_dp['response'])
+ucm.delete_device_pool(device_pool='Hollywood_DP')
 ```
 
 #### Update Device Pool
 
 ```python
-this_update_dp = ucm.update_device_pool(name='RTP_DP', regionName='G711_RGN')
-if this_update_dp['success']:
-    print(this_update_dp['response'])
+ucm.update_device_pool(name='RTP_DP', regionName='G711_RGN')
 ```
 
 ## CSS and Partitions
@@ -205,37 +176,30 @@ for css in ucm.get_calling_search_spaces():
 #### Get Specific Calling Search Space
 
 ```python
-this_css = ucm.get_calling_search_space(calling_search_space='pstn-css')
-if this_css['success']:
-    print(this_css['response']._uuid)
+css = ucm.get_calling_search_space(calling_search_space='pstn-css')
+print(css.name)
 ```
 
 #### Add Calling Search Space
 
 ```python
-this_add_css = ucm.add_calling_search_space(
+ucm.add_calling_search_space(
     calling_search_space='VIP_CSS',
     description='Very Important Stuff'
     members=['losfeliz-pt','silverlake-pt','pstn-pt']
     )
-if this_add_css['success']:
-    print(this_add_css['response'])
 ```
 
 #### Delete Calling Search Space
 
 ```python
-this_update_css = ucm.update_calling_search_space(calling_search_space='VIP_CSS')
-if this_update_css['success']:
-    print(this_update_css['response'])
+ucm.update_calling_search_space(calling_search_space='VIP_CSS')
 ```
 
 #### Delete Calling Search Space
 
 ```python
-this_delete_css = ucm.delete_calling_search_space(calling_search_space='VIP_CSS')
-if this_delete_css['success']:
-    print(this_delete_css['response'])
+ucm.delete_calling_search_space(calling_search_space='VIP_CSS')
 ```
 
 #### Get Partitions
@@ -248,25 +212,20 @@ for pt in ucm.get_partitions():
 #### Get Specific Partition
 
 ```python
-this_pt = ucm.get_partition(partition='pstn-pt')
-if this_pt['success']:
-    print(this_pt['response']._uuid)
+pt = ucm.get_partition(partition='pstn-pt')
+print(pt.name)
 ```
 
 #### Add Partition
 
 ```python
-this_add_pt = ucm.add_partition(partition='VIP_PT', description='Very Important Peep')
-if this_add_pt['success']:
-    print(this_add_pt['response'])
+ucm.add_partition(partition='VIP_PT', description='Very Important Peep')
 ```
 
 #### Delete Partition
 
 ```python
-this_delete_pt = ucm.delete_partition(name='VIP_PT')
-if this_delete_pt['success']:
-    print(this_delete_pt['response'])
+ucm.delete_partition(name='VIP_PT')
 ```
 
 ## Regions and Locations
@@ -275,31 +234,26 @@ if this_delete_pt['success']:
 
 ```python
 for reg in ucm.get_regions():
-    print(reg._uuid)
+    print(reg.uuid)
 ```
 
 #### Get Specific Region
 
 ```python
-this_reg = ucm.get_region(region='losfeliz_reg')
-if this_reg['success']:
-    print(this_reg['response']._uuid)
+reg = ucm.get_region(region='losfeliz_reg')
+print(reg.name)
 ```
 
 #### Add Region
 
 ```python
-this_add_reg = ucm.add_region(region='Hollywood-REG')
-if this_add_reg['success']:
-    print(this_add_reg['response'])
+ucm.add_region(region='Hollywood-REG')
 ```
 
 #### Delete Region
 
 ```python
-this_delete_reg = ucm.delete_region(region='Hollywood-REG')
-if this_delete_reg['success']:
-    print(this_delete_reg['response'])
+ucm.delete_region(region='Hollywood-REG')
 ```
 
 #### Get Locations
@@ -312,25 +266,20 @@ for loc in ucm.get_locations():
 #### Get Specific Location
 
 ```python
-this_loc = ucm.get_location(name='Shadow')
-if this_loc['success']:
-    print(this_loc['response'])
+loc = ucm.get_location(name='Shadow')
+print(loc.name)
 ```
 
 #### Add Location
 
 ```python
-this_add_location = ucm.add_location(location='Hollywood-LOC')
-if this_add_location['success']:
-    print(this_add_location['response'])
+ucm.add_location(location='Hollywood-LOC')
 ```
 
 #### Delete Location
 
 ```python
-this_delete_location = ucm.delete_location(location='Hollywood-LOC')
-if this_delete_location['success']:
-    print(this_delete_location['response'])
+ucm.delete_location(location='Hollywood-LOC')
 ```
 
 ## Directory Numbers
@@ -339,34 +288,29 @@ if this_delete_location['success']:
 
 ```python
 for dn in ucm.get_directory_numbers():
-    print(dn)
+    print(dn.uuid)
 ```
 
 #### Get Specific Directory Number
 
 ```python
-this_dn = ucm.get_directory_number(directory_number='2888',partition='losfeliz-pt')
-if this_dn['success']:
-    print(this_dn['response']._uuid)
+dn = ucm.get_directory_number(directory_number='2888',partition='losfeliz-pt')
+print(dn.uuid)
 ```
 
 #### Add Directory Number
 
 ```python
-this_add_dn = ucm.add_directory_number(
+ucm.add_directory_number(
     pattern='1102',
     partition='ABQ_PT'
     )
-if this_add_dn['success']:
-    print(this_add_dn['response'])
 ```
 
 #### Delete Directory Number
 
 ```python
-this_delete_dn = ucm.delete_directory_number(uuid='{0B0CDC93-EC9C-7255-1B09-40A3CE727D5A}')
-if this_delete_dn['success']:
-    print(this_delete_dn['response'])
+ucm.delete_directory_number(uuid='{0B0CDC93-EC9C-7255-1B09-40A3CE727D5A}')
 ```
 
 ## Device Profiles
@@ -381,15 +325,14 @@ for udp in ucm.get_device_profiles():
 #### Get Specific User Device Profile
 
 ```python
-this_udp = ucm.get_device_profile(profile='udp-bsimpson')
-if this_udp['success']:
-    print(this_udp['response']._uuid)
+udp = ucm.get_device_profile(profile='udp-bsimpson')
+print(udp.name)
 ```
 
 #### Add User Device Profile
 
 ```python
-this_add_udp = ucm.add_device_profile(
+ucm.add_device_profile(
     profile='UDP_MScott',
     description='Michael Scott - 2901',
     product='Cisco 8861',
@@ -400,16 +343,12 @@ this_add_udp = ucm.add_device_profile(
         ('2902', 'losfeliz-pt', 'Pam Beesley', 'Pam Beesley', 'Pam Beesley - 2902', '+1408202XXXX')
     ]
 )
-if this_add_udp['success']:
-    print(this_add_udp['response'])
 ```
 
 #### Delete User Device Profile
 
 ```python
-this_delete_udp = ucm.delete_device_profile('UDP_Mscott')
-if this_delete_udp['success']:
-    print(this_delete_udp['response'])
+ucm.delete_device_profile('UDP_Mscott')
 ```
 
 ## CTI Route Points
@@ -424,15 +363,14 @@ for cti in ucm.get_cti_route_points():
 #### Get Specific CTI Route Point
 
 ```python
-this_cti = ucm.get_cti_route_point(cti_route_point='AutoAttendant')
-if this_cti['success']:
-    print(this_cti['response'])
+cti = ucm.get_cti_route_point(cti_route_point='AutoAttendant')
+print(cti.name)
 ```
 
 #### Add CTI Route Point
 
 ```python
-this_add_cti = ucm.add_cti_route_point(
+ucm.add_cti_route_point(
     cti_route_point='aa-pilot',
     description='pilot to unity',
     device_pool='LosFeliz_DP',
@@ -442,16 +380,12 @@ this_add_cti = ucm.add_cti_route_point(
         ('2909', 'losfeliz-pt')
     ]
 )
-if this_add_cti['success']:
-    print(this_add_cti['response'])
 ```
 
 #### Delete CTI Route Point
 
 ```python
-this_delete_cti = ucm.delete_cti_route_point(name='OneArch')
-if this_delete_cti['success']:
-    print(this_delete_cti['response'])
+ucm.delete_cti_route_point(name='OneArch')
 ```
 
 ## Route Groups, Lists, and Patterns
@@ -465,7 +399,7 @@ for num in nums:
     for route in ucm.list_route_plan(num):
         print(route.dnOrPattern)
 for route in ucm.list_route_plan('2901'):
-    print(route._uuid)
+    print(route.uuid)
 ```
 
 #### Get Route Groups
@@ -478,28 +412,23 @@ for rg in ucm.get_route_groups():
 #### Get Specific Route Group
 
 ```python
-this_rg = ucm.get_route_group(route_group='losfeliz-rg')
-if this_rg['success']:
-    print(this_rg['response']._uuid)
+rg = ucm.get_route_group(route_group='losfeliz-rg')
+print(rg.uuid)
 ```
 
 #### Add Route Group
 
 ```python
-this_add_rg = ucm.add_route_group(
+ucm.add_route_group(
     route_group='hollywood-rg', 
     distribution_algorithm='Circular', 
     members=[('america-online-sip'), ('h323')])
-if this_add_rg['success']:
-    print(this_add_rg['response'])
 ```
 
 #### Delete Route Group
 
 ```python
-this_delete_rg = ucm.delete_route_group(route_group='hollywood-rg')
-if this_delete_rg['success']:
-    print(this_delete_rg['response'])
+ucm.delete_route_group(route_group='hollywood-rg')
 ```
 
 #### Get Route Lists
@@ -512,15 +441,14 @@ for rl in ucm.get_route_lists():
 #### Get Specific Route List
 
 ```python
-this_rl = ucm.get_route_list(route_list='stdloc-rl')
-if this_rl['success']:
-    print(this_rl['response'].description)
+rl = ucm.get_route_list(route_list='stdloc-rl')
+print(rl.description)
 ```
 
 #### Add Route List
 
 ```python
-this_add_rl = ucm.add_route_list(
+ucm.add_route_list(
     route_list='hollywood-rl', 
     description='hollywood', 
     run_on_all_nodes='true', 
@@ -529,16 +457,12 @@ this_add_rl = ucm.add_route_list(
         ('losfeliz-rg'), 
         ('silverlake-rg')
     ])
-if this_add_rl['success']:
-    print(this_add_rl['response'])
 ```
 
 #### Delete Route List
 
 ```python
-this_delete_rl = ucm.delete_route_list(route_list='hollywood-rl')
-if this_delete_rl['success']:
-    print(this_delete_rl['response'])
+ucm.delete_route_list(route_list='hollywood-rl')
 ```
 
 #### Get Route Patterns
@@ -551,30 +475,25 @@ for rp in ucm.get_route_patterns():
 #### Get Specific Route Pattern
 
 ```python
-this_rp = ucm.get_route_pattern(pattern='911')
-if this_rp['success']:
-    print(this_rp['response'].description)
+rp = ucm.get_route_pattern(pattern='911')
+print(rp.description)
 ```
 
 #### Add Route Pattern
 
 ```python
-this_add_rp = ucm.add_route_pattern(
+ucm.add_route_pattern(
     pattern='999', 
     partition='losfeliz-pt', 
     description='Movie Times', 
     route_list='stdloc-rl'
     )
-if this_add_rp['success']:
-    print(this_add_rp['response'])
 ```
 
 #### Delete Route Pattern
 
 ```python
-this_delete_rp = ucm.delete_route_pattern(pattern='999', partition='losfeliz-pt')
-if this_delete_rp['success']:
-    print(this_delete_rp['response'])
+ucm.delete_route_pattern(pattern='999', partition='losfeliz-pt')
 ```
 
 ## Runs and Dos
@@ -590,31 +509,23 @@ for sql in ucm.execute_sql_query('select * from device where description like "B
 
 ```sh
 for ldap in ucm.get_ldap_dir():
-    this_sync = ucm.do_ldap_sync(uuid=ldap._uuid)
-    if this_sync['success']:
-            print(this_sync['response'])
+    ucm.do_ldap_sync(uuid=ldap.uuid)
 ```
 
 #### Reset Device
 
 ```python
-this_reset = ucm.do_device_reset(device='SEP001100220033')
-if this_reset['success']:
-    print(this_reset['response'])
+ucm.do_device_reset(device='SEP001100220033')
 ```
 
 #### Extension Mobility Login
 
 ```python
-this_device_login = ucm.do_device_login(device='SEP001100220033', userId='bsimpson')
-if this_device_login['success']:
-    print(this_device_login['response'])
+ucm.do_device_login(device='SEP001100220033', userId='bsimpson')
 ```
 
 #### Extension Mobility Logout
 
 ```python
-this_device_logout = ucm.do_device_logout(device='SEP001100220033', userId='bsimpson')
-if this_device_logout['success']:
-    print(this_device_logout['response'])
+ucm.do_device_logout(device='SEP001100220033', userId='bsimpson')
 ```
