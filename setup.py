@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="ciscoaxl",
-    version="0.1",
+    version="0.111",
     author="Jeff Levensailor",
     author_email="jeff@levensailor.com",
     description="Cisco CUCM AXL Library. Simple to use.",
@@ -26,7 +26,8 @@ setup(
     install_requires = [
     'zeep==3.4.0',
     'urllib3==1.23',
-    'requests==2.22.0'
+    'requests==2.22.0',
+    'six==1.12.0'
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

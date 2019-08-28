@@ -61,27 +61,22 @@ class axl(object):
         self.UUID_PATTERN = re.compile(r'^[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}$', re.IGNORECASE)
         self.client = axl_client.create_service("{http://www.cisco.com/AXLAPIService/}AXLAPIBinding", f"https://{cucm}:8443/axl/")
 
-    def get_locations(self, mini=False):
+    def get_locations(self):
         """
         Get location details
         :param mini: return a list of tuples of location details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listLocation(
-                {'name': '%'}, returnedTags={
-                    'name': '',
-                    'withinAudioBandwidth': '',
-                    'withinVideoBandwidth': '',
-                    'withinImmersiveKbits': '',
-                })[1]['return']['location']
-        if mini:
-            return [(i['name'],
-                     i['withinAudioBandwidth'],
-                     i['withinVideoBandwidth'],
-                     i['withinImmersiveKbits'],
-                     ) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listLocation(
+                    {'name': '%'}, returnedTags={
+                        'name': '',
+                        'withinAudioBandwidth': '',
+                        'withinVideoBandwidth': '',
+                        'withinImmersiveKbits': '',
+                    })['return']['location']
+        except Fault as e:
+            return e
 
     def execute_sql_query(self, query):
         """
@@ -89,24 +84,10 @@ class axl(object):
         :param query: SQL Query to execute
         :return: result dictionary
         """
-        resp = self.client.service.executeSQLQuery(query)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']
-            return result
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.executeSQLQuery(query)
+        except Fault as e:
+            return e
 
     def execute_sql_update(self, query):
         """
@@ -114,59 +95,25 @@ class axl(object):
         :param query: SQL Update to execute
         :return: result dictionary
         """
-        resp = self.client.service.executeSQLUpdate(query)
-        
+        try:
+            return self.client.executeSQLUpdate(query)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return'][0]
-            return result
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_ldap_dir(self, mini=False):
+    def get_ldap_dir(self):
         """
         Get LDAP Syncs
         :return: result dictionary
         """
-        resp = self.client.service.listLdapDirectory(
-                {'name': '%'}, returnedTags={
-                        'name': '',
-                        'ldapDn': '',
-                        'userSearchBase': '',
-                })[1]['return']['ldapDirectory']
-        return resp
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['row']
-            return result
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.listLdapDirectory(
+                    {'name': '%'}, returnedTags={
+                            'name': '',
+                            'ldapDn': '',
+                            'userSearchBase': '',
+                    })['return']['ldapDirectory']
+        except Fault as e:
+            return e
 
 
     def do_ldap_sync(self, uuid):
@@ -175,24 +122,10 @@ class axl(object):
         :param uuid: uuid
         :return: result dictionary
         """
-        resp = self.client.service.doLdapSync(uuid=uuid, sync=True)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']
-            return result
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.doLdapSync(uuid=uuid, sync=True)
+        except Fault as e:
+            return e
 
     def do_change_dnd_status(self, userID, status):
         """
@@ -201,25 +134,10 @@ class axl(object):
         :param status:
         :return: result dictionary
         """
-        resp = self.client.service.doChangeDNDStatus(userID=userID, status=status)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['row']
-            return result['response']
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.doChangeDNDStatus(userID=userID, status=status)
+        except Fault as e:
+            return e
 
     def do_device_login(self, device, userId):
         """
@@ -228,25 +146,10 @@ class axl(object):
         :param userId:
         :return: result dictionary
         """
-        resp = self.client.service.doDeviceLogin(deviceName=device, userId=userId)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['row']
-            return result['response']
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.doDeviceLogin(deviceName=device, userId=userId)
+        except Fault as e:
+            return e
 
     def do_device_logout(self, device, userId):
         """
@@ -255,25 +158,10 @@ class axl(object):
         :param userId:
         :return: result dictionary
         """
-        resp = self.client.service.doDeviceLogout(deviceName=device, userId=userId)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['row']
-            return result['response']
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result                    
+        try:
+            return self.client.doDeviceLogout(deviceName=device, userId=userId)
+        except Fault as e:
+            return e
 
     def do_device_reset(self, name='', uuid=''):
         """
@@ -283,28 +171,15 @@ class axl(object):
         :return: result dictionary
         """
         if name != '' and uuid == '':
-            resp = self.client.service.doDeviceReset(deviceName=name, isHardReset=True)
+            try:
+                return self.client.doDeviceReset(deviceName=name, isHardReset=True)
+            except Fault as e:
+                return e
         elif name == '' and uuid != '':
-            resp = self.client.service.doDeviceReset(uuid=uuid, isHardReset=True)
-            
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        print(resp[1]['return'])
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']
-            return result['response']
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+            try:
+                return self.client.doDeviceReset(uuid=uuid, isHardReset=True)
+            except Fault as e:
+                return e
 
     def reset_sip_trunk(self, name='', uuid=''):
         """
@@ -314,28 +189,15 @@ class axl(object):
         :return: result dictionary
         """
         if name != '' and uuid == '':
-            resp = self.client.service.resetSipTrunk(name=name)
+            try:
+                return self.client.resetSipTrunk(name=name)
+            except Fault as e:
+                return e
         elif name == '' and uuid != '':
-            resp = self.client.service.resetSipTrunk(uuid=uuid)
-            
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        print(resp[1]['return'])
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']
-            return result['response']
-        elif resp[0] == 500 and 'syntax' in resp[1].faultstring:
-            result['response'] = 'Syntax error'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+            try:
+                return self.client.resetSipTrunk(uuid=uuid)
+            except Fault as e:
+                return e
 
     def get_location(self, **args):
         """
@@ -344,26 +206,10 @@ class axl(object):
         :param uuid: location uuid
         :return: result dictionary
         """
-        resp = self.client.service.getLocation(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['location']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Location: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getLocation(**args)
+        except Fault as e:
+            return e
 
     def add_location(self,
                      name,
@@ -372,7 +218,6 @@ class axl(object):
                      within_audio_bw=512,
                      within_video_bw=-1,
                      within_immersive_kbits=-1):
-
         """
         Add a location
         :param name: Name of the location to add
@@ -385,42 +230,26 @@ class axl(object):
         :return: result dictionary
         """
         if int(self.cucm_version) >= 10:
-
-            resp = self.client.service.addLocation({
-                'name': name,
-                # CUCM 10.6
-                'withinAudioBandwidth': within_audio_bw,
-                'withinVideoBandwidth': within_video_bw,
-                'withinImmersiveKbits': within_immersive_kbits,
-            })
-
+            try:
+                return self.client.addLocation({
+                    'name': name,
+                    # CUCM 10.6
+                    'withinAudioBandwidth': within_audio_bw,
+                    'withinVideoBandwidth': within_video_bw,
+                    'withinImmersiveKbits': within_immersive_kbits,
+                })
+            except Fault as e:
+                return e
         else:
-
-            resp = self.client.service.addLocation({
-                'name': name,
-                # CUCM 8.6
-                'kbits': kbits,
-                'videoKbits': video_kbits,
-            })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Location successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Location already exists'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Location could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+            try:
+                return self.client.addLocation({
+                    'name': name,
+                    # CUCM 8.6
+                    'kbits': kbits,
+                    'videoKbits': video_kbits,
+                })
+            except Fault as e:
+                return e
 
     def delete_location(self, **args):
         """
@@ -429,26 +258,10 @@ class axl(object):
         :param uuid: The uuid of the location to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeLocation(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Location successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Location: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Location could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeLocation(**args)
+        except Fault as e:
+            return e
 
     def update_location(self, **args):
         """
@@ -462,40 +275,21 @@ class axl(object):
         :param betweenLocations:
         :return:
         """
-        
-        resp = self.client.service.updateLocation(**args)
+        try:
+            return self.client.updateLocation(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Location successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'Location: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Location could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_regions(self, mini=False):
+    def get_regions(self):
         """
         Get region details
         :param mini: return a list of tuples of region details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listRegion(
-                {'name': '%'}, returnedTags={'_uuid': '', 'name': ''})[1]['return']['region']
-        if mini:
-            return [(i['_uuid'][1:-1]) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listRegion({'name': '%'}, returnedTags={'_uuid': '', 'name': ''})[1]['return']['region']
+        except Fault as e:
+            return e
 
     def get_region(self, **args):
         """
@@ -503,26 +297,10 @@ class axl(object):
         :param name: Region name
         :return: result dictionary
         """
-        resp = self.client.service.getRegion(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['region']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Region: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getRegion(**args)
+        except Fault as e:
+            return e
 
     def add_region(self, region):
         """
@@ -530,28 +308,10 @@ class axl(object):
         :param region: Name of the region to add
         :return: result dictionary
         """
-        resp = self.client.service.addRegion({
-            'name': region
-        })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Region successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Region already exists'.format(region)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Region could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addRegion({'name': region})
+        except Fault as e:
+            return e
 
     def update_region(self, name='', uuid='', moh_region=''):
         """
@@ -562,7 +322,7 @@ class axl(object):
         :return:
         """
         # Get all Regions
-        all_regions = self.client.service.listRegion({'name': '%'}, returnedTags={'name': ''})
+        all_regions = self.client.listRegion({'name': '%'}, returnedTags={'name': ''})
 
         # Make list of region names
         region_names = [str(i['name']) for i in all_regions[1]['return']['region']]
@@ -602,30 +362,15 @@ class axl(object):
                 })
 
         if name != '' and uuid == '':
-            resp = self.client.service.updateRegion(name=name,
-                                                    relatedRegions={'relatedRegion': region_list})
+            try:
+                return self.client.updateRegion(name=name,relatedRegions={'relatedRegion': region_list})
+            except Fault as e:
+                return e
         elif name == '' and uuid != '':
-            resp = self.client.service.updateRegion(uuid=uuid,
-                                                    relatedRegions={'relatedRegion': region_list})            
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Region successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(name) in resp[1].faultstring:
-            result['response'] = 'Region: {0} not found'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Region could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+            try:
+                return self.client.updateRegion(uuid=uuid,relatedRegions={'relatedRegion': region_list})
+            except Fault as e:
+                return e
 
     def delete_region(self, **args):
         """
@@ -634,39 +379,21 @@ class axl(object):
         :param uuid: The uuid of the region to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeRegion(**args)
+        try:
+            return self.client.removeRegion(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Region successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Region: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Region could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_srsts(self, mini=False):
+    def get_srsts(self):
         """
         Get all SRST details
         :param mini: return a list of tuples of SRST details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listSrst(
-                {'name': '%'}, returnedTags={'_uuid': ''})[1]['return']['srst']
-        if mini:
-            return [(i['_uuid'][1:-1]) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listSrst({'name': '%'}, returnedTags={'_uuid': ''})['return']['srst']
+        except Fault as e:
+            return e
 
     def get_srst(self, srst):
         """
@@ -674,26 +401,10 @@ class axl(object):
         :param srst: SRST name
         :return: result dictionary
         """
-        resp = self.client.service.getSrst(name=srst)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['srst']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'SRST: {0} not found'.format(srst)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getSrst(name=srst)
+        except Fault as e:
+            return e
 
     def add_srst(self, srst, ip_address, port=2000, sip_port=5060):
         """
@@ -704,31 +415,15 @@ class axl(object):
         :param sip_port: SIP port
         :return: result dictionary
         """
-        resp = self.client.service.addSrst({
+        try:
+            return self.client.addSrst({
             'name': srst,
             'port': port,
             'ipAddress': ip_address,
             'SipPort': sip_port,
         })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'SRST successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'SRST already exists'.format(srst)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'SRST could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        except Fault as e:
+            return e
 
     def delete_srst(self, srst):
         """
@@ -736,34 +431,19 @@ class axl(object):
         :param srst: The name of the SRST to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeSrst(name=srst)
+        try:
+            return self.client.removeSrst(name=srst)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'SRST successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'SRST: {0} not found'.format(srst)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'SRST could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_device_pools(self, mini=False):
+    def get_device_pools(self):
         """
         Get a dictionary of device pools
         :param mini: return a list of tuples of device pool info
         :return: a list of dictionary's of device pools information
         """
-        resp = self.client.service.listDevicePool(
+        try:
+            return self.client.listDevicePool(
                 {'name': '%'}, returnedTags={
                     'name': '',
                     'dateTimeSettingName': '',
@@ -772,17 +452,9 @@ class axl(object):
                     'regionName': '',
                     'srstName': '',
                     # 'localRouteGroup': [0],
-                })[1]['return']['devicePool']
-        if mini:
-            return [(i['name'],
-                     i['dateTimeSettingName']['value'],
-                     i['callManagerGroupName']['value'],
-                     i['regionName']['value'],
-                     i['srstName']['value'],
-                     # i['localRouteGroup'][0]['value'],
-                     ) for i in resp]
-        else:
-            return resp
+                })['return']['devicePool']
+        except Fault as e:
+            return e
 
     def get_device_pool(self, **args):
         """
@@ -790,26 +462,10 @@ class axl(object):
         :param device_pool: device pool name
         :return: result dictionary
         """
-        resp = self.client.service.getDevicePool(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['devicePool']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Device pool: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getDevicePool(**args)
+        except Fault as e:
+            return e
 
     def add_device_pool(self,
                         device_pool,
@@ -835,36 +491,20 @@ class axl(object):
         :param network_locale: Network locale name
         :return: result dictionary
         """
-        resp = self.client.service.addDevicePool({
-            'name': device_pool,
-            'dateTimeSettingName': date_time_group,  # update to state timezone
-            'regionName': region,
-            'locationName': location,
-            'localRouteGroup': {'name': 'Standard Local Route Group', 'value': route_group},
-            'mediaResourceListName': media_resource_group_list,
-            'srstName': srst,
-            'callManagerGroupName': cm_group,
-            'networkLocale': network_locale,
-        })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Device pool successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Device pool already exists'.format(srst)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Device pool could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addDevicePool({
+                'name': device_pool,
+                'dateTimeSettingName': date_time_group,  # update to state timezone
+                'regionName': region,
+                'locationName': location,
+                'localRouteGroup': {'name': 'Standard Local Route Group', 'value': route_group},
+                'mediaResourceListName': media_resource_group_list,
+                'srstName': srst,
+                'callManagerGroupName': cm_group,
+                'networkLocale': network_locale,
+            })
+        except Fault as e:
+            return e
 
     def update_device_pool(self, **args):
         """
@@ -884,36 +524,10 @@ class axl(object):
         :param media_resource_group_list:
         :return:
         """
-
-        
-        resp = self.client.service.updateDevicePool(**args)
-        # print(resp)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Device pool successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'Device pool: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'Route group: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'Media resource group list: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Device pool could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.updateDevicePool(**args)
+        except Fault as e:
+            return e
 
     def delete_device_pool(self, **args):
         """
@@ -921,45 +535,26 @@ class axl(object):
         :param device_pool: The name of the Device pool to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeDevicePool(**args)
+        try:
+            return self.client.removeDevicePool(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Device pool successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Device pool: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Device pool could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_conference_bridges(self, mini=False):
+    def get_conference_bridges(self):
         """
         Get conference bridges
         :param mini: List of tuples of conference bridge details
         :return: results dictionary
         """
-        resp = self.client.service.listConferenceBridge(
+        try:
+            return self.client.listConferenceBridge(
                 {'name': '%'},
                 returnedTags={'name': '',
                               'description': '',
                               'devicePoolName': '',
-                              'locationName': ''})[1]['return']['conferenceBridge']
-
-        if mini:
-            return [(i['name'], i['description'], i['devicePoolName']['value'], i['locationName']['value'])
-                    for i in resp]
-        else:
-            return resp
+                              'locationName': ''})['return']['conferenceBridge']
+        except Fault as e:
+            return e
 
     def get_conference_bridge(self, conference_bridge):
         """
@@ -967,26 +562,10 @@ class axl(object):
         :param conference_bridge: conference bridge name
         :return: result dictionary
         """
-        resp = self.client.service.getConferenceBridge(name=conference_bridge)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['conferenceBridge']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Conference bridge: {0} not found'.format(conference_bridge)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getConferenceBridge(name=conference_bridge)
+        except Fault as e:
+            return e
 
     def add_conference_bridge(self,
                               conference_bridge,
@@ -1005,33 +584,17 @@ class axl(object):
         :param security_profile: Conference bridge security type
         :return: result dictionary
         """
-        resp = self.client.service.addConferenceBridge({
-            'name': conference_bridge,
-            'description': description,
-            'devicePoolName': device_pool,
-            'locationName': location,
-            'product': product,
-            'securityProfileName': security_profile
-        })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Conference bridge successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Conference bridge already exists'.format(conference_bridge)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Conference bridge could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addConferenceBridge({
+                'name': conference_bridge,
+                'description': description,
+                'devicePoolName': device_pool,
+                'locationName': location,
+                'product': product,
+                'securityProfileName': security_profile
+            })
+        except Fault as e:
+            return e
 
     def delete_conference_bridge(self, conference_bridge):
         """
@@ -1039,43 +602,25 @@ class axl(object):
         :param conference_bridge: The name of the Conference bridge to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeConferenceBridge(name=conference_bridge)
+        try:
+            return self.client.removeConferenceBridge(name=conference_bridge)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Conference bridge successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Conference bridge: {0} not found'.format(conference_bridge)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Conference bridge could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_transcoders(self, mini=False):
+    def get_transcoders(self):
         """
         Get transcoders
         :param mini: List of tuples of transcoder details
         :return: results dictionary
         """
-        resp = self.client.service.listTranscoder(
+        try:
+            return self.client.listTranscoder(
                 {'name': '%'},
                 returnedTags={'name': '',
                               'description': '',
-                              'devicePoolName': ''})[1]['return']['transcoder']
-
-        if mini:
-            return [(i['name'], i['description'], i['devicePoolName']['value']) for i in resp]
-        else:
-            return resp
+                              'devicePoolName': ''})['return']['transcoder']
+        except Fault as e:
+            return e
 
     def get_transcoder(self, transcoder):
         """
@@ -1083,26 +628,10 @@ class axl(object):
         :param transcoder: conference bridge name
         :return: result dictionary
         """
-        resp = self.client.service.getTranscoder(name=transcoder)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['transcoder']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Transcoder: {0} not found'.format(transcoder)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getTranscoder(name=transcoder)
+        except Fault as e:
+            return e
 
     def add_transcoder(self,
                        transcoder,
@@ -1117,31 +646,15 @@ class axl(object):
         :param product: Trancoder product
         :return: result dictionary
         """
-        resp = self.client.service.addTranscoder({
-            'name': transcoder,
-            'description': description,
-            'devicePoolName': device_pool,
-            'product': product,
-        })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Conference bridge successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Conference bridge already exists'.format(transcoder)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Conference bridge could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addTranscoder({
+                'name': transcoder,
+                'description': description,
+                'devicePoolName': device_pool,
+                'product': product,
+            })
+        except Fault as e:
+            return e
 
     def delete_transcoder(self, transcoder):
         """
@@ -1149,49 +662,27 @@ class axl(object):
         :param transcoder: The name of the Transcoder to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeTranscoder(name=transcoder)
+        try:
+            return self.client.removeTranscoder(name=transcoder)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Transcoder successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Transcoder: {0} not found'.format(transcoder)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Transcoder could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_h323_gateways(self, mini=False):
+    def get_h323_gateways(self):
         """
         Get H323 Gateways
         :param mini: List of tuples of H323 Gateway details
         :return: results dictionary
         """
-        resp = self.client.service.listH323Gateway(
+        try:
+            return self.client.listH323Gateway(
                 {'name': '%'},
                 returnedTags={'name': '',
                               'description': '',
                               'devicePoolName': '',
                               'locationName': '',
-                              'sigDigits': ''})[1]['return']['h323Gateway']
-
-        if mini:
-            return [(i['name'],
-                     i['description'],
-                     i['devicePoolName']['value'],
-                     i['locationName']['value'],
-                     i['sigDigits']['value']) for i in resp]
-        else:
-            return resp
+                              'sigDigits': ''})['return']['h323Gateway']
+        except Fault as e:
+            return e
 
     def get_h323_gateway(self, h323_gateway):
         """
@@ -1199,26 +690,10 @@ class axl(object):
         :param h323_gateway: H323 Gateway name
         :return: result dictionary
         """
-        resp = self.client.service.getH323Gateway(name=h323_gateway)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['h323Gateway']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'H323 Gateway: {0} not found'.format(h323_gateway)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getH323Gateway(name=h323_gateway)
+        except Fault as e:
+            return e
 
     def add_h323_gateway(self,
                          h323_gateway,
@@ -1285,57 +760,41 @@ class axl(object):
         :param clng_party_sub_trans_css:
         :return:
         """
-        resp = self.client.service.addH323Gateway({
-            'name': h323_gateway,
-            'description': description,
-            'product': product,
-            'protocol': protocol,
-            'protocolSide': protocol_side,
-            'callingSearchSpaceName': css,
-            'automatedAlternateRoutingCssName': aar_css,
-            'devicePoolName': device_pool,
-            'locationName': location,
-            'mediaResourceListName': media_resource_group_list,
-            'aarNeighborhoodName': aar_neighborhood,
-            'pstnAccess': pstn_access,
-            'sigDigits': sig_digits,
-            'prefixDn': prefix_dn,
-            'redirectInboundNumberIe': redirect_in_num_ie,
-            'redirectOutboundNumberIe': redirect_out_num_ie,
-            'calledPartyIeNumberType': cld_party_ie_num_type,
-            'callingPartyIeNumberType': clng_party_ie_num_type,
-            'callingPartyNationalPrefix': clng_party_nat_pre,
-            'callingPartyInternationalPrefix': clng_party_inat_prefix,
-            'callingPartyUnknownPrefix': clng_party_unknown_prefix,
-            'callingPartySubscriberPrefix': clng_party_sub_prefix,
-            'callingPartyNationalStripDigits': clng_party_nat_strip_digits,
-            'callingPartyInternationalStripDigits': clng_party_inat_strip_digits,
-            'callingPartyUnknownStripDigits': clng_party_unknown_strip_digits,
-            'callingPartySubscriberStripDigits': clng_party_sub_strip_digits,
-            'callingPartyNationalTransformationCssName': clng_party_nat_trans_css,
-            'callingPartyInternationalTransformationCssName': clng_party_inat_trans_css,
-            'callingPartyUnknownTransformationCssName': clng_party_unknown_trans_css,
-            'callingPartySubscriberTransformationCssName': clng_party_sub_trans_css
-        })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'H323 gateway successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'H323 gateway already exists'.format(h323_gateway)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'H323 gateway could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addH323Gateway({
+                'name': h323_gateway,
+                'description': description,
+                'product': product,
+                'protocol': protocol,
+                'protocolSide': protocol_side,
+                'callingSearchSpaceName': css,
+                'automatedAlternateRoutingCssName': aar_css,
+                'devicePoolName': device_pool,
+                'locationName': location,
+                'mediaResourceListName': media_resource_group_list,
+                'aarNeighborhoodName': aar_neighborhood,
+                'pstnAccess': pstn_access,
+                'sigDigits': sig_digits,
+                'prefixDn': prefix_dn,
+                'redirectInboundNumberIe': redirect_in_num_ie,
+                'redirectOutboundNumberIe': redirect_out_num_ie,
+                'calledPartyIeNumberType': cld_party_ie_num_type,
+                'callingPartyIeNumberType': clng_party_ie_num_type,
+                'callingPartyNationalPrefix': clng_party_nat_pre,
+                'callingPartyInternationalPrefix': clng_party_inat_prefix,
+                'callingPartyUnknownPrefix': clng_party_unknown_prefix,
+                'callingPartySubscriberPrefix': clng_party_sub_prefix,
+                'callingPartyNationalStripDigits': clng_party_nat_strip_digits,
+                'callingPartyInternationalStripDigits': clng_party_inat_strip_digits,
+                'callingPartyUnknownStripDigits': clng_party_unknown_strip_digits,
+                'callingPartySubscriberStripDigits': clng_party_sub_strip_digits,
+                'callingPartyNationalTransformationCssName': clng_party_nat_trans_css,
+                'callingPartyInternationalTransformationCssName': clng_party_inat_trans_css,
+                'callingPartyUnknownTransformationCssName': clng_party_unknown_trans_css,
+                'callingPartySubscriberTransformationCssName': clng_party_sub_trans_css
+            })
+        except Fault as e:
+            return e
 
     def update_h323_gateway_mrgl(self, h323_gateway, media_resource_group_list):
         """
@@ -1344,33 +803,13 @@ class axl(object):
         :param media_resource_group_list:
         :return:
         """
-        resp = self.client.service.updateH323Gateway(
+        try:
+            return self.client.updateH323Gateway(
                 name=h323_gateway,
                 mediaResourceListName=media_resource_group_list,
         )
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'H323 gateway successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(h323_gateway) in resp[1].faultstring:
-            result['response'] = 'H323 gateway: {0} not found'.format(h323_gateway)
-            result['error'] = resp[1].faultstring
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(media_resource_group_list) in resp[1].faultstring:
-            result['response'] = 'Media resource group list: {0} not found'.format(media_resource_group_list)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'H323 gateway could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+        except Fault as e:
+            return e
 
     def delete_h323_gateway(self, h323_gateway):
         """
@@ -1378,39 +817,22 @@ class axl(object):
         :param h323_gateway: The name of the H323 gateway to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeH323Gateway(name=h323_gateway)
+        try:
+            return self.client.removeH323Gateway(name=h323_gateway)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'H323 gateway successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'H323 gateway: {0} not found'.format(h323_gateway)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'H323 gateway could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_route_groups(self, mini=False):
+    def get_route_groups(self):
         """
         Get route groups
         :param mini: return a list of tuples of route group details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listRouteGroup(
-                {'name': '%'}, returnedTags={'name': '', 'distributionAlgorithm': ''})[1]['return']['routeGroup']
-        if mini:
-            return [(i['name'], i['distributionAlgorithm']) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listRouteGroup(
+                {'name': '%'}, returnedTags={'name': '', 'distributionAlgorithm': ''})['return']['routeGroup']
+        except Fault as e:
+            return e
 
     def get_route_group(self, **args):
         """
@@ -1419,26 +841,10 @@ class axl(object):
         :param uuid: route group uuid
         :return: result dictionary
         """
-        resp = self.client.service.getRouteGroup(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['routeGroup']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route group: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getRouteGroup(**args)
+        except Fault as e:
+            return e
 
     def add_route_group(self,
                         name,
@@ -1463,26 +869,10 @@ class axl(object):
                 'port': 0
             }) for i in members]
 
-        resp = self.client.service.addRouteGroup(req)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route group successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Route group already exists'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route group could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addRouteGroup(req)
+        except Fault as e:
+            return e
 
     def delete_route_group(self, **args):
         """
@@ -1490,26 +880,10 @@ class axl(object):
         :param name: The name of the Route group to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeRouteGroup(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route group successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route group: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route group could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeRouteGroup(**args)
+        except Fault as e:
+            return e
 
     def update_route_group(self, **args):
         """
@@ -1519,40 +893,22 @@ class axl(object):
         :param members: A list of devices to add (must already exist DUH!)        
         :return: result dictionary
         """
-        resp = self.client.service.updateRouteGroup(**args)
+        try:
+            return self.client.updateRouteGroup(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route group successfully updated'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route group: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route group could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-
-    def get_route_lists(self, mini=False):
+    def get_route_lists(self):
         """
         Get route lists
         :param mini: return a list of tuples of route list details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listRouteList(
-                {'name': '%'}, returnedTags={'name': '', 'description': ''})[1]['return']['routeList']
-        if mini:
-            return [(i['name'], i['description']) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listRouteList(
+                {'name': '%'}, returnedTags={'name': '', 'description': ''})['return']['routeList']
+        except Fault as e:
+            return e
 
     def get_route_list(self, **args):
         """
@@ -1561,26 +917,10 @@ class axl(object):
         :param uuid: route list uuid
         :return: result dictionary
         """
-        resp = self.client.service.getRouteList(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['routeList']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route list: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getRouteList(**args)
+        except Fault as e:
+            return e
 
     def add_route_list(self,
                        name,
@@ -1625,26 +965,10 @@ class axl(object):
                 'calledPartyNumberType': 'Cisco CallManager',
             }) for i in members]
 
-        resp = self.client.service.addRouteList(req)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route list successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Route list already exists'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route list could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addRouteList(req)
+        except Fault as e:
+            return e
 
     def delete_route_list(self, **args):
         """
@@ -1653,26 +977,10 @@ class axl(object):
         :param uuid: The uuid of the Route list to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeRouteList(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route list successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route list: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route list could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeRouteList(**args)
+        except Fault as e:
+            return e
 
     def update_route_list(self, **args):
         """
@@ -1686,40 +994,23 @@ class axl(object):
         :param members: A list of route groups
         :return: result dictionary
         """
-        resp = self.client.service.updateRouteList(**args)
+        try:
+            return self.client.updateRouteList(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route list successfully updated'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route list: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route list could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_partitions(self, mini=False):
+    def get_partitions(self):
         """
         Get partitions
         :param mini: return a list of tuples of partition details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listRoutePartition(
+        try:
+            return self.client.listRoutePartition(
                 {'name': '%'}, returnedTags={
-                    'name': '', 'description': ''})[1]['return']['routePartition']
-        if mini:
-            return [(i['name'], i['description']) for i in resp]
-        else:
-            return resp
+                    'name': '', 'description': ''})['return']['routePartition']
+        except Fault as e:
+            return e
 
     def get_partition(self, **args):
         """
@@ -1728,26 +1019,10 @@ class axl(object):
         :param uuid: UUID name
         :return: result dictionary
         """
-        resp = self.client.service.getRoutePartition(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['routePartition']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route partition: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getRoutePartition(**args)
+        except Fault as e:
+            return e
 
     def add_partition(self,
                       name,
@@ -1760,30 +1035,14 @@ class axl(object):
         :param time_schedule_name: Name of the time schedule to use
         :return: result dictionary
         """
-        resp = self.client.service.addRoutePartition({
-            'name': name,
-            'description': description,
-            'timeScheduleIdName': time_schedule_name,
-        })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Partition successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Partition already exists'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Partition could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addRoutePartition({
+                'name': name,
+                'description': description,
+                'timeScheduleIdName': time_schedule_name,
+            })
+        except Fault as e:
+            return e
 
     def delete_partition(self, **args):
         """
@@ -1791,26 +1050,10 @@ class axl(object):
         :param partition: The name of the partition to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeRoutePartition(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Partition successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Partition:not found'
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Partition could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeRoutePartition(**args)
+        except Fault as e:
+            return e
 
     def update_partition(self, **args):
         """
@@ -1824,39 +1067,22 @@ class axl(object):
         :param timeZone:
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        resp = self.client.service.updateRoutePartition(**args)
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Partition successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'Partition: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Partition could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.updateRoutePartition(**args)
+        except Fault as e:
+            return e
 
 
-    def get_calling_search_spaces(self, mini=False):
+    def get_calling_search_spaces(self):
         """
         Get calling search spaces
         :param mini: return a list of tuples of css details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listCss(
-                {'name': '%'}, returnedTags={
-                    'name': '', 'description': ''})[1]['return']['css']
-        if mini:
-            return [(i['name'], i['description']) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listCss({'name': '%'}, returnedTags={'name': '', 'description': ''})['return']['css']
+        except Fault as e:
+            return e
 
     def get_calling_search_space(self, **css):
         """
@@ -1865,26 +1091,10 @@ class axl(object):
         :param uuid: Calling search space uuid
         :return: result dictionary
         """
-        resp = self.client.service.getCss(**css)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['css']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Calling search space: {0} not found'.format(**css)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getCss(**css)
+        except Fault as e:
+            return e
 
     def add_calling_search_space(self,
                                  name,
@@ -1902,33 +1112,16 @@ class axl(object):
             'description': description,
             'members': {'member': []},
         }
-
         if members:
             [req['members']['member'].append({
                 'routePartitionName': i,
                 'index': members.index(i) + 1,
             }) for i in members]
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        resp = self.client.service.addCss(req)
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Calling search space successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Calling search space already exists'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Calling search space could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        
+        try:
+            return self.client.addCss(req)
+        except Fault as e:
+            return e
 
     def delete_calling_search_space(self, **args):
         """
@@ -1936,26 +1129,10 @@ class axl(object):
         :param calling_search_space: The name of the partition to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeCss(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Calling search space successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Calling search space: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Calling search space could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeCss(**args)
+        except Fault as e:
+            return e
 
     def update_calling_search_space(self, **args):
         """
@@ -1969,39 +1146,22 @@ class axl(object):
         :param addMembers:
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        resp = self.client.service.updateCss(**args)
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'CSS successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'CSS: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'CSS could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.updateCss(**args)
+        except Fault as e:
+            return e
 
-
-    def get_route_patterns(self, mini=False):
+    def get_route_patterns(self):
         """
         Get route patterns
         :param mini: return a list of tuples of route pattern details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listRoutePattern(
-                {'pattern': '%'}, returnedTags={
-                    'pattern': '', 'description': '', '_uuid': ''})[1]['return']['routePattern']
-        if mini:
-            return [(i['pattern'], i['description'], i['_uuid'][1:-1]) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listRoutePattern({'pattern': '%'}, 
+            returnedTags={'pattern': '', 'description': '', '_uuid': ''})['return']['routePattern']
+        except Fault as e:
+            return e
 
     def get_route_pattern(self, pattern='', uuid=''):
         """
@@ -2010,51 +1170,24 @@ class axl(object):
         :param uuid: route pattern uuid
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
         if uuid == '' and pattern != '':
         # Cant get pattern directly so get UUID first
-            uuid = self.client.service.listRoutePattern({'pattern': pattern}, returnedTags={'_uuid': ''})
+            try:
+                uuid = self.client.listRoutePattern({'pattern': pattern}, returnedTags={'uuid': ''})
+            except Fault as e:
+                return e
+            if 'return' in uuid and uuid['return'] is not None:
+                uuid = uuid['return']['routePattern'][0]['uuid']
+                try:
+                    return self.client.getRoutePattern(uuid=uuid)
+                except Fault as e:
+                    return e
 
-            if uuid[0] == 200 and uuid[1]['return'] == '':
-                result['response'] = 'Route pattern: {0} not found'.format(pattern)
-                result['error'] = 'Route pattern: {0} not found'.format(pattern)
-                return result
-
-            else:
-                resp = self.client.service.getRoutePattern(uuid=uuid[1]['return']['routePattern'][0]['_uuid'][1:-1])
-
-                if resp[0] == 200:
-                    result['success'] = True
-                    result['response'] = resp[1]['return']['routePattern']
-                    return result
-                elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-                    result['response'] = 'Route pattern: {0} not found'.format(pattern)
-                    result['error'] = resp[1].faultstring
-                    return result
-                else:
-                    result['response'] = 'Unknown error'
-                    result['error'] = resp[1].faultstring
-                    return result
         elif uuid != '' and pattern == '':
-                resp = self.client.service.getRoutePattern(uuid=uuid)
-
-                if resp[0] == 200:
-                    result['success'] = True
-                    result['response'] = resp[1]['return']['routePattern']
-                    return result
-                elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-                    result['response'] = 'Route pattern: {0} not found'.format(uuid)
-                    result['error'] = resp[1].faultstring
-                    return result
-                else:
-                    result['response'] = 'Unknown error'
-                    result['error'] = resp[1].faultstring
-                    return result           
+            try:
+                return self.client.getRoutePattern(uuid=uuid)
+            except Fault as e:
+                return e
 
     def add_route_pattern(self,
                           pattern,
@@ -2075,11 +1208,6 @@ class axl(object):
         :param partition: Route pattern partition
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
 
         req = {
             'pattern': pattern,
@@ -2091,38 +1219,19 @@ class axl(object):
         }
 
         if gateway == '' and route_list == '':
-            result['response'] = 'Either a gateway OR route list, is a required parameter'
-            result['error'] = 'Enter either a gateway OR route list, not both'
-            return result
+            return 'Either a gateway OR route list, is a required parameter'
+
         elif gateway != '' and route_list != '':
-            result['response'] = 'Enter a gateway OR route list, not both'
-            result['error'] = 'Destination can be a gateway OR route list, not both'
-            return result
+            return 'Enter a gateway OR route list, not both'
+
         elif gateway != '':
             req['destination'].update({'gatewayName': gateway})
-            destination = gateway
         elif route_list != '':
             req['destination'].update({'routeListName': route_list})
-            destination = route_list
-
-        resp = self.client.service.addRoutePattern(req)
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Pattern successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Pattern already exists'.format(pattern)
-            result['error'] = resp[1].faultstring
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Gateway or route list: {0} not found'.format(destination)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Pattern could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addRoutePattern(req)
+        except Fault as e:
+            return e
 
     def delete_route_pattern(self, **args):
         """
@@ -2132,26 +1241,10 @@ class axl(object):
         :param partition: The name of the partition
         :return: result dictionary
         """
-        resp = self.client.service.removeRoutePattern(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route Pattern successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route Pattern could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeRoutePattern(**args)
+        except Fault as e:
+            return e
 
     def update_route_pattern(self, **args):
         """
@@ -2166,40 +1259,22 @@ class axl(object):
         :param partition: Route pattern partition
         :return: result dictionary
         """
-        resp = self.client.service.updateRoutePattern(**args)
+        try:
+            return self.client.updateRoutePattern(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Route Pattern successfully updated'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Route Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Route Pattern could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_media_resource_groups(self, mini=False):
+    def get_media_resource_groups(self):
         """
         Get media resource groups
         :param mini: return a list of tuples of route pattern details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listMediaResourceGroup(
-                {'name': '%'}, returnedTags={
-                    'name': '', 'description': ''})[1]['return']['mediaResourceGroup']
-        if mini:
-            return [(i['name'], i['description']) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listMediaResourceGroup({'name': '%'}, 
+            returnedTags={'name': '', 'description': ''})['return']['mediaResourceGroup']
+        except Fault as e:
+            return e
 
     def get_media_resource_group(self, media_resource_group):
         """
@@ -2207,26 +1282,10 @@ class axl(object):
         :param media_resource_group: Media resource group name
         :return: result dictionary
         """
-        resp = self.client.service.getMediaResourceGroup(name=media_resource_group)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['mediaResourceGroup']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Media resource group: {0} not found'.format(media_resource_group)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getMediaResourceGroup(name=media_resource_group)
+        except Fault as e:
+            return e
 
     def add_media_resource_group(self,
                                  media_resource_group,
@@ -2248,29 +1307,13 @@ class axl(object):
             'members': {'member': []}
         }
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
         if members:
             [req['members']['member'].append({'deviceName': i}) for i in members]
 
-        resp = self.client.service.addMediaResourceGroup(req)
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Media resource group successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Media resource group already exists'.format(media_resource_group)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Media resource group could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addMediaResourceGroup(req)
+        except Fault as e:
+            return e
 
     def delete_media_resource_group(self, media_resource_group):
         """
@@ -2278,40 +1321,22 @@ class axl(object):
         :param media_resource_group: The name of the media resource group to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeMediaResourceGroup(name=media_resource_group)
+        try:
+            return self.client.removeMediaResourceGroup(name=media_resource_group)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Media resource group successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Media resource group: {0} not found'.format(media_resource_group)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Media resource group could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_media_resource_group_lists(self, mini=False):
+    def get_media_resource_group_lists(self):
         """
         Get media resource groups
         :param mini: return a list of tuples of route pattern details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listMediaResourceList(
-                {'name': '%'}, returnedTags={
-                    'name': ''})[1]['return']['mediaResourceList']
-        if mini:
-            return [i['name'] for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listMediaResourceList({'name': '%'}, 
+            returnedTags={'name': ''})['return']['mediaResourceList']
+        except Fault as e:
+            return e
 
     def get_media_resource_group_list(self, media_resource_group_list):
         """
@@ -2319,26 +1344,10 @@ class axl(object):
         :param media_resource_group_list: Media resource group list name
         :return: result dictionary
         """
-        resp = self.client.service.getMediaResourceList(name=media_resource_group_list)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['mediaResourceList']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Media resource group list: {0} not found'.format(media_resource_group_list)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getMediaResourceList(name=media_resource_group_list)
+        except Fault as e:
+            return e
 
     def add_media_resource_group_list(self, media_resource_group_list, members=[]):
         """
@@ -2352,30 +1361,13 @@ class axl(object):
             'members': {'member': []}
         }
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
         if members:
             [req['members']['member'].append({'order': members.index(i),
                                               'mediaResourceGroupName': i}) for i in members]
-
-        resp = self.client.service.addMediaResourceList(req)
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Media resource group list successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Media resource group list already exists'.format(media_resource_group_list)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Media resource group list could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addMediaResourceList(req)
+        except Fault as e:
+            return e
 
     def delete_media_resource_group_list(self, media_resource_group_list):
         """
@@ -2383,40 +1375,22 @@ class axl(object):
         :param media_resource_group_list: The name of the media resource group list to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeMediaResourceList(name=media_resource_group_list)
+        try:
+            return self.client.removeMediaResourceList(name=media_resource_group_list)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Media resource group list successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Media resource group list: {0} not found'.format(media_resource_group_list)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Media resource group list could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def get_directory_numbers(self, mini=False):
+    def get_directory_numbers(self):
         """
         Get directory numbers
         :param mini: return a list of tuples of directory number details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listLine(
-                {'pattern': '%'}, returnedTags={
-                    'pattern': '', 'description': '', 'routePartitionName': ''})[1]['return']['line']
-        if mini:
-            return [(i['pattern'], i['description'], i['routePartitionName']) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listLine({'pattern': '%'}, 
+            returnedTags={'pattern': '', 'description': '', 'routePartitionName': ''})['return']['line']
+        except Fault as e:
+            return e
 
     def get_directory_number(self, **args):
         """
@@ -2425,25 +1399,10 @@ class axl(object):
         :param partition:
         :return: result dictionary
         """
-        resp = self.client.service.getLine(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['line']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Directory Number: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getLine(**args)
+        except Fault as e:
+            return e
 
     def add_directory_number(self,
                              pattern,
@@ -2478,87 +1437,70 @@ class axl(object):
         :param forward_to_vm: Forward to voice mail checkbox
         :return: result dictionary
         """
-
-        resp = self.client.service.addLine({
-            'pattern': pattern,
-            'routePartitionName': partition,
-            'description': description,
-            'alertingName': alerting_name,
-            'asciiAlertingName': ascii_alerting_name,
-            'voiceMailProfileName': vm_profile_name,
-            'shareLineAppearanceCssName': shared_line_css,
-            'aarNeighborhoodName': aar_neighbourhood,
-            'aarDestinationMask': aar_destination_mask,
-            'callForwardAll': {
-                'forwardToVoiceMail': forward_all_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': forward_all_destination,
-            },
-            'callForwardBusy': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardBusyInt': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardNoAnswer': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardNoAnswerInt': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardNoCoverage': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardNoCoverageInt': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardOnFailure': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardNotRegistered': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
-            'callForwardNotRegisteredInt': {
-                'forwardToVoiceMail': forward_to_vm,
-                'callingSearchSpaceName': call_forward_css,
-                'destination': call_forward_destination,
-            },
+        try:
+            return self.client.addLine({
+                'pattern': pattern,
+                'routePartitionName': partition,
+                'description': description,
+                'alertingName': alerting_name,
+                'asciiAlertingName': ascii_alerting_name,
+                'voiceMailProfileName': vm_profile_name,
+                'shareLineAppearanceCssName': shared_line_css,
+                'aarNeighborhoodName': aar_neighbourhood,
+                'aarDestinationMask': aar_destination_mask,
+                'callForwardAll': {
+                    'forwardToVoiceMail': forward_all_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': forward_all_destination,
+                },
+                'callForwardBusy': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardBusyInt': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardNoAnswer': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardNoAnswerInt': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardNoCoverage': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardNoCoverageInt': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardOnFailure': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardNotRegistered': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                },
+                'callForwardNotRegisteredInt': {
+                    'forwardToVoiceMail': forward_to_vm,
+                    'callingSearchSpaceName': call_forward_css,
+                    'destination': call_forward_destination,
+                }
         })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Directory number successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Directory number already exists'.format(pattern)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Directory number could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        except Fault as e:
+            return e
 
     def delete_directory_number(self, uuid):
         """
@@ -2566,27 +1508,10 @@ class axl(object):
         :param directory_number: The name of the directory number to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeLine(uuid=uuid)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Directory number successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Directory number: {0} not found'.format(uuid)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Directory number could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
+        try:
+            return self.client.removeLine(uuid=uuid)
+        except Fault as e:
+            return e
 
     def update_directory_number(self, **args):
         """
@@ -2607,36 +1532,22 @@ class axl(object):
         :param forward_to_vm: Forward to voice mail checkbox
         :return: result dictionary
         """
-        resp = self.client.service.updateLine(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
+        try:
+            return self.client.updateLine(**args)
+        except Fault as e:
+            return e
 
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Directory number successfully updated'
-            return result
-        else:
-            result['response'] = 'Directory number could not be added'
-            result['error'] = resp[1].faultstring
-            return result
-
-
-    def get_cti_route_points(self, mini=False):
+    def get_cti_route_points(self):
         """
         Get CTI route points
         :param mini: return a list of tuples of CTI route point details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listCtiRoutePoint(
-                {'name': '%'}, returnedTags={
-                    'name': '', 'description': ''})[1]['return']['ctiRoutePoint']
-        if mini:
-            return [(i['name'], i['description']) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listCtiRoutePoint({'name': '%'}, 
+            returnedTags={'name': '', 'description': ''})['return']['ctiRoutePoint']
+        except Fault as e:
+            return e
 
     def get_cti_route_point(self, **args):
         """
@@ -2645,26 +1556,10 @@ class axl(object):
         :param uuid: CTI route point uuid
         :return: result dictionary
         """
-        resp = self.client.service.getCtiRoutePoint(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['ctiRoutePoint']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'CTI route point: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getCtiRoutePoint(**args)
+        except Fault as e:
+            return e
 
     def add_cti_route_point(self,
                             name,
@@ -2721,26 +1616,10 @@ class axl(object):
                     'routePartitionName': i[1]}
             }) for i in lines]
 
-        resp = self.client.service.addCtiRoutePoint(req)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'CTI route point successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'CTI route point already exists'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'CTI route point could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addCtiRoutePoint(req)
+        except Fault as e:
+            return e
 
     def delete_cti_route_point(self, **args):
         """
@@ -2748,26 +1627,10 @@ class axl(object):
         :param cti_route_point: The name of the CTI route point to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeCtiRoutePoint(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'CTI route point successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'CTI route point: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'CTI route point could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeCtiRoutePoint(**args)
+        except Fault as e:
+            return e
 
     def update_cti_route_point(self, **args):
         """
@@ -2788,59 +1651,39 @@ class axl(object):
         :param lines: A list of tuples of [(directory_number, partition)]
         :return:
         """
+        try:
+            return self.client.updateCtiRoutePoint(**args)
+        except Fault as e:
+            return e
 
-        resp = self.client.service.updateCtiRoutePoint(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'CTI route point successfully updated'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'CTI route point already updated'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'CTI route point could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-
-    def get_phones(self, mini=False, first=1000, skip=0):
+    def get_phones(self, first=1000, skip=0):
         """
         Get phone details
         :param mini: return a list of tuples of phone details
         :return: A list of dictionaries. If > 1000 records are returned, a list of list of dictionaries will be returned
         """
         paginated = []
-        resp = self.client.service.listPhone(
-                {'name': '%'}, returnedTags={
-                    'name': '',
-                    'product': '',
-                    'protocol': '',
-                    'locationName': '',
-                }, first=first, skip=skip)[1]['return']['phone']
-        if len(resp) >= 1000:
-            skip=first+skip
-            first+=first
-            paginated.append(resp)
-            self.get_phones(first=first, skip=skip)
-        if mini:
-            return [(i['name'],
-                     i['product'],
-                     i['protocol'],
-                     i['locationName']['value'],
-                     ) for i in resp]
-        else:
-            if first > 1000:
-                return paginated
+        try:
+            resp = self.client.listPhone(
+                    {'name': '%'}, returnedTags={
+                        'name': '',
+                        'product': '',
+                        'protocol': '',
+                        'locationName': '',
+                    }, first=first, skip=skip)['return']['phone']
+        except Fault as e:
+            return e
+
+            if len(resp) >= 1000:
+                skip=first+skip
+                first+=first
+                paginated.append(resp)
+                self.get_phones(first=first, skip=skip)
             else:
-                return resp
+                if first > 1000:
+                    return paginated
+                else:
+                    return resp
 
     def get_phone(self, **args):
         """
@@ -2848,25 +1691,10 @@ class axl(object):
         :param phone: profile name
         :return: result dictionary
         """
-        resp = self.client.service.getPhone(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['phone']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Phone: {0} not found'.format('phone')
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getPhone(**args)['return']['phone']
+        except Fault as e:
+            return e
 
     def add_phone(self,
                   name,
@@ -2967,79 +1795,10 @@ class axl(object):
         if em_url_button_enable:
             req['services']['service'][0].update({'urlButtonIndex': em_url_button_index, 'urlLabel': em_url_label})
 
-        resp = self.client.service.addPhone(req)
-        print(resp)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Phone successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Phone already exists'.format(name)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Phone could not be added'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def add_phone_api(self, **args):
-        print(args)
-        """
-        lines takes a list of Tuples with properties for each line EG:
-
-                                               display                           external
-            DN     partition    display        ascii          label               mask
-        [('77777', 'LINE_PT', 'Jim Smith', 'Jim Smith', 'Jim Smith - 77777', '0294127777')]
-        Add A phone
-        :param name:
-        :param description:
-        :param product:
-        :param device_pool:
-        :param location:
-        :param phone_template:
-        :param common_device_config:
-        :param css:
-        :param aar_css:
-        :param subscribe_css:
-        :param lines:
-        :param dev_class:
-        :param protocol:
-        :param softkey_template:
-        :param enable_em:
-        :param em_service_name:
-        :param em_service_url:
-        :param em_url_button_enable:
-        :param em_url_button_index:
-        :param em_url_label:
-        :param ehook_enable:
-        :return:
-        """
-        resp = self.client.service.addPhone(**args)
-        print(resp)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Phone successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Phone already exists'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Phone could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            resp = self.client.addPhone(req)
+        except Fault as e:
+            return e
 
     def delete_phone(self, **args):
         """
@@ -3047,26 +1806,10 @@ class axl(object):
         :param phone: The name of the phone to delete
         :return: result dictionary
         """
-        resp = self.client.service.removePhone(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Phone successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Phone: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Phone could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removePhone(**args)
+        except Fault as e:
+            return e
 
     def update_phone(self, **args):
                   
@@ -3100,46 +1843,27 @@ class axl(object):
         :param ehook_enable:
         :return:
         """
+        try:
+            return self.client.updatePhone(**args)
+        except Fault as e:
+            return e
 
-        resp = self.client.service.updatePhone(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Phone successfully updated'
-            return result
-        else:
-            result['response'] = 'Phone could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-
-
-    def get_device_profiles(self, mini=False):
+    def get_device_profiles(self):
         """
         Get device profile details
         :param mini: return a list of tuples of device profile details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listDeviceProfile(
-                {'name': '%'}, returnedTags={
-                    'name': '',
-                    'product': '',
-                    'protocol': '',
-                    'phoneTemplateName': '',
-                })[1]['return']['deviceProfile']
-        if mini:
-            return [(i['name'],
-                     i['product'],
-                     i['protocol'],
-                     i['phoneTemplateName']['value'],
-                     ) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listDeviceProfile(
+                    {'name': '%'}, returnedTags={
+                        'name': '',
+                        'product': '',
+                        'protocol': '',
+                        'phoneTemplateName': '',
+                    })['return']['deviceProfile']
+        except Fault as e:
+            return e
 
     def get_device_profile(self, **args):
         """
@@ -3148,26 +1872,10 @@ class axl(object):
         :param uuid: profile uuid
         :return: result dictionary
         """
-        resp = self.client.service.getDeviceProfile(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['deviceProfile']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Profile: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getDeviceProfile(**args)
+        except Fault as e:
+            return e
 
     def add_device_profile(self,
                            profile,
@@ -3227,25 +1935,10 @@ class axl(object):
                 'e164Mask': i[5]
             }) for i in lines]
 
-        resp = self.client.service.addDeviceProfile(req)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Device profile successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Device profile already exists'.format(profile)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Device profile could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addDeviceProfile(req)
+        except Fault as e:
+            return e
 
     def delete_device_profile(self, **args):
         """
@@ -3253,26 +1946,10 @@ class axl(object):
         :param profile: The name of the device profile to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeDeviceProfile(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Device profile successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Device profile: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Device profile could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeDeviceProfile(**args)
+        except Fault as e:
+            return e
 
     def update_device_profile(self,**args):
         """
@@ -3293,47 +1970,26 @@ class axl(object):
         :param em_service_name:
         :return:
         """
+        try:
+            return self.client.updateDeviceProfile(**args)
+        except Fault as e:
+            return e
 
-        resp = self.client.service.updateDeviceProfile(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Device profile successfully updated'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Device profile already exists'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Device profile could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-
-    def get_users(self, mini=False):
+    def get_users(self):
         """
         Get users details
         :param mini: return a list of tuples of user details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listUser(
-                {'userid': '%'}, returnedTags={
-                    'userid': '',
-                    'firstName': '',
-                    'lastName': '',
-                })[1]['return']['user']
-        if mini:
-            return [(i['userid'],
-                     i['firstName'],
-                     i['lastName'],
-                     ) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listUser(
+                    {'userid': '%'}, returnedTags={
+                        'userid': '',
+                        'firstName': '',
+                        'lastName': '',
+                    })['return']['user']
+        except Fault as e:
+            return e
 
     def get_user(self, user_id):
         """
@@ -3341,25 +1997,10 @@ class axl(object):
         :param user_id: profile name
         :return: result dictionary
         """
-        resp = self.client.service.getUser(userid=user_id)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['user']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'User: {0} not found'.format(user_id)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getUser(userid=user_id)
+        except Fault as e:
+            return e
 
     def add_user(self,
                  user_id,
@@ -3374,31 +2015,15 @@ class axl(object):
         :param user_profile: User profile template
         :return: result dictionary
         """
-        resp = self.client.service.addUser({
-            'userid': user_id,
-            'firstName': first_name,
-            'lastName': last_name,
-            'userProfile': user_profile,
-        })
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'User successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'User already exists'.format(user_id)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'User could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addUser({
+                'userid': user_id,
+                'firstName': first_name,
+                'lastName': last_name,
+                'userProfile': user_profile,
+            })
+        except Fault as e:
+            return e
 
     def update_user(self, **args):
         """
@@ -3408,25 +2033,10 @@ class axl(object):
         :param pin: Extension mobility PIN
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        resp = self.client.service.updateUser(**args)
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'User successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'User ID: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'User could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
+        try:
+            return self.client.updateUser(**args)
+        except Fault as e:
+            return e
 
     def update_user_em(self,
                        user_id,
@@ -3443,51 +2053,25 @@ class axl(object):
         :param primary_extension: Primary extension, must be a number from the device profile
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        resp = self.client.service.getDeviceProfile(name=device_profile)
-
-        if resp[0] == 500 and '{0} was not found'.format(device_profile) in resp[1].faultstring:
-            result['response'] = 'Device profile: {0} not found'.format(device_profile)
-            result['error'] = resp[1].faultstring
-            return result
-
+        try:
+            resp = self.client.getDeviceProfile(name=device_profile)
+        except Fault as e:
+            return e
+        if 'return' in resp and resp['return'] is not None:
+            uuid = resp['return']['deviceProfile']['uuid']
+            try:
+                return self.client.updateUser(
+                    userid=user_id,
+                    phoneProfiles={'profileName': {'_uuid': uuid}},
+                    defaultProfile=default_profile,
+                    subscribeCallingSearchSpaceName=subscribe_css,
+                    primaryExtension={'pattern': primary_extension},
+                    associatedGroups={'userGroup': {'name': 'Standard CCM End Users'}}
+            )
+            except Fault as e:
+                return e
         else:
-            uuid = resp[1]['return']['deviceProfile']['_uuid'][1:-1]
-
-        resp = self.client.service.updateUser(
-                userid=user_id,
-                phoneProfiles={'profileName': {'_uuid': uuid}},
-                defaultProfile=default_profile,
-                subscribeCallingSearchSpaceName=subscribe_css,
-                primaryExtension={'pattern': primary_extension},
-                associatedGroups={'userGroup': {'name': 'Standard CCM End Users'}}
-        )
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'User successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(user_id) in resp[1].faultstring:
-            result['response'] = 'User ID: {0} not found'.format(user_id)
-            result['error'] = resp[1].faultstring
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(default_profile) in resp[1].faultstring:
-            result['response'] = 'Default profile: {0} not found'.format(default_profile)
-            result['error'] = resp[1].faultstring
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(subscribe_css) in resp[1].faultstring:
-            result['response'] = 'Subscribe CSS: {0} not found'.format(subscribe_css)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'User could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+            return 'Device Profile not found for user'
 
     def update_user_credentials(self,
                                 user_id,
@@ -3500,48 +2084,27 @@ class axl(object):
         :param pin: Extension mobility PIN
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
 
         if password == '' and pin == '':
-            result['response'] = 'User could not be updated'
-            result['error'] = 'Password and/or Pin are required'
-            return result
+            return 'Password and/or Pin are required'
 
         elif password != '' and pin != '':
-            resp = self.client.service.updateUser(
-                    userid=user_id,
-                    password=password,
-                    pin=pin,
-            )
+            try:
+                return self.client.updateUser(userid=user_id,password=password,pin=pin)
+            except Fault as e:
+                return e
 
         elif password != '':
-            resp = self.client.service.updateUser(
-                    userid=user_id,
-                    password=password,
-            )
+            try:
+                return self.client.updateUser(userid=user_id,password=password)
+            except Fault as e:
+                return e
 
         elif pin != '':
-            resp = self.client.service.updateUser(
-                    userid=user_id,
-                    pin=pin,
-            )
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'User successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(user_id) in resp[1].faultstring:
-            result['response'] = 'User ID: {0} not found'.format(user_id)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'User could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+            try:
+                return self.client.updateUser(userid=user_id,pin=pin)
+            except Fault as e:
+                return e
 
     def delete_user(self, **args):
         """
@@ -3549,35 +2112,19 @@ class axl(object):
         :param user_id: The name of the user to delete
         :return: result dictionary
         """
-        resp = self.client.service.removeUser(**args)
+        try:
+            return self.client.removeUser(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'User successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'User: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'User could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
-
-
-    def get_translations(self, mini=False):
+    def get_translations(self):
         """
         Get translation patterns
         :param mini: return a list of tuples of route pattern details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listTransPattern(
+        try:
+            return self.client.listTransPattern(
                 {'pattern': '%'}, returnedTags={
                     'pattern': '', 
                     'description': '', 
@@ -3592,11 +2139,10 @@ class axl(object):
                     'callingPartyTransformationMask': '',
                     'digitDiscardInstructionName': '',
                     'callingPartyPrefixDigits': '',
-                    'provideOutsideDialtone': '' })[1]['return']['transPattern']
-        if mini:
-            return [(i['pattern'], i['description'], i['_uuid'][1:-1]) for i in resp]
-        else:
-            return resp
+                    'provideOutsideDialtone': '' })['return']['transPattern']
+        except Fault as e:
+            return e
+
 
     def get_translation(self, pattern='', partition='', uuid=''):
         """
@@ -3608,59 +2154,43 @@ class axl(object):
         """
 
         if pattern != '' and partition != '' and uuid == '':
-            resp = self.client.service.getTransPattern(
-                pattern=pattern, 
-                routePartitionName=partition,
-                returnedTags={
-                'pattern': '', 
-                'description': '', 
-                'routePartitionName': '',
-                'callingSearchSpaceName': '',
-                'useCallingPartyPhoneMask': '',
-                'patternUrgency': '',
-                'provideOutsideDialtone': '',
-                'prefixDigitsOut': '',
-                'calledPartyTransformationMask': '',
-                'callingPartyTransformationMask': '',
-                'digitDiscardInstructionName': '',
-                'callingPartyPrefixDigits': ''})
+            try:
+                return self.client.getTransPattern(pattern=pattern,routePartitionName=partition,
+                    returnedTags={
+                        'pattern': '', 
+                        'description': '', 
+                        'routePartitionName': '',
+                        'callingSearchSpaceName': '',
+                        'useCallingPartyPhoneMask': '',
+                        'patternUrgency': '',
+                        'provideOutsideDialtone': '',
+                        'prefixDigitsOut': '',
+                        'calledPartyTransformationMask': '',
+                        'callingPartyTransformationMask': '',
+                        'digitDiscardInstructionName': '',
+                        'callingPartyPrefixDigits': ''})
+            except Fault as e:
+                return e
         elif uuid != '' and pattern == '' and partition == '':
-            resp = self.client.service.getTransPattern(
-            uuid=uuid, returnedTags={
-                'pattern': '', 
-                'description': '', 
-                'routePartitionName': '',
-                'callingSearchSpaceName': '',
-                'useCallingPartyPhoneMask': '',
-                'patternUrgency': '',
-                'provideOutsideDialtone': '',
-                'prefixDigitsOut': '',
-                'calledPartyTransformationMask': '',
-                'callingPartyTransformationMask': '',
-                'digitDiscardInstructionName': '',
-                'callingPartyPrefixDigits': ''})
+            try:
+                return self.client.getTransPattern(uuid=uuid, 
+                returnedTags={
+                    'pattern': '', 
+                    'description': '', 
+                    'routePartitionName': '',
+                    'callingSearchSpaceName': '',
+                    'useCallingPartyPhoneMask': '',
+                    'patternUrgency': '',
+                    'provideOutsideDialtone': '',
+                    'prefixDigitsOut': '',
+                    'calledPartyTransformationMask': '',
+                    'callingPartyTransformationMask': '',
+                    'digitDiscardInstructionName': '',
+                    'callingPartyPrefixDigits': ''})
+            except Fault as e:
+                return e
         else: 
             return "must specify either uuid OR pattern and partition"
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['transPattern']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Translation pattern: {0} not found'.format(pattern)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
-
 
     def add_translation(self,
                         pattern,
@@ -3696,42 +2226,25 @@ class axl(object):
         :param blockEnable: - optional
         :return: result dictionary
         """
-        resp = self.client.service.addTransPattern({
-            'pattern': pattern, 
-            'description': description,
-            'routePartitionName': partition,
-            'usage': usage,
-            'callingSearchSpaceName': callingSearchSpaceName,
-            'useCallingPartyPhoneMask': useCallingPartyPhoneMask,
-            'patternUrgency': patternUrgency,
-            'provideOutsideDialtone': provideOutsideDialtone,
-            'prefixDigitsOut': prefixDigitsOut,
-            'calledPartyTransformationMask': calledPartyTransformationMask,
-            'callingPartyTransformationMask': callingPartyTransformationMask,
-            'digitDiscardInstructionName': digitDiscardInstructionName,
-            'callingPartyPrefixDigits': callingPartyPrefixDigits,
-            'blockEnable': blockEnable
-        })
-        # print(resp)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Translation successfully added'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Translation already exists'.format(pattern)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Translation could not be added'
-            result['error'] = resp[1].faultstring
-            return result
-
+        try:
+            return self.client.addTransPattern({
+                'pattern': pattern, 
+                'description': description,
+                'routePartitionName': partition,
+                'usage': usage,
+                'callingSearchSpaceName': callingSearchSpaceName,
+                'useCallingPartyPhoneMask': useCallingPartyPhoneMask,
+                'patternUrgency': patternUrgency,
+                'provideOutsideDialtone': provideOutsideDialtone,
+                'prefixDigitsOut': prefixDigitsOut,
+                'calledPartyTransformationMask': calledPartyTransformationMask,
+                'callingPartyTransformationMask': callingPartyTransformationMask,
+                'digitDiscardInstructionName': digitDiscardInstructionName,
+                'callingPartyPrefixDigits': callingPartyPrefixDigits,
+                'blockEnable': blockEnable
+            })
+        except Fault as e:
+            return e
 
     def delete_translation(self, pattern='', partition='', uuid=''):
         """
@@ -3743,29 +2256,17 @@ class axl(object):
         """
 
         if pattern != '' and partition != '' and uuid == '':
-            resp = self.client.service.removeTransPattern(pattern=pattern, routePartitionName=partition)
+            try:
+                return self.client.removeTransPattern(pattern=pattern, routePartitionName=partition)
+            except Fault as e:
+                return e
         elif uuid != '' and pattern == '' and partition == '':
-            resp = self.client.service.removeTransPattern(uuid=uuid)
+            try:
+                return self.client.removeTransPattern(uuid=uuid)
+            except Fault as e:
+                return e
         else: 
             return "must specify either uuid OR pattern and partition"
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Translation Pattern successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Translation Pattern: {0} not found'.format(pattern, partition)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Translation Pattern could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
 
     def update_translation(self,
                         pattern='',
@@ -3836,106 +2337,58 @@ class axl(object):
             args['callingPartyPrefixDigits'] = callingPartyPrefixDigits
         if blockEnable != '':
             args['blockEnable'] = blockEnable
-        
-        resp = self.client.service.updateTransPattern(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Translation successfully updated'
-            return result
-        elif resp[0] == 500 and 'duplicate value' in resp[1].faultstring:
-            result['response'] = 'Translation not found'.format(pattern)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Translation could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-
-    def list_route_plan(self, pattern='', mini=False):
-        """
-        List Route Plan
-        :param pattern: Route Plan Contains Pattern
-        :return: results dictionary
-        """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
         try:
-            resp = self.client.service.listRoutePlan(
-                {'dnOrPattern': '%'+pattern+'%'}, returnedTags={
-                                'dnOrPattern': '',
-                                'partition': '',
-                                'type': '',
-                                'routeDetail': ''
-                })
-        except:
-            print('some error')
-        #print(resp)
-        if resp[0] == 200:
-            if 'routePlan' in resp[1]['return']:
-                result['success'] = True
-                result['response'] = resp[1]['return']['routePlan']
-                return result
-            else:
-                result['success'] = True
-                result['response'] = 'Empty'
-                return result
-        else:
-            result['response'] = 'No Patterns found?'
-            result['error'] = resp[1]
-            return result
+            return self.client.updateTransPattern(**args)
+        except Fault as e:
+            return e
 
-    def list_route_plan_specific(self, pattern='', mini=False):
+    def list_route_plan(self, pattern=''):
         """
         List Route Plan
         :param pattern: Route Plan Contains Pattern
         :return: results dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        resp = self.client.service.listRoutePlan(
-            {'dnOrPattern': pattern}, returnedTags={
-                            'dnOrPattern': '',
-                            'partition': '',
-                            'type': '',
-                            'routeDetail': ''
+        try:
+            return self.client.listRoutePlan(
+                {'dnOrPattern': '%'+pattern+'%'}, 
+                returnedTags={
+                    'dnOrPattern': '',
+                    'partition': '',
+                    'type': '',
+                    'routeDetail': ''
+                })
+        except Fault as e:
+            return e
+
+    def list_route_plan_specific(self, pattern=''):
+        """
+        List Route Plan
+        :param pattern: Route Plan Contains Pattern
+        :return: results dictionary
+        """
+        try:
+            return self.client.listRoutePlan({'dnOrPattern': pattern}, 
+                returnedTags={
+                    'dnOrPattern': '',
+                    'partition': '',
+                    'type': '',
+                    'routeDetail': ''
             })
+        except Fault as e:
+            return e
 
-        if resp[0] == 200 and 'routePlan' in resp[1]['return']:
-            result['success'] = True
-            result['response'] = resp[1]['return']['routePlan']
-            return result
-        else:
-            result['response'] = 'No Patterns found?'
-            result['error'] = resp[1]
-            return result
-
-    def get_called_party_xforms(self, mini=False):
+    def get_called_party_xforms(self):
         """
         Get called party xforms
         :param mini: return a list of tuples of called party transformation pattern details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listCalledPartyTransformationPattern(
-                {'pattern': '%'}, returnedTags={
-                    'pattern': '', 'description': '', '_uuid': ''})[1]['return']['calledPartyTransformationPattern']
-        if mini:
-            return [(i['pattern'], i['description'], i['_uuid'][1:-1]) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listCalledPartyTransformationPattern({'pattern': '%'}, 
+                returnedTags={
+                    'pattern': '', 'description': '', 'uuid': ''})['return']['calledPartyTransformationPattern']
+        except Fault as e:
+            return e
 
     def get_called_party_xform(self, **args):
         """
@@ -3945,25 +2398,11 @@ class axl(object):
         :param uuid:
         :return: result dictionary
         """
-        resp = self.client.service.getCalledPartyTransformationPattern(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
+        try:
+            return self.client.getCalledPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Called Party Transformation Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
 
     def add_called_party_xform(self, **args):
         """
@@ -3981,22 +2420,10 @@ class axl(object):
         :param mlppPreemptionDisabled: does anyone use this?
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        resp = self.client.service.addCalledPartyTransformationPattern(**args)
-        print(resp)
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Transformation pattern successfully added'
-            return result
-        else:
-            result['response'] = 'Transformation pattern could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addCalledPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
     def delete_called_party_xform(self, **args):
         """
@@ -4006,26 +2433,10 @@ class axl(object):
         :param partition: The name of the partition
         :return: result dictionary
         """
-        resp = self.client.service.removeCalledPartyTransformationPattern(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Transformation successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Transformation Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Transformation could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeCalledPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
     def update_called_party_xform(self, **args):
         """
@@ -4045,41 +2456,24 @@ class axl(object):
         :return: result dictionary
         :return: result dictionary
         """
-        resp = self.client.service.updateCalledPartyTransformationPattern(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Transformation Pattern successfully updated'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Transformation Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Transformation Pattern could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.updateCalledPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
 
-    def get_calling_party_xforms(self, mini=False):
+    def get_calling_party_xforms(self):
         """
         Get calling party xforms
         :param mini: return a list of tuples of calling party transformation pattern details
         :return: A list of dictionary's
         """
-        resp = self.client.service.listCallingPartyTransformationPattern(
-                {'pattern': '%'}, returnedTags={
-                    'pattern': '', 'description': '', '_uuid': ''})[1]['return']['callingPartyTransformationPattern']
-        if mini:
-            return [(i['pattern'], i['description'], i['_uuid'][1:-1]) for i in resp]
-        else:
-            return resp
+        try:
+            return self.client.listCallingPartyTransformationPattern({'pattern': '%'}, 
+            returnedTags={
+                'pattern': '', 'description': '', 'uuid': ''})['return']['callingPartyTransformationPattern']
+        except Fault as e:
+            return e
 
     def get_calling_party_xform(self, **args):
         """
@@ -4089,25 +2483,10 @@ class axl(object):
         :param uuid:
         :return: result dictionary
         """
-        resp = self.client.service.getCallingPartyTransformationPattern(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Calling Party Transformation Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.getCallingPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
     def add_calling_party_xform(self, **args):
         """
@@ -4125,22 +2504,10 @@ class axl(object):
         :param mlppPreemptionDisabled: does anyone use this?
         :return: result dictionary
         """
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        resp = self.client.service.addCallingPartyTransformationPattern(**args)
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Transformation pattern successfully added'
-            return result
-        else:
-            result['response'] = 'Transformation pattern could not be added'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.addCallingPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
     def delete_calling_party_xform(self, **args):
         """
@@ -4150,26 +2517,10 @@ class axl(object):
         :param partition: The name of the partition
         :return: result dictionary
         """
-        resp = self.client.service.removeCallingPartyTransformationPattern(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Transformation successfully deleted'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Transformation Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Transformation could not be deleted'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.removeCallingPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
     def update_calling_party_xform(self, **args):
         """
@@ -4189,35 +2540,21 @@ class axl(object):
         :return: result dictionary
         :return: result dictionary
         """
-        resp = self.client.service.updateCallingPartyTransformationPattern(**args)
-
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'Transformation Pattern successfully updated'
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'Transformation Pattern: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Transformation Pattern could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
+        try:
+            return self.client.updateCallingPartyTransformationPattern(**args)
+        except Fault as e:
+            return e
 
     def get_sip_trunks(self):
-        resp = self.client.service.listSipTrunk(
-                {'name': '%'}, returnedTags={
+        try:
+            return self.client.listSipTrunk({'name': '%'}, 
+                returnedTags={
                     'name': '',
                     'sipProfileName': '',
                     'callingSearchSpaceName': '',
-                })[1]['return']['sipTrunk']
-        return resp
+                })['return']['sipTrunk']
+        except Fault as e:
+            return e
 
     def get_sip_trunk(self, **args):
         """
@@ -4226,26 +2563,10 @@ class axl(object):
         :param uuid:
         :return: result dictionary
         """
-        resp = self.client.service.getSipTrunk(**args)
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = resp[1]['return']['sipTrunk']
-            return result
-        elif resp[0] == 500 and 'was not found' in resp[1].faultstring:
-            result['response'] = 'SIP Trunk: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
-
+        try:
+            return self.client.getSipTrunk(**args)
+        except Fault as e:
+            return e
 
     def update_sip_trunk(self, **args):
         """
@@ -4262,29 +2583,12 @@ class axl(object):
 
         :return:
         """
-        
-        resp = self.client.service.updateSipTrunk(**args)
+        try:
+            return self.client.updateSipTrunk(**args)
+        except Fault as e:
+            return e
 
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'SIP Trunk successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**args) in resp[1].faultstring:
-            result['response'] = 'SIP Trunk: {0} not found'.format(**args)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'SIP Trunk could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def add_sip_trunk(self, **kwargs):
+    def add_sip_trunk(self, **args):
         """
         Add a SIP Trunk
         :param name:
@@ -4301,29 +2605,12 @@ class axl(object):
 
         :return:
         """
-    
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
+        try:
+            return self.client.addSipTrunk(**args)
+        except Fault as e:
+            return e
 
-        resp = self.client.service.addSipTrunk(kwargs)
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'SIP Trunk successfully added'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**kwargs) in resp[1].faultstring:
-            result['response'] = 'SIP Trunk: {0} not found'.format(**kwargs)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'SIP Trunk could not be added'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def update_dhcp_subnet(self, **kwargs):
+    def update_dhcp_subnet(self, **args):
         """
         Update DHCP Subnet
         :param uuid:
@@ -4342,47 +2629,14 @@ class axl(object):
 
         :return:
         """
-    
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
+        try:
+            return self.client.updateDhcpSubnet(**args)
+        except Fault as e:
+            return e
 
-        resp = self.client.service.updateDhcpSubnet(**kwargs)
-
-        if resp[0] == 200:
-            result['success'] = True
-            result['response'] = 'DHCP Subnet successfully updated'
-            return result
-        elif resp[0] == 500 and '{0} was not found'.format(**kwargs) in resp[1].faultstring:
-            result['response'] = 'DHCP Subnet: {0} not found'.format(**kwargs)
-            result['error'] = resp[1].faultstring
-            return result
-        else:
-            result['response'] = 'DHCP Subnet could not be updated'
-            result['error'] = resp[1].faultstring
-            return result
-
-    def listProcessNodes(self):
-        resp = self.client.service.listProcessNode({'name': '%', 'processNodeRole': 'CUCM Voice/Video'}, returnedTags={'name': ''})
-        result = {
-            'success': False,
-            'response': '',
-            'error': '',
-        }
-        if resp[0] == 200:
-            result['success'] = True
-            subs = []
-            nodes = resp[1]['return']['processNode']
-            
-            # only return call processing nodes and not the enterprisewidedata node
-            for node in nodes:
-                    if node.name != 'EnterpriseWideData':
-                        subs.append(node.name)
-            result['response'] = subs
-            return result
-        else:
-            result['response'] = 'Unknown error'
-            result['error'] = resp[1].faultstring
-            return result
+    def list_process_nodes(self):
+        try:
+            return self.client.listProcessNode({'name': '%', 'processNodeRole': 'CUCM Voice/Video'}, 
+                returnedTags={'name': ''})['return']['processNode']
+        except Fault as e:
+            return e
