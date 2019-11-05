@@ -111,7 +111,7 @@ env.bak/
 venv.bak/
 .gitignore
 
-.vscode
+.vscode/
 # Spyder project settings
 .spyderproject
 .spyproject
