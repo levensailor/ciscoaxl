@@ -12,10 +12,10 @@ pip install ciscoaxl
 ```python
 from ciscoaxl import axl
 
-cucm = os.getenv('cucm', '10.10.20.1')
-username = os.getenv('cucm_username', 'administrator')
-password = os.getenv('cucm_password', 'ciscopsdt')
-version = os.getenv('version', '12.5')
+cucm = '10.10.20.1'
+username = 'axluser'
+password = 'axlpassword'
+version = '12.5'
 ucm = axl(username=cucm_username,password=cucm_password,cucm=cucm,cucm_version=version)
 ```
 

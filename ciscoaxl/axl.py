@@ -2005,22 +2005,22 @@ class axl(object):
     def add_user(self,
                  user_id,
                  last_name,
-                 first_name='',
-                 user_profile='Standard (Factory Default) User Profile'):
+                 first_name,
+                 presenceGroupName='Standard Presence group'
+                 ):
         """
         Add a user
         :param user_id: User ID of the user to add
         :param first_name: First name of the user to add
         :param last_name: Last name of the user to add
-        :param user_profile: User profile template
         :return: result dictionary
         """
         try:
             return self.client.addUser({
                 'userid': user_id,
-                'firstName': first_name,
-                'lastName': last_name,
-                'userProfile': user_profile,
+                'last_name': last_name,
+                'first_name': first_name,
+                'presenceGroupName': presenceGroupName
             })
         except Fault as e:
             return e
@@ -2638,5 +2638,17 @@ class axl(object):
         try:
             return self.client.listProcessNode({'name': '%', 'processNodeRole': 'CUCM Voice/Video'}, 
                 returnedTags={'name': ''})['return']['processNode']
+        except Fault as e:
+            return e
+        
+    def add_call_manager_group(self, **args):
+        """
+        Add call manager group
+        :param name: name of cmg
+        :param members[]: array of mbmers
+        :return: result dictionary
+        """
+        try:
+            return self.client.addCallManagerGroup({**args})
         except Fault as e:
             return e
