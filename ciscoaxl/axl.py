@@ -85,7 +85,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.executeSQLQuery(query)
+            return self.client.executeSQLQuery(query)['return']
         except Fault as e:
             return e
 

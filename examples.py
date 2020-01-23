@@ -21,8 +21,8 @@ Users
 #     print(user.firstName)
 
 ''''Get Specific User'''
-# user = ucm.get_user(user_id='mscott')
-# print(user.email)
+# user = ucm.get_user(user_id='restaurant@abbeyroad.com')
+# print(user)
 
 ''''Add User'''
 # ucm.add_user(user_id='jlevensailor', last_name='Levensailor', first_name='Jeff')
@@ -455,9 +455,25 @@ Runs and Dos
 
 #---Execute SQL Query
 
-# for sql in ucm.execute_sql_query('select * from device where description like "Bart%"'):
-#     print(sql.name)
+# for sql in ucm.execute_sql_update(query):
+#     print(sql)
+def dothis(row):
+    print(row)
 
+def build_query():
+    with open("intercoms.txt") as intercoms:
+        for row in intercoms:
+            #print(row, end='')
+            query = f'''
+            UPDATE devicenumplanmap dnmp
+            SET dnmp.speeddial = '', dnmp.label = 'ICM:'
+            WHERE dnmp.speeddial = "{row[:10]}*"
+            '''
+            print(query)
+            sql = ucm.execute_sql_update(query)
+            print(sql)
+
+build_query()
 #---Do LDAP Sync on all agreements
 
 # for ldap in ucm.get_ldap_dir():
