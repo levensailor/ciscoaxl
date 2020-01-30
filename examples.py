@@ -10,15 +10,20 @@ username = os.getenv('username')
 password = os.getenv('password')
 version = os.getenv('version')
 
+
+print(cucm)
 ucm = axl(username=username,password=password,cucm=cucm,cucm_version=version)
 
 """
 Users
 """
-
+print(ucm.get_users())
 '''Get All Users'''
 # for user in ucm.get_users():
-#     print(user.firstName)
+#     try:
+#         print(user)
+#     except Exception as e:
+#         print(e)
 
 ''''Get Specific User'''
 # user = ucm.get_user(user_id='restaurant@abbeyroad.com')
@@ -457,23 +462,23 @@ Runs and Dos
 
 # for sql in ucm.execute_sql_update(query):
 #     print(sql)
-def dothis(row):
-    print(row)
+# def dothis(row):
+#     print(row)
 
-def build_query():
-    with open("intercoms.txt") as intercoms:
-        for row in intercoms:
-            #print(row, end='')
-            query = f'''
-            UPDATE devicenumplanmap dnmp
-            SET dnmp.speeddial = '', dnmp.label = 'ICM:'
-            WHERE dnmp.speeddial = "{row[:10]}*"
-            '''
-            print(query)
-            sql = ucm.execute_sql_update(query)
-            print(sql)
+# def build_query():
+#     with open("intercoms.txt") as intercoms:
+#         for row in intercoms:
+#             #print(row, end='')
+#             query = f'''
+#             UPDATE devicenumplanmap dnmp
+#             SET dnmp.speeddial = '', dnmp.label = 'ICM:'
+#             WHERE dnmp.speeddial = "{row[:10]}*"
+#             '''
+#             print(query)
+#             sql = ucm.execute_sql_update(query)
+#             print(sql)
 
-build_query()
+# build_query()
 #---Do LDAP Sync on all agreements
 
 # for ldap in ucm.get_ldap_dir():

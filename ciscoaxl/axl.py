@@ -10,7 +10,7 @@ Links:
 """
 
 import sys
-import pathlib
+from pathlib import Path
 import os
 
 from requests import Session 
@@ -44,7 +44,12 @@ class axl(object):
         """
 
         cwd = os.path.dirname(os.path.abspath(__file__))
-        wsdl = pathlib.PurePosixPath(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").as_uri()
+        if os.name == "posix":
+            wsdl = Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").as_uri()
+            print(os.name)
+        else:
+            print(os.name)
+            wsdl = str(Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").absolute())
         session = Session() 
         session.verify = False 
         session.auth = HTTPBasicAuth(username, password) 
