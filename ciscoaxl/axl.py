@@ -46,14 +46,12 @@ class axl(object):
         cwd = os.path.dirname(os.path.abspath(__file__))
         if os.name == "posix":
             wsdl = Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").as_uri()
-            print(os.name)
         else:
-            print(os.name)
             wsdl = str(Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").absolute())
         session = Session() 
         session.verify = False 
         session.auth = HTTPBasicAuth(username, password) 
-        settings = Settings(strict=False, xml_huge_tree=True) 
+        settings = Settings(strict=False, xml_huge_tree=True, xsd_ignore_sequence_order=True) 
         transport = Transport(session=session, timeout=10, cache=SqliteCache()) 
         axl_client = Client(wsdl, settings=settings, transport=transport) 
 
@@ -1980,19 +1978,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_users(self):
+    def get_users(self, tagfilter={'userid': '','firstName': '','lastName': '',}):
         """
         Get users details
         :param mini: return a list of tuples of user details
         :return: A list of dictionary's
         """
+        
         try:
             return self.client.listUser(
-                    {'userid': '%'}, returnedTags={
-                        'userid': '',
-                        'firstName': '',
-                        'lastName': '',
-                    })['return']['user']
+                    {'userid': '%'}, returnedTags=tagfilter)['return']['user']
         except Fault as e:
             return e
 
@@ -2003,7 +1998,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getUser(userid=user_id)
+            return self.client.getUser(userid=user_id)['return']['user']
         except Fault as e:
             return e
 
