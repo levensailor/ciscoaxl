@@ -11,7 +11,8 @@ __pycache__/
 ciscoaxl/__pycache__
 # C extensions
 *.so
-
+*.txt
+*.csv
 # Distribution / packaging
 .Python
 build/
