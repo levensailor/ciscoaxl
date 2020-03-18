@@ -13,16 +13,18 @@ import sys
 from pathlib import Path
 import os
 
-from requests import Session 
-from requests.auth import HTTPBasicAuth 
+from requests import Session
+from requests.auth import HTTPBasicAuth
 import re
-import urllib3 
-from zeep import Client, Settings, Plugin 
-from zeep.transports import Transport 
-from zeep.cache import SqliteCache 
-from zeep.plugins import HistoryPlugin 
-from zeep.exceptions import Fault 
+import urllib3
+from zeep import Client, Settings, Plugin
+from zeep.transports import Transport
+from zeep.cache import SqliteCache
+from zeep.plugins import HistoryPlugin
+from zeep.exceptions import Fault
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 class axl(object):
     """
@@ -48,12 +50,14 @@ class axl(object):
             wsdl = Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").as_uri()
         else:
             wsdl = str(Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").absolute())
-        session = Session() 
-        session.verify = False 
-        session.auth = HTTPBasicAuth(username, password) 
-        settings = Settings(strict=False, xml_huge_tree=True, xsd_ignore_sequence_order=True) 
-        transport = Transport(session=session, timeout=10, cache=SqliteCache()) 
-        axl_client = Client(wsdl, settings=settings, transport=transport) 
+        session = Session()
+        session.verify = False
+        session.auth = HTTPBasicAuth(username, password)
+        settings = Settings(
+            strict=False, xml_huge_tree=True, xsd_ignore_sequence_order=True
+        )
+        transport = Transport(session=session, timeout=10, cache=SqliteCache())
+        axl_client = Client(wsdl, settings=settings, transport=transport)
 
         self.wsdl = wsdl
         self.username = username
@@ -61,23 +65,32 @@ class axl(object):
         self.wsdl = wsdl
         self.cucm = cucm
         self.cucm_version = cucm_version
-        self.UUID_PATTERN = re.compile(r'^[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}$', re.IGNORECASE)
-        self.client = axl_client.create_service("{http://www.cisco.com/AXLAPIService/}AXLAPIBinding", f"https://{cucm}:8443/axl/")
+        self.UUID_PATTERN = re.compile(
+            r"^[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}$", re.IGNORECASE
+        )
+        self.client = axl_client.create_service(
+            "{http://www.cisco.com/AXLAPIService/}AXLAPIBinding",
+            f"https://{cucm}:8443/axl/",
+        )
 
-    def get_locations(self):
+    def get_locations(
+        self,
+        tagfilter={
+            "name": "",
+            "withinAudioBandwidth": "",
+            "withinVideoBandwidth": "",
+            "withinImmersiveKbits": "",
+        },
+    ):
         """
         Get location details
         :param mini: return a list of tuples of location details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listLocation(
-                    {'name': '%'}, returnedTags={
-                        'name': '',
-                        'withinAudioBandwidth': '',
-                        'withinVideoBandwidth': '',
-                        'withinImmersiveKbits': '',
-                    })['return']['location']
+            return self.client.listLocation({"name": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["location"]
         except Fault as e:
             return e
 
@@ -88,7 +101,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.executeSQLQuery(query)['return']
+            return self.client.executeSQLQuery(query)["return"]
         except Fault as e:
             return e
 
@@ -103,21 +116,17 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_ldap_dir(self):
+    def get_ldap_dir(self, tagfilter={"name": "", "ldapDn": "", "userSearchBase": "",}):
         """
         Get LDAP Syncs
         :return: result dictionary
         """
         try:
             return self.client.listLdapDirectory(
-                    {'name': '%'}, returnedTags={
-                            'name': '',
-                            'ldapDn': '',
-                            'userSearchBase': '',
-                    })['return']['ldapDirectory']
+                {"name": "%"}, returnedTags=tagfilter,
+            )["return"]["ldapDirectory"]
         except Fault as e:
             return e
-
 
     def do_ldap_sync(self, uuid):
         """
@@ -166,37 +175,37 @@ class axl(object):
         except Fault as e:
             return e
 
-    def do_device_reset(self, name='', uuid=''):
+    def do_device_reset(self, name="", uuid=""):
         """
         Do Device Reset
         :param name: device name
         :param uuid: device uuid
         :return: result dictionary
         """
-        if name != '' and uuid == '':
+        if name != "" and uuid == "":
             try:
                 return self.client.doDeviceReset(deviceName=name, isHardReset=True)
             except Fault as e:
                 return e
-        elif name == '' and uuid != '':
+        elif name == "" and uuid != "":
             try:
                 return self.client.doDeviceReset(uuid=uuid, isHardReset=True)
             except Fault as e:
                 return e
 
-    def reset_sip_trunk(self, name='', uuid=''):
+    def reset_sip_trunk(self, name="", uuid=""):
         """
         Reset SIP Trunk
         :param name: device name
         :param uuid: device uuid
         :return: result dictionary
         """
-        if name != '' and uuid == '':
+        if name != "" and uuid == "":
             try:
                 return self.client.resetSipTrunk(name=name)
             except Fault as e:
                 return e
-        elif name == '' and uuid != '':
+        elif name == "" and uuid != "":
             try:
                 return self.client.resetSipTrunk(uuid=uuid)
             except Fault as e:
@@ -214,13 +223,15 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_location(self,
-                     name,
-                     kbits=512,
-                     video_kbits=-1,
-                     within_audio_bw=512,
-                     within_video_bw=-1,
-                     within_immersive_kbits=-1):
+    def add_location(
+        self,
+        name,
+        kbits=512,
+        video_kbits=-1,
+        within_audio_bw=512,
+        within_video_bw=-1,
+        within_immersive_kbits=-1,
+    ):
         """
         Add a location
         :param name: Name of the location to add
@@ -234,23 +245,27 @@ class axl(object):
         """
         if int(self.cucm_version) >= 10:
             try:
-                return self.client.addLocation({
-                    'name': name,
-                    # CUCM 10.6
-                    'withinAudioBandwidth': within_audio_bw,
-                    'withinVideoBandwidth': within_video_bw,
-                    'withinImmersiveKbits': within_immersive_kbits,
-                })
+                return self.client.addLocation(
+                    {
+                        "name": name,
+                        # CUCM 10.6
+                        "withinAudioBandwidth": within_audio_bw,
+                        "withinVideoBandwidth": within_video_bw,
+                        "withinImmersiveKbits": within_immersive_kbits,
+                    }
+                )
             except Fault as e:
                 return e
         else:
             try:
-                return self.client.addLocation({
-                    'name': name,
-                    # CUCM 8.6
-                    'kbits': kbits,
-                    'videoKbits': video_kbits,
-                })
+                return self.client.addLocation(
+                    {
+                        "name": name,
+                        # CUCM 8.6
+                        "kbits": kbits,
+                        "videoKbits": video_kbits,
+                    }
+                )
             except Fault as e:
                 return e
 
@@ -283,14 +298,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_regions(self):
+    def get_regions(self, tagfilter={"_uuid": "", "name": ""}):
         """
         Get region details
         :param mini: return a list of tuples of region details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listRegion({'name': '%'}, returnedTags={'_uuid': '', 'name': ''})[1]['return']['region']
+            return self.client.listRegion({"name": "%"}, returnedTags=tagfilter)[1][
+                "return"
+            ]["region"]
         except Fault as e:
             return e
 
@@ -312,11 +329,11 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addRegion({'name': region})
+            return self.client.addRegion({"name": region})
         except Fault as e:
             return e
 
-    def update_region(self, name='', uuid='', moh_region=''):
+    def update_region(self, name="", uuid="", moh_region=""):
         """
         Update region and assign region to all other regions
         :param name:
@@ -325,10 +342,10 @@ class axl(object):
         :return:
         """
         # Get all Regions
-        all_regions = self.client.listRegion({'name': '%'}, returnedTags={'name': ''})
+        all_regions = self.client.listRegion({"name": "%"}, returnedTags={"name": ""})
 
         # Make list of region names
-        region_names = [str(i['name']) for i in all_regions[1]['return']['region']]
+        region_names = [str(i["name"]) for i in all_regions[1]["return"]["region"]]
 
         # Build list of dictionaries to add to region api call
         region_list = []
@@ -336,42 +353,52 @@ class axl(object):
         for i in region_names:
             # Highest codec within a region
             if i == name:
-                region_list.append({
-                    'regionName': i,
-                    'bandwidth': '256 kbps',
-                    'videoBandwidth': '-1',
-                    'immersiveVideoBandwidth': '-1',
-                    'lossyNetwork': 'Use System Default',
-                })
+                region_list.append(
+                    {
+                        "regionName": i,
+                        "bandwidth": "256 kbps",
+                        "videoBandwidth": "-1",
+                        "immersiveVideoBandwidth": "-1",
+                        "lossyNetwork": "Use System Default",
+                    }
+                )
 
             # Music on hold region name
             elif i == moh_region:
-                region_list.append({
-                    'regionName': i,
-                    'bandwidth': '64 kbps',
-                    'videoBandwidth': '-1',
-                    'immersiveVideoBandwidth': '-1',
-                    'lossyNetwork': 'Use System Default',
-                })
+                region_list.append(
+                    {
+                        "regionName": i,
+                        "bandwidth": "64 kbps",
+                        "videoBandwidth": "-1",
+                        "immersiveVideoBandwidth": "-1",
+                        "lossyNetwork": "Use System Default",
+                    }
+                )
 
             # All else G.711
             else:
-                region_list.append({
-                    'regionName': i,
-                    'bandwidth': '64 kbps',
-                    'videoBandwidth': '-1',
-                    'immersiveVideoBandwidth': '-1',
-                    'lossyNetwork': 'Use System Default',
-                })
+                region_list.append(
+                    {
+                        "regionName": i,
+                        "bandwidth": "64 kbps",
+                        "videoBandwidth": "-1",
+                        "immersiveVideoBandwidth": "-1",
+                        "lossyNetwork": "Use System Default",
+                    }
+                )
 
-        if name != '' and uuid == '':
+        if name != "" and uuid == "":
             try:
-                return self.client.updateRegion(name=name,relatedRegions={'relatedRegion': region_list})
+                return self.client.updateRegion(
+                    name=name, relatedRegions={"relatedRegion": region_list}
+                )
             except Fault as e:
                 return e
-        elif name == '' and uuid != '':
+        elif name == "" and uuid != "":
             try:
-                return self.client.updateRegion(uuid=uuid,relatedRegions={'relatedRegion': region_list})
+                return self.client.updateRegion(
+                    uuid=uuid, relatedRegions={"relatedRegion": region_list}
+                )
             except Fault as e:
                 return e
 
@@ -387,14 +414,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_srsts(self):
+    def get_srsts(self, tagfilter={"_uuid": ""}):
         """
         Get all SRST details
         :param mini: return a list of tuples of SRST details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listSrst({'name': '%'}, returnedTags={'_uuid': ''})['return']['srst']
+            return self.client.listSrst({"name": "%"}, returnedTags=tagfilter)[
+                "return"
+            ]["srst"]
         except Fault as e:
             return e
 
@@ -419,12 +448,14 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addSrst({
-            'name': srst,
-            'port': port,
-            'ipAddress': ip_address,
-            'SipPort': sip_port,
-        })
+            return self.client.addSrst(
+                {
+                    "name": srst,
+                    "port": port,
+                    "ipAddress": ip_address,
+                    "SipPort": sip_port,
+                }
+            )
         except Fault as e:
             return e
 
@@ -439,23 +470,27 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_device_pools(self):
+    def get_device_pools(
+        self,
+        tagfilter={
+            "name": "",
+            "dateTimeSettingName": "",
+            "callManagerGroupName": "",
+            "mediaResourceListName": "",
+            "regionName": "",
+            "srstName": "",
+            # 'localRouteGroup': [0],
+        },
+    ):
         """
         Get a dictionary of device pools
         :param mini: return a list of tuples of device pool info
         :return: a list of dictionary's of device pools information
         """
         try:
-            return self.client.listDevicePool(
-                {'name': '%'}, returnedTags={
-                    'name': '',
-                    'dateTimeSettingName': '',
-                    'callManagerGroupName': '',
-                    'mediaResourceListName': '',
-                    'regionName': '',
-                    'srstName': '',
-                    # 'localRouteGroup': [0],
-                })['return']['devicePool']
+            return self.client.listDevicePool({"name": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["devicePool"]
         except Fault as e:
             return e
 
@@ -470,16 +505,18 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_device_pool(self,
-                        device_pool,
-                        date_time_group='CMLocal',
-                        region='Default',
-                        location='',
-                        route_group='',
-                        media_resource_group_list='',
-                        srst='Disable',
-                        cm_group='Default',
-                        network_locale=''):
+    def add_device_pool(
+        self,
+        device_pool,
+        date_time_group="CMLocal",
+        region="Default",
+        location="",
+        route_group="",
+        media_resource_group_list="",
+        srst="Disable",
+        cm_group="Default",
+        network_locale="",
+    ):
 
         """
         Add a device pool
@@ -495,17 +532,22 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addDevicePool({
-                'name': device_pool,
-                'dateTimeSettingName': date_time_group,  # update to state timezone
-                'regionName': region,
-                'locationName': location,
-                'localRouteGroup': {'name': 'Standard Local Route Group', 'value': route_group},
-                'mediaResourceListName': media_resource_group_list,
-                'srstName': srst,
-                'callManagerGroupName': cm_group,
-                'networkLocale': network_locale,
-            })
+            return self.client.addDevicePool(
+                {
+                    "name": device_pool,
+                    "dateTimeSettingName": date_time_group,  # update to state timezone
+                    "regionName": region,
+                    "locationName": location,
+                    "localRouteGroup": {
+                        "name": "Standard Local Route Group",
+                        "value": route_group,
+                    },
+                    "mediaResourceListName": media_resource_group_list,
+                    "srstName": srst,
+                    "callManagerGroupName": cm_group,
+                    "networkLocale": network_locale,
+                }
+            )
         except Fault as e:
             return e
 
@@ -543,7 +585,15 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_conference_bridges(self):
+    def get_conference_bridges(
+        self,
+        tagfilter={
+            "name": "",
+            "description": "",
+            "devicePoolName": "",
+            "locationName": "",
+        },
+    ):
         """
         Get conference bridges
         :param mini: List of tuples of conference bridge details
@@ -551,11 +601,8 @@ class axl(object):
         """
         try:
             return self.client.listConferenceBridge(
-                {'name': '%'},
-                returnedTags={'name': '',
-                              'description': '',
-                              'devicePoolName': '',
-                              'locationName': ''})['return']['conferenceBridge']
+                {"name": "%"}, returnedTags=tagfilter,
+            )["return"]["conferenceBridge"]
         except Fault as e:
             return e
 
@@ -570,13 +617,15 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_conference_bridge(self,
-                              conference_bridge,
-                              description='',
-                              device_pool='Default',
-                              location='Hub_None',
-                              product='Cisco IOS Enhanced Conference Bridge',
-                              security_profile='Non Secure Conference Bridge'):
+    def add_conference_bridge(
+        self,
+        conference_bridge,
+        description="",
+        device_pool="Default",
+        location="Hub_None",
+        product="Cisco IOS Enhanced Conference Bridge",
+        security_profile="Non Secure Conference Bridge",
+    ):
         """
         Add a conference bridge
         :param conference_bridge: Conference bridge name
@@ -588,14 +637,16 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addConferenceBridge({
-                'name': conference_bridge,
-                'description': description,
-                'devicePoolName': device_pool,
-                'locationName': location,
-                'product': product,
-                'securityProfileName': security_profile
-            })
+            return self.client.addConferenceBridge(
+                {
+                    "name": conference_bridge,
+                    "description": description,
+                    "devicePoolName": device_pool,
+                    "locationName": location,
+                    "product": product,
+                    "securityProfileName": security_profile,
+                }
+            )
         except Fault as e:
             return e
 
@@ -610,18 +661,18 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_transcoders(self):
+    def get_transcoders(
+        self, tagfilter={"name": "", "description": "", "devicePoolName": ""}
+    ):
         """
         Get transcoders
         :param mini: List of tuples of transcoder details
         :return: results dictionary
         """
         try:
-            return self.client.listTranscoder(
-                {'name': '%'},
-                returnedTags={'name': '',
-                              'description': '',
-                              'devicePoolName': ''})['return']['transcoder']
+            return self.client.listTranscoder({"name": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["transcoder"]
         except Fault as e:
             return e
 
@@ -636,11 +687,13 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_transcoder(self,
-                       transcoder,
-                       description='',
-                       device_pool='Default',
-                       product='Cisco IOS Enhanced Media Termination Point'):
+    def add_transcoder(
+        self,
+        transcoder,
+        description="",
+        device_pool="Default",
+        product="Cisco IOS Enhanced Media Termination Point",
+    ):
         """
         Add a transcoder
         :param transcoder: Transcoder name
@@ -650,12 +703,14 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addTranscoder({
-                'name': transcoder,
-                'description': description,
-                'devicePoolName': device_pool,
-                'product': product,
-            })
+            return self.client.addTranscoder(
+                {
+                    "name": transcoder,
+                    "description": description,
+                    "devicePoolName": device_pool,
+                    "product": product,
+                }
+            )
         except Fault as e:
             return e
 
@@ -670,20 +725,25 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_h323_gateways(self):
+    def get_h323_gateways(
+        self,
+        tagfilter={
+            "name": "",
+            "description": "",
+            "devicePoolName": "",
+            "locationName": "",
+            "sigDigits": "",
+        },
+    ):
         """
         Get H323 Gateways
         :param mini: List of tuples of H323 Gateway details
         :return: results dictionary
         """
         try:
-            return self.client.listH323Gateway(
-                {'name': '%'},
-                returnedTags={'name': '',
-                              'description': '',
-                              'devicePoolName': '',
-                              'locationName': '',
-                              'sigDigits': ''})['return']['h323Gateway']
+            return self.client.listH323Gateway({"name": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["h323Gateway"]
         except Fault as e:
             return e
 
@@ -698,37 +758,39 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_h323_gateway(self,
-                         h323_gateway,
-                         description='',
-                         device_pool='Default',
-                         location='Hub_None',
-                         media_resource_group_list='',
-                         prefix_dn='',
-                         sig_digits='99',
-                         css='',
-                         aar_css='',
-                         aar_neighborhood='',
-                         product='H.323 Gateway',
-                         protocol='H.225',
-                         protocol_side='Network',
-                         pstn_access='true',
-                         redirect_in_num_ie='false',
-                         redirect_out_num_ie='false',
-                         cld_party_ie_num_type='Unknown',
-                         clng_party_ie_num_type='Unknown',
-                         clng_party_nat_pre='',
-                         clng_party_inat_prefix='',
-                         clng_party_unknown_prefix='',
-                         clng_party_sub_prefix='',
-                         clng_party_nat_strip_digits='',
-                         clng_party_inat_strip_digits='',
-                         clng_party_unknown_strip_digits='',
-                         clng_party_sub_strip_digits='',
-                         clng_party_nat_trans_css='',
-                         clng_party_inat_trans_css='',
-                         clng_party_unknown_trans_css='',
-                         clng_party_sub_trans_css=''):
+    def add_h323_gateway(
+        self,
+        h323_gateway,
+        description="",
+        device_pool="Default",
+        location="Hub_None",
+        media_resource_group_list="",
+        prefix_dn="",
+        sig_digits="99",
+        css="",
+        aar_css="",
+        aar_neighborhood="",
+        product="H.323 Gateway",
+        protocol="H.225",
+        protocol_side="Network",
+        pstn_access="true",
+        redirect_in_num_ie="false",
+        redirect_out_num_ie="false",
+        cld_party_ie_num_type="Unknown",
+        clng_party_ie_num_type="Unknown",
+        clng_party_nat_pre="",
+        clng_party_inat_prefix="",
+        clng_party_unknown_prefix="",
+        clng_party_sub_prefix="",
+        clng_party_nat_strip_digits="",
+        clng_party_inat_strip_digits="",
+        clng_party_unknown_strip_digits="",
+        clng_party_sub_strip_digits="",
+        clng_party_nat_trans_css="",
+        clng_party_inat_trans_css="",
+        clng_party_unknown_trans_css="",
+        clng_party_sub_trans_css="",
+    ):
         """
         Add H323 gateway
         :param h323_gateway:
@@ -764,38 +826,40 @@ class axl(object):
         :return:
         """
         try:
-            return self.client.addH323Gateway({
-                'name': h323_gateway,
-                'description': description,
-                'product': product,
-                'protocol': protocol,
-                'protocolSide': protocol_side,
-                'callingSearchSpaceName': css,
-                'automatedAlternateRoutingCssName': aar_css,
-                'devicePoolName': device_pool,
-                'locationName': location,
-                'mediaResourceListName': media_resource_group_list,
-                'aarNeighborhoodName': aar_neighborhood,
-                'pstnAccess': pstn_access,
-                'sigDigits': sig_digits,
-                'prefixDn': prefix_dn,
-                'redirectInboundNumberIe': redirect_in_num_ie,
-                'redirectOutboundNumberIe': redirect_out_num_ie,
-                'calledPartyIeNumberType': cld_party_ie_num_type,
-                'callingPartyIeNumberType': clng_party_ie_num_type,
-                'callingPartyNationalPrefix': clng_party_nat_pre,
-                'callingPartyInternationalPrefix': clng_party_inat_prefix,
-                'callingPartyUnknownPrefix': clng_party_unknown_prefix,
-                'callingPartySubscriberPrefix': clng_party_sub_prefix,
-                'callingPartyNationalStripDigits': clng_party_nat_strip_digits,
-                'callingPartyInternationalStripDigits': clng_party_inat_strip_digits,
-                'callingPartyUnknownStripDigits': clng_party_unknown_strip_digits,
-                'callingPartySubscriberStripDigits': clng_party_sub_strip_digits,
-                'callingPartyNationalTransformationCssName': clng_party_nat_trans_css,
-                'callingPartyInternationalTransformationCssName': clng_party_inat_trans_css,
-                'callingPartyUnknownTransformationCssName': clng_party_unknown_trans_css,
-                'callingPartySubscriberTransformationCssName': clng_party_sub_trans_css
-            })
+            return self.client.addH323Gateway(
+                {
+                    "name": h323_gateway,
+                    "description": description,
+                    "product": product,
+                    "protocol": protocol,
+                    "protocolSide": protocol_side,
+                    "callingSearchSpaceName": css,
+                    "automatedAlternateRoutingCssName": aar_css,
+                    "devicePoolName": device_pool,
+                    "locationName": location,
+                    "mediaResourceListName": media_resource_group_list,
+                    "aarNeighborhoodName": aar_neighborhood,
+                    "pstnAccess": pstn_access,
+                    "sigDigits": sig_digits,
+                    "prefixDn": prefix_dn,
+                    "redirectInboundNumberIe": redirect_in_num_ie,
+                    "redirectOutboundNumberIe": redirect_out_num_ie,
+                    "calledPartyIeNumberType": cld_party_ie_num_type,
+                    "callingPartyIeNumberType": clng_party_ie_num_type,
+                    "callingPartyNationalPrefix": clng_party_nat_pre,
+                    "callingPartyInternationalPrefix": clng_party_inat_prefix,
+                    "callingPartyUnknownPrefix": clng_party_unknown_prefix,
+                    "callingPartySubscriberPrefix": clng_party_sub_prefix,
+                    "callingPartyNationalStripDigits": clng_party_nat_strip_digits,
+                    "callingPartyInternationalStripDigits": clng_party_inat_strip_digits,
+                    "callingPartyUnknownStripDigits": clng_party_unknown_strip_digits,
+                    "callingPartySubscriberStripDigits": clng_party_sub_strip_digits,
+                    "callingPartyNationalTransformationCssName": clng_party_nat_trans_css,
+                    "callingPartyInternationalTransformationCssName": clng_party_inat_trans_css,
+                    "callingPartyUnknownTransformationCssName": clng_party_unknown_trans_css,
+                    "callingPartySubscriberTransformationCssName": clng_party_sub_trans_css,
+                }
+            )
         except Fault as e:
             return e
 
@@ -808,9 +872,8 @@ class axl(object):
         """
         try:
             return self.client.updateH323Gateway(
-                name=h323_gateway,
-                mediaResourceListName=media_resource_group_list,
-        )
+                name=h323_gateway, mediaResourceListName=media_resource_group_list,
+            )
         except Fault as e:
             return e
 
@@ -825,15 +888,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_route_groups(self):
+    def get_route_groups(self, tagfilter={"name": "", "distributionAlgorithm": ""}):
         """
         Get route groups
         :param mini: return a list of tuples of route group details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listRouteGroup(
-                {'name': '%'}, returnedTags={'name': '', 'distributionAlgorithm': ''})['return']['routeGroup']
+            return self.client.listRouteGroup({"name": "%"}, returnedTags=tagfilter)[
+                "return"
+            ]["routeGroup"]
         except Fault as e:
             return e
 
@@ -849,10 +913,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_route_group(self,
-                        name,
-                        distribution_algorithm='Top Down',
-                        members=[]):
+    def add_route_group(self, name, distribution_algorithm="Top Down", members=[]):
         """
         Add a route group
         :param name: Route group name
@@ -860,17 +921,22 @@ class axl(object):
         :param members: A list of devices to add (must already exist DUH!)
         """
         req = {
-            'name': name,
-            'distributionAlgorithm': distribution_algorithm,
-            'members': {'member': []},
+            "name": name,
+            "distributionAlgorithm": distribution_algorithm,
+            "members": {"member": []},
         }
 
         if members:
-            [req['members']['member'].append({
-                'deviceName': i,
-                'deviceSelectionOrder': members.index(i) + 1,
-                'port': 0
-            }) for i in members]
+            [
+                req["members"]["member"].append(
+                    {
+                        "deviceName": i,
+                        "deviceSelectionOrder": members.index(i) + 1,
+                        "port": 0,
+                    }
+                )
+                for i in members
+            ]
 
         try:
             return self.client.addRouteGroup(req)
@@ -901,15 +967,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_route_lists(self):
+    def get_route_lists(self, tagfilter={"name": "", "description": ""}):
         """
         Get route lists
         :param mini: return a list of tuples of route list details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listRouteList(
-                {'name': '%'}, returnedTags={'name': '', 'description': ''})['return']['routeList']
+            return self.client.listRouteList({"name": "%"}, returnedTags=tagfilter)[
+                "return"
+            ]["routeList"]
         except Fault as e:
             return e
 
@@ -925,13 +992,15 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_route_list(self,
-                       name,
-                       description='',
-                       cm_group_name='Default',
-                       route_list_enabled='true',
-                       run_on_all_nodes='false',
-                       members=[]):
+    def add_route_list(
+        self,
+        name,
+        description="",
+        cm_group_name="Default",
+        route_list_enabled="true",
+        run_on_all_nodes="false",
+        members=[],
+    ):
 
         """
         Add a route list
@@ -944,29 +1013,34 @@ class axl(object):
         :return: Result dictionary
         """
         req = {
-            'name': name,
-            'description': description,
-            'callManagerGroupName': cm_group_name,
-            'routeListEnabled': route_list_enabled,
-            'runOnEveryNode': run_on_all_nodes,
-            'members': {'member': []},
+            "name": name,
+            "description": description,
+            "callManagerGroupName": cm_group_name,
+            "routeListEnabled": route_list_enabled,
+            "runOnEveryNode": run_on_all_nodes,
+            "members": {"member": []},
         }
 
         if members:
-            [req['members']['member'].append({
-                'routeGroupName': i,
-                'selectionOrder': members.index(i) + 1,
-                'calledPartyTransformationMask': '',
-                'callingPartyTransformationMask': '',
-                'digitDiscardInstructionName': '',
-                'callingPartyPrefixDigits': '',
-                'prefixDigitsOut': '',
-                'useFullyQualifiedCallingPartyNumber': 'Default',
-                'callingPartyNumberingPlan': 'Cisco CallManager',
-                'callingPartyNumberType': 'Cisco CallManager',
-                'calledPartyNumberingPlan': 'Cisco CallManager',
-                'calledPartyNumberType': 'Cisco CallManager',
-            }) for i in members]
+            [
+                req["members"]["member"].append(
+                    {
+                        "routeGroupName": i,
+                        "selectionOrder": members.index(i) + 1,
+                        "calledPartyTransformationMask": "",
+                        "callingPartyTransformationMask": "",
+                        "digitDiscardInstructionName": "",
+                        "callingPartyPrefixDigits": "",
+                        "prefixDigitsOut": "",
+                        "useFullyQualifiedCallingPartyNumber": "Default",
+                        "callingPartyNumberingPlan": "Cisco CallManager",
+                        "callingPartyNumberType": "Cisco CallManager",
+                        "calledPartyNumberingPlan": "Cisco CallManager",
+                        "calledPartyNumberType": "Cisco CallManager",
+                    }
+                )
+                for i in members
+            ]
 
         try:
             return self.client.addRouteList(req)
@@ -1002,7 +1076,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_partitions(self):
+    def get_partitions(self, tagfilter={"name": "", "description": ""}):
         """
         Get partitions
         :param mini: return a list of tuples of partition details
@@ -1010,8 +1084,8 @@ class axl(object):
         """
         try:
             return self.client.listRoutePartition(
-                {'name': '%'}, returnedTags={
-                    'name': '', 'description': ''})['return']['routePartition']
+                {"name": "%"}, returnedTags=tagfilter
+            )["return"]["routePartition"]
         except Fault as e:
             return e
 
@@ -1027,10 +1101,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_partition(self,
-                      name,
-                      description='',
-                      time_schedule_name='All the time'):
+    def add_partition(self, name, description="", time_schedule_name="All the time"):
         """
         Add a partition
         :param name: Name of the partition to add
@@ -1039,11 +1110,13 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addRoutePartition({
-                'name': name,
-                'description': description,
-                'timeScheduleIdName': time_schedule_name,
-            })
+            return self.client.addRoutePartition(
+                {
+                    "name": name,
+                    "description": description,
+                    "timeScheduleIdName": time_schedule_name,
+                }
+            )
         except Fault as e:
             return e
 
@@ -1075,15 +1148,16 @@ class axl(object):
         except Fault as e:
             return e
 
-
-    def get_calling_search_spaces(self):
+    def get_calling_search_spaces(self, tagfilter={"name": "", "description": ""}):
         """
         Get calling search spaces
         :param mini: return a list of tuples of css details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listCss({'name': '%'}, returnedTags={'name': '', 'description': ''})['return']['css']
+            return self.client.listCss({"name": "%"}, returnedTags=tagfilter)["return"][
+                "css"
+            ]
         except Fault as e:
             return e
 
@@ -1099,10 +1173,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_calling_search_space(self,
-                                 name,
-                                 description='',
-                                 members=[]):
+    def add_calling_search_space(self, name, description="", members=[]):
         """
         Add a Calling search space
         :param name: Name of the CSS to add
@@ -1111,16 +1182,18 @@ class axl(object):
         :return: result dictionary
         """
         req = {
-            'name': name,
-            'description': description,
-            'members': {'member': []},
+            "name": name,
+            "description": description,
+            "members": {"member": []},
         }
         if members:
-            [req['members']['member'].append({
-                'routePartitionName': i,
-                'index': members.index(i) + 1,
-            }) for i in members]
-        
+            [
+                req["members"]["member"].append(
+                    {"routePartitionName": i, "index": members.index(i) + 1,}
+                )
+                for i in members
+            ]
+
         try:
             return self.client.addCss(req)
         except Fault as e:
@@ -1154,53 +1227,60 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_route_patterns(self):
+    def get_route_patterns(
+        self, tagfilter={"pattern": "", "description": "", "_uuid": ""}
+    ):
         """
         Get route patterns
         :param mini: return a list of tuples of route pattern details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listRoutePattern({'pattern': '%'}, 
-            returnedTags={'pattern': '', 'description': '', '_uuid': ''})['return']['routePattern']
+            return self.client.listRoutePattern(
+                {"pattern": "%"}, returnedTags=tagfilter,
+            )["return"]["routePattern"]
         except Fault as e:
             return e
 
-    def get_route_pattern(self, pattern='', uuid=''):
+    def get_route_pattern(self, pattern="", uuid=""):
         """
         Get route pattern
         :param pattern: route pattern
         :param uuid: route pattern uuid
         :return: result dictionary
         """
-        if uuid == '' and pattern != '':
-        # Cant get pattern directly so get UUID first
+        if uuid == "" and pattern != "":
+            # Cant get pattern directly so get UUID first
             try:
-                uuid = self.client.listRoutePattern({'pattern': pattern}, returnedTags={'uuid': ''})
+                uuid = self.client.listRoutePattern(
+                    {"pattern": pattern}, returnedTags={"uuid": ""}
+                )
             except Fault as e:
                 return e
-            if 'return' in uuid and uuid['return'] is not None:
-                uuid = uuid['return']['routePattern'][0]['uuid']
+            if "return" in uuid and uuid["return"] is not None:
+                uuid = uuid["return"]["routePattern"][0]["uuid"]
                 try:
                     return self.client.getRoutePattern(uuid=uuid)
                 except Fault as e:
                     return e
 
-        elif uuid != '' and pattern == '':
+        elif uuid != "" and pattern == "":
             try:
                 return self.client.getRoutePattern(uuid=uuid)
             except Fault as e:
                 return e
 
-    def add_route_pattern(self,
-                          pattern,
-                          gateway='',
-                          route_list='',
-                          description='',
-                          partition='',
-                          blockEnable=False,
-                          patternUrgency=False,
-                          releaseClause='Call Rejected'):
+    def add_route_pattern(
+        self,
+        pattern,
+        gateway="",
+        route_list="",
+        description="",
+        partition="",
+        blockEnable=False,
+        patternUrgency=False,
+        releaseClause="Call Rejected",
+    ):
         """
         Add a route pattern
         :param pattern: Route pattern - required
@@ -1213,24 +1293,24 @@ class axl(object):
         """
 
         req = {
-            'pattern': pattern,
-            'description': description,
-            'destination': {},
-            'routePartitionName': partition,
-            'blockEnable': blockEnable,
-            'releaseClause': releaseClause
+            "pattern": pattern,
+            "description": description,
+            "destination": {},
+            "routePartitionName": partition,
+            "blockEnable": blockEnable,
+            "releaseClause": releaseClause,
         }
 
-        if gateway == '' and route_list == '':
-            return 'Either a gateway OR route list, is a required parameter'
+        if gateway == "" and route_list == "":
+            return "Either a gateway OR route list, is a required parameter"
 
-        elif gateway != '' and route_list != '':
-            return 'Enter a gateway OR route list, not both'
+        elif gateway != "" and route_list != "":
+            return "Enter a gateway OR route list, not both"
 
-        elif gateway != '':
-            req['destination'].update({'gatewayName': gateway})
-        elif route_list != '':
-            req['destination'].update({'routeListName': route_list})
+        elif gateway != "":
+            req["destination"].update({"gatewayName": gateway})
+        elif route_list != "":
+            req["destination"].update({"routeListName": route_list})
         try:
             return self.client.addRoutePattern(req)
         except Fault as e:
@@ -1267,15 +1347,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_media_resource_groups(self):
+    def get_media_resource_groups(self, tagfilter={"name": "", "description": ""}):
         """
         Get media resource groups
         :param mini: return a list of tuples of route pattern details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listMediaResourceGroup({'name': '%'}, 
-            returnedTags={'name': '', 'description': ''})['return']['mediaResourceGroup']
+            return self.client.listMediaResourceGroup(
+                {"name": "%"}, returnedTags=tagfilter
+            )["return"]["mediaResourceGroup"]
         except Fault as e:
             return e
 
@@ -1290,11 +1371,9 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_media_resource_group(self,
-                                 media_resource_group,
-                                 description='',
-                                 multicast='false',
-                                 members=[]):
+    def add_media_resource_group(
+        self, media_resource_group, description="", multicast="false", members=[]
+    ):
         """
         Add a media resource group
         :param media_resource_group: Media resource group name
@@ -1304,14 +1383,14 @@ class axl(object):
         :return: result dictionary
         """
         req = {
-            'name': media_resource_group,
-            'description': description,
-            'multicast': multicast,
-            'members': {'member': []}
+            "name": media_resource_group,
+            "description": description,
+            "multicast": multicast,
+            "members": {"member": []},
         }
 
         if members:
-            [req['members']['member'].append({'deviceName': i}) for i in members]
+            [req["members"]["member"].append({"deviceName": i}) for i in members]
 
         try:
             return self.client.addMediaResourceGroup(req)
@@ -1329,15 +1408,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_media_resource_group_lists(self):
+    def get_media_resource_group_lists(self, tagfilter={"name": ""}):
         """
         Get media resource groups
         :param mini: return a list of tuples of route pattern details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listMediaResourceList({'name': '%'}, 
-            returnedTags={'name': ''})['return']['mediaResourceList']
+            return self.client.listMediaResourceList(
+                {"name": "%"}, returnedTags=tagfilter
+            )["return"]["mediaResourceList"]
         except Fault as e:
             return e
 
@@ -1359,14 +1439,15 @@ class axl(object):
         :param members: A list of members
         :return:
         """
-        req = {
-            'name': media_resource_group_list,
-            'members': {'member': []}
-        }
+        req = {"name": media_resource_group_list, "members": {"member": []}}
 
         if members:
-            [req['members']['member'].append({'order': members.index(i),
-                                              'mediaResourceGroupName': i}) for i in members]
+            [
+                req["members"]["member"].append(
+                    {"order": members.index(i), "mediaResourceGroupName": i}
+                )
+                for i in members
+            ]
         try:
             return self.client.addMediaResourceList(req)
         except Fault as e:
@@ -1383,15 +1464,18 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_directory_numbers(self):
+    def get_directory_numbers(
+        self, tagfilter={"pattern": "", "description": "", "routePartitionName": "",}
+    ):
         """
         Get directory numbers
         :param mini: return a list of tuples of directory number details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listLine({'pattern': '%'}, 
-            returnedTags={'pattern': '', 'description': '', 'routePartitionName': ''})['return']['line']
+            return self.client.listLine({"pattern": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["line"]
         except Fault as e:
             return e
 
@@ -1407,21 +1491,23 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_directory_number(self,
-                             pattern,
-                             partition='',
-                             description='',
-                             alerting_name='',
-                             ascii_alerting_name='',
-                             shared_line_css='',
-                             aar_neighbourhood='',
-                             call_forward_css='',
-                             vm_profile_name='NoVoiceMail',
-                             aar_destination_mask='',
-                             call_forward_destination='',
-                             forward_all_to_vm='false',
-                             forward_all_destination='',
-                             forward_to_vm='false'):
+    def add_directory_number(
+        self,
+        pattern,
+        partition="",
+        description="",
+        alerting_name="",
+        ascii_alerting_name="",
+        shared_line_css="",
+        aar_neighbourhood="",
+        call_forward_css="",
+        vm_profile_name="NoVoiceMail",
+        aar_destination_mask="",
+        call_forward_destination="",
+        forward_all_to_vm="false",
+        forward_all_destination="",
+        forward_to_vm="false",
+    ):
         """
         Add a directory number
         :param pattern: Directory number
@@ -1441,67 +1527,69 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addLine({
-                'pattern': pattern,
-                'routePartitionName': partition,
-                'description': description,
-                'alertingName': alerting_name,
-                'asciiAlertingName': ascii_alerting_name,
-                'voiceMailProfileName': vm_profile_name,
-                'shareLineAppearanceCssName': shared_line_css,
-                'aarNeighborhoodName': aar_neighbourhood,
-                'aarDestinationMask': aar_destination_mask,
-                'callForwardAll': {
-                    'forwardToVoiceMail': forward_all_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': forward_all_destination,
-                },
-                'callForwardBusy': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardBusyInt': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardNoAnswer': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardNoAnswerInt': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardNoCoverage': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardNoCoverageInt': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardOnFailure': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardNotRegistered': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
-                },
-                'callForwardNotRegisteredInt': {
-                    'forwardToVoiceMail': forward_to_vm,
-                    'callingSearchSpaceName': call_forward_css,
-                    'destination': call_forward_destination,
+            return self.client.addLine(
+                {
+                    "pattern": pattern,
+                    "routePartitionName": partition,
+                    "description": description,
+                    "alertingName": alerting_name,
+                    "asciiAlertingName": ascii_alerting_name,
+                    "voiceMailProfileName": vm_profile_name,
+                    "shareLineAppearanceCssName": shared_line_css,
+                    "aarNeighborhoodName": aar_neighbourhood,
+                    "aarDestinationMask": aar_destination_mask,
+                    "callForwardAll": {
+                        "forwardToVoiceMail": forward_all_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": forward_all_destination,
+                    },
+                    "callForwardBusy": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardBusyInt": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardNoAnswer": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardNoAnswerInt": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardNoCoverage": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardNoCoverageInt": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardOnFailure": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardNotRegistered": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
+                    "callForwardNotRegisteredInt": {
+                        "forwardToVoiceMail": forward_to_vm,
+                        "callingSearchSpaceName": call_forward_css,
+                        "destination": call_forward_destination,
+                    },
                 }
-        })
+            )
         except Fault as e:
             return e
 
@@ -1540,15 +1628,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_cti_route_points(self):
+    def get_cti_route_points(self, tagfilter={"name": "", "description": ""}):
         """
         Get CTI route points
         :param mini: return a list of tuples of CTI route point details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listCtiRoutePoint({'name': '%'}, 
-            returnedTags={'name': '', 'description': ''})['return']['ctiRoutePoint']
+            return self.client.listCtiRoutePoint({"name": "%"}, returnedTags=tagfilter)[
+                "return"
+            ]["ctiRoutePoint"]
         except Fault as e:
             return e
 
@@ -1564,19 +1653,21 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_cti_route_point(self,
-                            name,
-                            description='',
-                            device_pool='Default',
-                            location='Hub_None',
-                            common_device_config='',
-                            css='',
-                            product='CTI Route Point',
-                            dev_class='CTI Route Point',
-                            protocol='SCCP',
-                            protocol_slide='User',
-                            use_trusted_relay_point='Default',
-                            lines=[]):
+    def add_cti_route_point(
+        self,
+        name,
+        description="",
+        device_pool="Default",
+        location="Hub_None",
+        common_device_config="",
+        css="",
+        product="CTI Route Point",
+        dev_class="CTI Route Point",
+        protocol="SCCP",
+        protocol_slide="User",
+        use_trusted_relay_point="Default",
+        lines=[],
+    ):
         """
         Add CTI route point
         lines should be a list of tuples containing the pattern and partition
@@ -1597,27 +1688,30 @@ class axl(object):
         """
 
         req = {
-            'name': name,
-            'description': description,
-            'product': product,
-            'class': dev_class,
-            'protocol': protocol,
-            'protocolSide': protocol_slide,
-            'commonDeviceConfigName': common_device_config,
-            'callingSearchSpaceName': css,
-            'devicePoolName': device_pool,
-            'locationName': location,
-            'useTrustedRelayPoint': use_trusted_relay_point,
-            'lines': {'line': []}
+            "name": name,
+            "description": description,
+            "product": product,
+            "class": dev_class,
+            "protocol": protocol,
+            "protocolSide": protocol_slide,
+            "commonDeviceConfigName": common_device_config,
+            "callingSearchSpaceName": css,
+            "devicePoolName": device_pool,
+            "locationName": location,
+            "useTrustedRelayPoint": use_trusted_relay_point,
+            "lines": {"line": []},
         }
 
         if lines:
-            [req['lines']['line'].append({
-                'index': lines.index(i) + 1,
-                'dirn': {
-                    'pattern': i[0], 
-                    'routePartitionName': i[1]}
-            }) for i in lines]
+            [
+                req["lines"]["line"].append(
+                    {
+                        "index": lines.index(i) + 1,
+                        "dirn": {"pattern": i[0], "routePartitionName": i[1]},
+                    }
+                )
+                for i in lines
+            ]
 
         try:
             return self.client.addCtiRoutePoint(req)
@@ -1659,7 +1753,19 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_phones(self, first=1000, skip=0):
+    def get_phones(
+        self,
+        first=1000,
+        skip=0,
+        tagfilter={
+            "name": "",
+            "product": "",
+            "description": "",
+            "protocol": "",
+            "locationName": "",
+            "callingSearchSpaceName": "",
+        },
+    ):
         """
         Get phone details
         :param mini: return a list of tuples of phone details
@@ -1668,18 +1774,14 @@ class axl(object):
         paginated = []
         try:
             return self.client.listPhone(
-                    {'name': '%'}, returnedTags={
-                        'name': '',
-                        'product': '',
-                        'protocol': '',
-                        'locationName': '',
-                    }, first=first, skip=skip)['return']['phone']
+                {"name": "%"}, returnedTags=tagfilter, first=first, skip=skip
+            )["return"]["phone"]
         except Fault as e:
             return e
 
             if len(resp) >= 1000:
-                skip=first+skip
-                first+=first
+                skip = first + skip
+                first += first
                 paginated.append(resp)
                 self.get_phones(first=first, skip=skip)
             else:
@@ -1695,33 +1797,35 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getPhone(**args)['return']['phone']
+            return self.client.getPhone(**args)["return"]["phone"]
         except Fault as e:
             return e
 
-    def add_phone(self,
-                  name,
-                  description='',
-                  product='Cisco 7941',
-                  device_pool='Default',
-                  location='Hub_None',
-                  phone_template='Standard 8861 SIP',
-                  common_device_config='',
-                  css='',
-                  aar_css='',
-                  subscribe_css='',
-                  securityProfileName='',
-                  lines=[],
-                  dev_class='Phone',
-                  protocol='SCCP',
-                  softkey_template='Standard User',
-                  enable_em='true',
-                  em_service_name='Extension Mobility',
-                  em_service_url=False,
-                  em_url_button_enable=False,
-                  em_url_button_index='1',
-                  em_url_label='Press here to logon',
-                  ehook_enable=1):
+    def add_phone(
+        self,
+        name,
+        description="",
+        product="Cisco 7941",
+        device_pool="Default",
+        location="Hub_None",
+        phone_template="Standard 8861 SIP",
+        common_device_config="",
+        css="",
+        aar_css="",
+        subscribe_css="",
+        securityProfileName="",
+        lines=[],
+        dev_class="Phone",
+        protocol="SCCP",
+        softkey_template="Standard User",
+        enable_em="true",
+        em_service_name="Extension Mobility",
+        em_service_url=False,
+        em_url_button_enable=False,
+        em_url_button_index="1",
+        em_url_label="Press here to logon",
+        ehook_enable=1,
+    ):
         """
         lines takes a list of Tuples with properties for each line EG:
 
@@ -1754,49 +1858,57 @@ class axl(object):
         """
 
         req = {
-            'name': name,
-            'description': description,
-            'product': product,
-            'class': dev_class,
-            'protocol': protocol,
-            'commonDeviceConfigName': common_device_config,
-            'softkeyTemplateName': softkey_template,
-            'phoneTemplateName': phone_template,
-            'devicePoolName': device_pool,
-            'locationName': location,
-            'enableExtensionMobility': enable_em,
-            'callingSearchSpaceName': css,
-            'automatedAlternateRoutingCssName': aar_css,
-            'subscribeCallingSearchSpaceName': subscribe_css,
-            'lines': {'line': []},
-            'services': {'service': []},
-            'vendorConfig': [{
-                'ehookEnable': ehook_enable
-            }]
+            "name": name,
+            "description": description,
+            "product": product,
+            "class": dev_class,
+            "protocol": protocol,
+            "commonDeviceConfigName": common_device_config,
+            "softkeyTemplateName": softkey_template,
+            "phoneTemplateName": phone_template,
+            "devicePoolName": device_pool,
+            "locationName": location,
+            "enableExtensionMobility": enable_em,
+            "callingSearchSpaceName": css,
+            "automatedAlternateRoutingCssName": aar_css,
+            "subscribeCallingSearchSpaceName": subscribe_css,
+            "lines": {"line": []},
+            "services": {"service": []},
+            "vendorConfig": [{"ehookEnable": ehook_enable}],
         }
 
         if lines:
-            [req['lines']['line'].append({
-                'index': lines.index(i) + 1,
-                'dirn': {
-                    'pattern': i[0],
-                    'routePartitionName': i[1]
-                },
-                'display': i[2],
-                'displayAscii': i[3],
-                'label': i[4],
-                'e164Mask': i[5]
-            }) for i in lines]
+            [
+                req["lines"]["line"].append(
+                    {
+                        "index": lines.index(i) + 1,
+                        "dirn": {"pattern": i[0], "routePartitionName": i[1]},
+                        "display": i[2],
+                        "displayAscii": i[3],
+                        "label": i[4],
+                        "e164Mask": i[5],
+                    }
+                )
+                for i in lines
+            ]
 
         if em_service_url:
-            req['services']['service'].append([{
-                'telecasterServiceName': em_service_name,
-                'name': em_service_name,
-                'url': 'http://{0}:8080/emapp/EMAppServlet?device=#DEVICENAME#&EMCC=#EMCC#'.format(self.cucm),
-            }])
+            req["services"]["service"].append(
+                [
+                    {
+                        "telecasterServiceName": em_service_name,
+                        "name": em_service_name,
+                        "url": "http://{0}:8080/emapp/EMAppServlet?device=#DEVICENAME#&EMCC=#EMCC#".format(
+                            self.cucm
+                        ),
+                    }
+                ]
+            )
 
         if em_url_button_enable:
-            req['services']['service'][0].update({'urlButtonIndex': em_url_button_index, 'urlLabel': em_url_label})
+            req["services"]["service"][0].update(
+                {"urlButtonIndex": em_url_button_index, "urlLabel": em_url_label}
+            )
 
         try:
             resp = self.client.addPhone(req)
@@ -1815,7 +1927,7 @@ class axl(object):
             return e
 
     def update_phone(self, **args):
-                  
+
         """
         lines takes a list of Tuples with properties for each line EG:
 
@@ -1851,7 +1963,10 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_device_profiles(self):
+    def get_device_profiles(
+        self,
+        tagfilter={"name": "", "product": "", "protocol": "", "phoneTemplateName": "",},
+    ):
         """
         Get device profile details
         :param mini: return a list of tuples of device profile details
@@ -1859,12 +1974,8 @@ class axl(object):
         """
         try:
             return self.client.listDeviceProfile(
-                    {'name': '%'}, returnedTags={
-                        'name': '',
-                        'product': '',
-                        'protocol': '',
-                        'phoneTemplateName': '',
-                    })['return']['deviceProfile']
+                {"name": "%"}, returnedTags=tagfilter,
+            )["return"]["deviceProfile"]
         except Fault as e:
             return e
 
@@ -1880,16 +1991,18 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_device_profile(self,
-                           profile,
-                           description='',
-                           product='Cisco 7962',
-                           phone_template='Standard 7962G SCCP',
-                           dev_class='Device Profile',
-                           protocol='SCCP',
-                           softkey_template='Standard User',
-                           em_service_name='Extension Mobility',
-                           lines=[]):
+    def add_device_profile(
+        self,
+        profile,
+        description="",
+        product="Cisco 7962",
+        phone_template="Standard 7962G SCCP",
+        dev_class="Device Profile",
+        protocol="SCCP",
+        softkey_template="Standard User",
+        em_service_name="Extension Mobility",
+        lines=[],
+    ):
         """
         Add A Device profile for use with extension mobility
         lines takes a list of Tuples with properties for each line EG:
@@ -1910,33 +2023,41 @@ class axl(object):
         """
 
         req = {
-            'name': profile,
-            'description': description,
-            'product': product,
-            'class': dev_class,
-            'protocol': protocol,
-            'softkeyTemplateName': softkey_template,
-            'phoneTemplateName': phone_template,
-            'lines': {'line': []},
-            'services': {'service': [{
-                'telecasterServiceName': em_service_name,
-                'name': em_service_name,
-                'url': 'http://{0}:8080/emapp/EMAppServlet?device=#DEVICENAME#&EMCC=#EMCC#'.format(self.cucm),
-            }]},
+            "name": profile,
+            "description": description,
+            "product": product,
+            "class": dev_class,
+            "protocol": protocol,
+            "softkeyTemplateName": softkey_template,
+            "phoneTemplateName": phone_template,
+            "lines": {"line": []},
+            "services": {
+                "service": [
+                    {
+                        "telecasterServiceName": em_service_name,
+                        "name": em_service_name,
+                        "url": "http://{0}:8080/emapp/EMAppServlet?device=#DEVICENAME#&EMCC=#EMCC#".format(
+                            self.cucm
+                        ),
+                    }
+                ]
+            },
         }
 
         if lines:
-            [req['lines']['line'].append({
-                'index': lines.index(i) + 1,
-                'dirn': {
-                    'pattern': i[0],
-                    'routePartitionName': i[1]
-                },
-                'display': i[2],
-                'displayAscii': i[3],
-                'label': i[4],
-                'e164Mask': i[5]
-            }) for i in lines]
+            [
+                req["lines"]["line"].append(
+                    {
+                        "index": lines.index(i) + 1,
+                        "dirn": {"pattern": i[0], "routePartitionName": i[1]},
+                        "display": i[2],
+                        "displayAscii": i[3],
+                        "label": i[4],
+                        "e164Mask": i[5],
+                    }
+                )
+                for i in lines
+            ]
 
         try:
             return self.client.addDeviceProfile(req)
@@ -1954,7 +2075,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def update_device_profile(self,**args):
+    def update_device_profile(self, **args):
         """
         Update A Device profile for use with extension mobility
         lines takes a list of Tuples with properties for each line EG:
@@ -1978,16 +2099,17 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_users(self, tagfilter={'userid': '','firstName': '','lastName': '',}):
+    def get_users(self, tagfilter={"userid": "", "firstName": "", "lastName": "",}):
         """
         Get users details
         :param mini: return a list of tuples of user details
         :return: A list of dictionary's
         """
-        
+
         try:
-            return self.client.listUser(
-                    {'userid': '%'}, returnedTags=tagfilter)['return']['user']
+            return self.client.listUser({"userid": "%"}, returnedTags=tagfilter)[
+                "return"
+            ]["user"]
         except Fault as e:
             return e
 
@@ -1998,16 +2120,17 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getUser(userid=user_id)['return']['user']
+            return self.client.getUser(userid=user_id)["return"]["user"]
         except Fault as e:
             return e
 
-    def add_user(self,
-                 user_id,
-                 last_name,
-                 first_name,
-                 presenceGroupName='Standard Presence group'
-                 ):
+    def add_user(
+        self,
+        user_id,
+        last_name,
+        first_name,
+        presenceGroupName="Standard Presence group",
+    ):
         """
         Add a user
         :param user_id: User ID of the user to add
@@ -2016,12 +2139,14 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addUser({
-                'userid': user_id,
-                'last_name': last_name,
-                'first_name': first_name,
-                'presenceGroupName': presenceGroupName
-            })
+            return self.client.addUser(
+                {
+                    "userid": user_id,
+                    "last_name": last_name,
+                    "first_name": first_name,
+                    "presenceGroupName": presenceGroupName,
+                }
+            )
         except Fault as e:
             return e
 
@@ -2038,12 +2163,9 @@ class axl(object):
         except Fault as e:
             return e
 
-    def update_user_em(self,
-                       user_id,
-                       device_profile,
-                       default_profile,
-                       subscribe_css,
-                       primary_extension):
+    def update_user_em(
+        self, user_id, device_profile, default_profile, subscribe_css, primary_extension
+    ):
         """
         Update end user for extension mobility
         :param user_id: User ID
@@ -2057,26 +2179,23 @@ class axl(object):
             resp = self.client.getDeviceProfile(name=device_profile)
         except Fault as e:
             return e
-        if 'return' in resp and resp['return'] is not None:
-            uuid = resp['return']['deviceProfile']['uuid']
+        if "return" in resp and resp["return"] is not None:
+            uuid = resp["return"]["deviceProfile"]["uuid"]
             try:
                 return self.client.updateUser(
                     userid=user_id,
-                    phoneProfiles={'profileName': {'_uuid': uuid}},
+                    phoneProfiles={"profileName": {"_uuid": uuid}},
                     defaultProfile=default_profile,
                     subscribeCallingSearchSpaceName=subscribe_css,
-                    primaryExtension={'pattern': primary_extension},
-                    associatedGroups={'userGroup': {'name': 'Standard CCM End Users'}}
-            )
+                    primaryExtension={"pattern": primary_extension},
+                    associatedGroups={"userGroup": {"name": "Standard CCM End Users"}},
+                )
             except Fault as e:
                 return e
         else:
-            return 'Device Profile not found for user'
+            return "Device Profile not found for user"
 
-    def update_user_credentials(self,
-                                user_id,
-                                password='',
-                                pin=''):
+    def update_user_credentials(self, user_id, password="", pin=""):
         """
         Update end user for credentials
         :param user_id: User ID
@@ -2085,24 +2204,26 @@ class axl(object):
         :return: result dictionary
         """
 
-        if password == '' and pin == '':
-            return 'Password and/or Pin are required'
+        if password == "" and pin == "":
+            return "Password and/or Pin are required"
 
-        elif password != '' and pin != '':
+        elif password != "" and pin != "":
             try:
-                return self.client.updateUser(userid=user_id,password=password,pin=pin)
+                return self.client.updateUser(
+                    userid=user_id, password=password, pin=pin
+                )
             except Fault as e:
                 return e
 
-        elif password != '':
+        elif password != "":
             try:
-                return self.client.updateUser(userid=user_id,password=password)
+                return self.client.updateUser(userid=user_id, password=password)
             except Fault as e:
                 return e
 
-        elif pin != '':
+        elif pin != "":
             try:
-                return self.client.updateUser(userid=user_id,pin=pin)
+                return self.client.updateUser(userid=user_id, pin=pin)
             except Fault as e:
                 return e
 
@@ -2125,26 +2246,28 @@ class axl(object):
         """
         try:
             return self.client.listTransPattern(
-                {'pattern': '%'}, returnedTags={
-                    'pattern': '', 
-                    'description': '', 
-                    '_uuid': '', 
-                    'routePartitionName': '',
-                    'callingSearchSpaceName': '',
-                    'useCallingPartyPhoneMask': '',
-                    'patternUrgency': '',
-                    'provideOutsideDialtone': '',
-                    'prefixDigitsOut': '',
-                    'calledPartyTransformationMask': '',
-                    'callingPartyTransformationMask': '',
-                    'digitDiscardInstructionName': '',
-                    'callingPartyPrefixDigits': '',
-                    'provideOutsideDialtone': '' })['return']['transPattern']
+                {"pattern": "%"},
+                returnedTags={
+                    "pattern": "",
+                    "description": "",
+                    "_uuid": "",
+                    "routePartitionName": "",
+                    "callingSearchSpaceName": "",
+                    "useCallingPartyPhoneMask": "",
+                    "patternUrgency": "",
+                    "provideOutsideDialtone": "",
+                    "prefixDigitsOut": "",
+                    "calledPartyTransformationMask": "",
+                    "callingPartyTransformationMask": "",
+                    "digitDiscardInstructionName": "",
+                    "callingPartyPrefixDigits": "",
+                    "provideOutsideDialtone": "",
+                },
+            )["return"]["transPattern"]
         except Fault as e:
             return e
 
-
-    def get_translation(self, pattern='', partition='', uuid=''):
+    def get_translation(self, pattern="", partition="", uuid=""):
         """
         Get translation pattern
         :param pattern: translation pattern to match
@@ -2153,62 +2276,70 @@ class axl(object):
         :return: result dictionary
         """
 
-        if pattern != '' and partition != '' and uuid == '':
+        if pattern != "" and partition != "" and uuid == "":
             try:
-                return self.client.getTransPattern(pattern=pattern,routePartitionName=partition,
+                return self.client.getTransPattern(
+                    pattern=pattern,
+                    routePartitionName=partition,
                     returnedTags={
-                        'pattern': '', 
-                        'description': '', 
-                        'routePartitionName': '',
-                        'callingSearchSpaceName': '',
-                        'useCallingPartyPhoneMask': '',
-                        'patternUrgency': '',
-                        'provideOutsideDialtone': '',
-                        'prefixDigitsOut': '',
-                        'calledPartyTransformationMask': '',
-                        'callingPartyTransformationMask': '',
-                        'digitDiscardInstructionName': '',
-                        'callingPartyPrefixDigits': ''})
+                        "pattern": "",
+                        "description": "",
+                        "routePartitionName": "",
+                        "callingSearchSpaceName": "",
+                        "useCallingPartyPhoneMask": "",
+                        "patternUrgency": "",
+                        "provideOutsideDialtone": "",
+                        "prefixDigitsOut": "",
+                        "calledPartyTransformationMask": "",
+                        "callingPartyTransformationMask": "",
+                        "digitDiscardInstructionName": "",
+                        "callingPartyPrefixDigits": "",
+                    },
+                )
             except Fault as e:
                 return e
-        elif uuid != '' and pattern == '' and partition == '':
+        elif uuid != "" and pattern == "" and partition == "":
             try:
-                return self.client.getTransPattern(uuid=uuid, 
-                returnedTags={
-                    'pattern': '', 
-                    'description': '', 
-                    'routePartitionName': '',
-                    'callingSearchSpaceName': '',
-                    'useCallingPartyPhoneMask': '',
-                    'patternUrgency': '',
-                    'provideOutsideDialtone': '',
-                    'prefixDigitsOut': '',
-                    'calledPartyTransformationMask': '',
-                    'callingPartyTransformationMask': '',
-                    'digitDiscardInstructionName': '',
-                    'callingPartyPrefixDigits': ''})
+                return self.client.getTransPattern(
+                    uuid=uuid,
+                    returnedTags={
+                        "pattern": "",
+                        "description": "",
+                        "routePartitionName": "",
+                        "callingSearchSpaceName": "",
+                        "useCallingPartyPhoneMask": "",
+                        "patternUrgency": "",
+                        "provideOutsideDialtone": "",
+                        "prefixDigitsOut": "",
+                        "calledPartyTransformationMask": "",
+                        "callingPartyTransformationMask": "",
+                        "digitDiscardInstructionName": "",
+                        "callingPartyPrefixDigits": "",
+                    },
+                )
             except Fault as e:
                 return e
-        else: 
+        else:
             return "must specify either uuid OR pattern and partition"
 
-    def add_translation(self,
-                        pattern,
-                        partition,
-                        description='',
-                        usage='Translation',
-                        callingSearchSpaceName='',
-                        useCallingPartyPhoneMask='Off',
-                        patternUrgency='f',
-                        provideOutsideDialtone='f',
-                        prefixDigitsOut='',
-                        calledPartyTransformationMask='',
-                        callingPartyTransformationMask='',
-                        digitDiscardInstructionName='',
-                        callingPartyPrefixDigits='',
-                        blockEnable='f',
-                        routeNextHopByCgpn='f'
-                        ):
+    def add_translation(
+        self,
+        pattern,
+        partition,
+        description="",
+        usage="Translation",
+        callingSearchSpaceName="",
+        useCallingPartyPhoneMask="Off",
+        patternUrgency="f",
+        provideOutsideDialtone="f",
+        prefixDigitsOut="",
+        calledPartyTransformationMask="",
+        callingPartyTransformationMask="",
+        digitDiscardInstructionName="",
+        callingPartyPrefixDigits="",
+        blockEnable="f",
+        routeNextHopByCgpn="f",
+    ):
         """
         Add a translation pattern
         :param pattern: Translation pattern
@@ -2227,26 +2358,28 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addTransPattern({
-                'pattern': pattern, 
-                'description': description,
-                'routePartitionName': partition,
-                'usage': usage,
-                'callingSearchSpaceName': callingSearchSpaceName,
-                'useCallingPartyPhoneMask': useCallingPartyPhoneMask,
-                'patternUrgency': patternUrgency,
-                'provideOutsideDialtone': provideOutsideDialtone,
-                'prefixDigitsOut': prefixDigitsOut,
-                'calledPartyTransformationMask': calledPartyTransformationMask,
-                'callingPartyTransformationMask': callingPartyTransformationMask,
-                'digitDiscardInstructionName': digitDiscardInstructionName,
-                'callingPartyPrefixDigits': callingPartyPrefixDigits,
-                'blockEnable': blockEnable
-            })
+            return self.client.addTransPattern(
+                {
+                    "pattern": pattern,
+                    "description": description,
+                    "routePartitionName": partition,
+                    "usage": usage,
+                    "callingSearchSpaceName": callingSearchSpaceName,
+                    "useCallingPartyPhoneMask": useCallingPartyPhoneMask,
+                    "patternUrgency": patternUrgency,
+                    "provideOutsideDialtone": provideOutsideDialtone,
+                    "prefixDigitsOut": prefixDigitsOut,
+                    "calledPartyTransformationMask": calledPartyTransformationMask,
+                    "callingPartyTransformationMask": callingPartyTransformationMask,
+                    "digitDiscardInstructionName": digitDiscardInstructionName,
+                    "callingPartyPrefixDigits": callingPartyPrefixDigits,
+                    "blockEnable": blockEnable,
+                }
+            )
         except Fault as e:
             return e
 
-    def delete_translation(self, pattern='', partition='', uuid=''):
+    def delete_translation(self, pattern="", partition="", uuid=""):
         """
         Delete a translation pattern
         :param pattern: The pattern of the route to delete
@@ -2255,37 +2388,40 @@ class axl(object):
         :return: result dictionary
         """
 
-        if pattern != '' and partition != '' and uuid == '':
+        if pattern != "" and partition != "" and uuid == "":
             try:
-                return self.client.removeTransPattern(pattern=pattern, routePartitionName=partition)
+                return self.client.removeTransPattern(
+                    pattern=pattern, routePartitionName=partition
+                )
             except Fault as e:
                 return e
-        elif uuid != '' and pattern == '' and partition == '':
+        elif uuid != "" and pattern == "" and partition == "":
             try:
                 return self.client.removeTransPattern(uuid=uuid)
             except Fault as e:
                 return e
-        else: 
+        else:
             return "must specify either uuid OR pattern and partition"
 
-    def update_translation(self,
-                        pattern='',
-                        partition='',
-                        uuid='',
-                        newPattern='',
-                        description='',
-                        newRoutePartitionName='',
-                        callingSearchSpaceName='',
-                        useCallingPartyPhoneMask='',
-                        patternUrgency='',
-                        provideOutsideDialtone='',
-                        prefixDigitsOut='',
-                        calledPartyTransformationMask='',
-                        callingPartyTransformationMask='',
-                        digitDiscardInstructionName='',
-                        callingPartyPrefixDigits='',
-                        blockEnable=''
-                        ):
+    def update_translation(
+        self,
+        pattern="",
+        partition="",
+        uuid="",
+        newPattern="",
+        description="",
+        newRoutePartitionName="",
+        callingSearchSpaceName="",
+        useCallingPartyPhoneMask="",
+        patternUrgency="",
+        provideOutsideDialtone="",
+        prefixDigitsOut="",
+        calledPartyTransformationMask="",
+        callingPartyTransformationMask="",
+        digitDiscardInstructionName="",
+        callingPartyPrefixDigits="",
+        blockEnable="",
+    ):
         """
         Update a translation pattern
         :param uuid: UUID or Translation + Partition Required
@@ -2306,43 +2442,43 @@ class axl(object):
         """
 
         args = {}
-        if description != '':
-            args['description'] = description
-        if pattern != '' and partition != '' and uuid == '':
-            args['pattern'] = pattern
-            args['routePartitionName'] = partition
-        if pattern == '' and partition == '' and uuid != '':
-            args['uuid'] = uuid
-        if newPattern != '':
-            args['newPattern'] = newPattern
-        if newRoutePartitionName != '':
-            args['newRoutePartitionName'] = newRoutePartitionName
-        if callingSearchSpaceName != '':
-            args['callingSearchSpaceName'] = callingSearchSpaceName
-        if useCallingPartyPhoneMask != '':
-            args['useCallingPartyPhoneMask'] = useCallingPartyPhoneMask
-        if digitDiscardInstructionName != '':
-            args['digitDiscardInstructionName'] = digitDiscardInstructionName
-        if callingPartyTransformationMask != '':
-            args['callingPartyTransformationMask'] = callingPartyTransformationMask            
-        if calledPartyTransformationMask != '':
-            args['calledPartyTransformationMask'] = calledPartyTransformationMask
-        if patternUrgency != '':
-            args['patternUrgency'] = patternUrgency
-        if provideOutsideDialtone != '':
-            args['provideOutsideDialtone'] = provideOutsideDialtone
-        if prefixDigitsOut != '':
-            args['prefixDigitsOut'] = prefixDigitsOut
-        if callingPartyPrefixDigits != '':
-            args['callingPartyPrefixDigits'] = callingPartyPrefixDigits
-        if blockEnable != '':
-            args['blockEnable'] = blockEnable
+        if description != "":
+            args["description"] = description
+        if pattern != "" and partition != "" and uuid == "":
+            args["pattern"] = pattern
+            args["routePartitionName"] = partition
+        if pattern == "" and partition == "" and uuid != "":
+            args["uuid"] = uuid
+        if newPattern != "":
+            args["newPattern"] = newPattern
+        if newRoutePartitionName != "":
+            args["newRoutePartitionName"] = newRoutePartitionName
+        if callingSearchSpaceName != "":
+            args["callingSearchSpaceName"] = callingSearchSpaceName
+        if useCallingPartyPhoneMask != "":
+            args["useCallingPartyPhoneMask"] = useCallingPartyPhoneMask
+        if digitDiscardInstructionName != "":
+            args["digitDiscardInstructionName"] = digitDiscardInstructionName
+        if callingPartyTransformationMask != "":
+            args["callingPartyTransformationMask"] = callingPartyTransformationMask
+        if calledPartyTransformationMask != "":
+            args["calledPartyTransformationMask"] = calledPartyTransformationMask
+        if patternUrgency != "":
+            args["patternUrgency"] = patternUrgency
+        if provideOutsideDialtone != "":
+            args["provideOutsideDialtone"] = provideOutsideDialtone
+        if prefixDigitsOut != "":
+            args["prefixDigitsOut"] = prefixDigitsOut
+        if callingPartyPrefixDigits != "":
+            args["callingPartyPrefixDigits"] = callingPartyPrefixDigits
+        if blockEnable != "":
+            args["blockEnable"] = blockEnable
         try:
             return self.client.updateTransPattern(**args)
         except Fault as e:
             return e
 
-    def list_route_plan(self, pattern=''):
+    def list_route_plan(self, pattern=""):
         """
         List Route Plan
         :param pattern: Route Plan Contains Pattern
@@ -2350,30 +2486,33 @@ class axl(object):
         """
         try:
             return self.client.listRoutePlan(
-                {'dnOrPattern': '%'+pattern+'%'}, 
+                {"dnOrPattern": "%" + pattern + "%"},
                 returnedTags={
-                    'dnOrPattern': '',
-                    'partition': '',
-                    'type': '',
-                    'routeDetail': ''
-                })
+                    "dnOrPattern": "",
+                    "partition": "",
+                    "type": "",
+                    "routeDetail": "",
+                },
+            )
         except Fault as e:
             return e
 
-    def list_route_plan_specific(self, pattern=''):
+    def list_route_plan_specific(self, pattern=""):
         """
         List Route Plan
         :param pattern: Route Plan Contains Pattern
         :return: results dictionary
         """
         try:
-            return self.client.listRoutePlan({'dnOrPattern': pattern}, 
+            return self.client.listRoutePlan(
+                {"dnOrPattern": pattern},
                 returnedTags={
-                    'dnOrPattern': '',
-                    'partition': '',
-                    'type': '',
-                    'routeDetail': ''
-            })
+                    "dnOrPattern": "",
+                    "partition": "",
+                    "type": "",
+                    "routeDetail": "",
+                },
+            )
         except Fault as e:
             return e
 
@@ -2384,9 +2523,10 @@ class axl(object):
         :return: A list of dictionary's
         """
         try:
-            return self.client.listCalledPartyTransformationPattern({'pattern': '%'}, 
-                returnedTags={
-                    'pattern': '', 'description': '', 'uuid': ''})['return']['calledPartyTransformationPattern']
+            return self.client.listCalledPartyTransformationPattern(
+                {"pattern": "%"},
+                returnedTags={"pattern": "", "description": "", "uuid": ""},
+            )["return"]["calledPartyTransformationPattern"]
         except Fault as e:
             return e
 
@@ -2402,7 +2542,6 @@ class axl(object):
             return self.client.getCalledPartyTransformationPattern(**args)
         except Fault as e:
             return e
-
 
     def add_called_party_xform(self, **args):
         """
@@ -2461,7 +2600,6 @@ class axl(object):
         except Fault as e:
             return e
 
-
     def get_calling_party_xforms(self):
         """
         Get calling party xforms
@@ -2469,9 +2607,10 @@ class axl(object):
         :return: A list of dictionary's
         """
         try:
-            return self.client.listCallingPartyTransformationPattern({'pattern': '%'}, 
-            returnedTags={
-                'pattern': '', 'description': '', 'uuid': ''})['return']['callingPartyTransformationPattern']
+            return self.client.listCallingPartyTransformationPattern(
+                {"pattern": "%"},
+                returnedTags={"pattern": "", "description": "", "uuid": ""},
+            )["return"]["callingPartyTransformationPattern"]
         except Fault as e:
             return e
 
@@ -2547,12 +2686,14 @@ class axl(object):
 
     def get_sip_trunks(self):
         try:
-            return self.client.listSipTrunk({'name': '%'}, 
+            return self.client.listSipTrunk(
+                {"name": "%"},
                 returnedTags={
-                    'name': '',
-                    'sipProfileName': '',
-                    'callingSearchSpaceName': '',
-                })['return']['sipTrunk']
+                    "name": "",
+                    "sipProfileName": "",
+                    "callingSearchSpaceName": "",
+                },
+            )["return"]["sipTrunk"]
         except Fault as e:
             return e
 
@@ -2636,11 +2777,13 @@ class axl(object):
 
     def list_process_nodes(self):
         try:
-            return self.client.listProcessNode({'name': '%', 'processNodeRole': 'CUCM Voice/Video'}, 
-                returnedTags={'name': ''})['return']['processNode']
+            return self.client.listProcessNode(
+                {"name": "%", "processNodeRole": "CUCM Voice/Video"},
+                returnedTags={"name": ""},
+            )["return"]["processNode"]
         except Fault as e:
             return e
-        
+
     def add_call_manager_group(self, **args):
         """
         Add call manager group

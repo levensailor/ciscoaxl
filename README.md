@@ -1,14 +1,17 @@
 # Python SDK for Cisco CUCM AXL API
 
 ## AXL API Documentation
- - https://developer.cisco.com/docs/axl-schema-reference/
+
+- https://developer.cisco.com/docs/axl-schema-reference/
 
 ## Installation
+
 ```bash
 pip install ciscoaxl
 ```
 
 ## Example Usage
+
 ```python
 from ciscoaxl import axl
 
@@ -19,31 +22,49 @@ version = '12.5'
 ucm = axl(username=cucm_username,password=cucm_password,cucm=cucm,cucm_version=version)
 ```
 
+> Note: all get methods that return more than 1 item have a tagfilter property that can allow more fields to return. Fields are filtered by default to increase performance, but if you need additional fields returned from the axl call, simply add the tagfilter={} to the request. Example:
+
+```python
+get_phones(tagfilter{ "name": "",
+            "product": "",
+            "description": "",
+            "protocol": "",
+            "locationName": "",
+            "callingSearchSpaceName": "",
+            "devicePoolName": ""
+        })
+```
+
 ## Users
 
 #### Get All Users
+
 ```python
 for user in ucm.get_users():
     print(user.firstName)
 ```
 
 #### Get Specific User
+
 ```python
 user = ucm.get_user(user_id='mscott')
 print(user.email)
 ```
 
 #### Add User
+
 ```python
 ucm.add_user(user_id='jlevensailor', last_name='Levensailor', first_name='Jeff')
 ```
 
 #### Delete User
+
 ```python
 ucm.delete_user(user_id='jlevensailor')
 ```
 
 #### Update User
+
 ```python
 ucm.update_user(user_id='jlevensailor', password='Lagavulin16', pin='5432')
 ```
@@ -91,7 +112,6 @@ ucm.delete_phone('SEP004433220043')
 
 ## Translations and Transformations
 
-
 #### Get Translation Patterns
 
 ```python
@@ -130,7 +150,6 @@ ucm.update_translation(pattern='1234', partition='xlates-pt', newPattern='4567')
 
 ## Device Pools
 
-
 #### Get Device Pools
 
 ```python
@@ -164,7 +183,6 @@ ucm.update_device_pool(name='RTP_DP', regionName='G711_RGN')
 ```
 
 ## CSS and Partitions
-
 
 #### Get Calling Search Spaces
 
@@ -376,7 +394,7 @@ ucm.add_cti_route_point(
     device_pool='LosFeliz_DP',
     css='allphone-css',
     lines=[
-        ('2908', 'losfeliz-pt'), 
+        ('2908', 'losfeliz-pt'),
         ('2909', 'losfeliz-pt')
     ]
 )
@@ -420,8 +438,8 @@ print(rg.uuid)
 
 ```python
 ucm.add_route_group(
-    route_group='hollywood-rg', 
-    distribution_algorithm='Circular', 
+    route_group='hollywood-rg',
+    distribution_algorithm='Circular',
     members=[('america-online-sip'), ('h323')])
 ```
 
@@ -449,12 +467,12 @@ print(rl.description)
 
 ```python
 ucm.add_route_list(
-    route_list='hollywood-rl', 
-    description='hollywood', 
-    run_on_all_nodes='true', 
-    cm_group_name='Default', 
+    route_list='hollywood-rl',
+    description='hollywood',
+    run_on_all_nodes='true',
+    cm_group_name='Default',
     members=[
-        ('losfeliz-rg'), 
+        ('losfeliz-rg'),
         ('silverlake-rg')
     ])
 ```
@@ -483,9 +501,9 @@ print(rp.description)
 
 ```python
 ucm.add_route_pattern(
-    pattern='999', 
-    partition='losfeliz-pt', 
-    description='Movie Times', 
+    pattern='999',
+    partition='losfeliz-pt',
+    description='Movie Times',
     route_list='stdloc-rl'
     )
 ```
