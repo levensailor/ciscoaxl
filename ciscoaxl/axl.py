@@ -863,7 +863,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def update_h323_gateway_mrgl(self, h323_gateway, media_resource_group_list):
+    def update_h323_gateway(self, h323_gateway, **args):
         """
 
         :param h323_gateway:
@@ -872,7 +872,7 @@ class axl(object):
         """
         try:
             return self.client.updateH323Gateway(
-                name=h323_gateway, mediaResourceListName=media_resource_group_list,
+                name=h323_gateway, **args
             )
         except Fault as e:
             return e
