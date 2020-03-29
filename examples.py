@@ -11,13 +11,12 @@ password = os.getenv('password')
 version = os.getenv('version')
 
 
-print(cucm)
 ucm = axl(username=username,password=password,cucm=cucm,cucm_version=version)
 
 """
 Users
 """
-print(ucm.get_users())
+# print(ucm.get_ldap_dirs())
 '''Get All Users'''
 # for user in ucm.get_users():
 #     try:
@@ -26,19 +25,21 @@ print(ucm.get_users())
 #         print(e)
 
 ''''Get Specific User'''
-# user = ucm.get_user(user_id='restaurant@abbeyroad.com')
+# user = ucm.get_user(user_id='mscott')
 # print(user)
 
 ''''Add User'''
-# ucm.add_user(user_id='jlevensailor', last_name='Levensailor', first_name='Jeff')
+#print(ucm.add_user(userid='jlevensailor', lastName='Levensailor', firstName='Jeff'))
 
+
+''''Update User'''
+#print(ucm.update_user(userid='jlevensailor', password='Lagavulin16', pin='5432'))
 
 ''''Delete User'''
-# ucm.delete_user(user_id='jlevensailor')
+#print(ucm.delete_user(userid='jlevensailor'))
 
 
-# ''''Update User'''
-# ucm.update_user(user_id='jlevensailor', password='Lagavulin16', pin='5432')
+
 
 
 """
@@ -57,7 +58,7 @@ Phones
 
 #---Add Phone
 
-# ucm.add_phone(
+# dev = ucm.add_phone(
 #     name='SEP0023AF482340',
 #     description='Robert - 1102',
 #     product='Cisco 8861',
@@ -71,6 +72,17 @@ Phones
 #         ('1102', 'ABQ_PT', 'Robert Smith', 'Robert Smith', 'Robert Smith - 1102', '+1408202XXXX')
 #     ]
 # )
+
+# dev = ucm.add_phone(
+#             name='SEP001122334455',
+#             product='Cisco 8861',
+#             device_pool='Default',
+#             location='Hub_None',
+#             protocol='SIP',
+#             lines=[
+#                 ('1102', '', 'Robert Smith', 'Robert Smith', 'Robert Smith - 1102', '+1408202XXXX')
+#             ])
+# print(dev)
 
 #---Delete Phone
 
@@ -125,7 +137,8 @@ Device Pools
 
 #---Add Device Pool
 
-# ucm.add_device_pool(device_pool='Hollywood_DP')
+# dp = ucm.add_device_pool(name='Hollywood_DP')
+# print(dp)
 
 #---Delete Device Pool
 
@@ -224,8 +237,9 @@ Regions and Locations
 
 #---Add Location
 
-# ucm.add_location(location='Hollywood-LOC')
+# print(type(ucm.add_location(name='testlocation')))
 
+# print(type(ucm.update_location(name='testlocation', newName='newlocation')['return']))
 
 #---Delete Location
 
@@ -481,12 +495,15 @@ Runs and Dos
 # build_query()
 #---Do LDAP Sync on all agreements
 
+#print(ucm.execute_sql_update('''insert into routepartition (name,description) values ('Dodgers','World Series Champs')'''))
+
 # for ldap in ucm.get_ldap_dir():
-#     ucm.do_ldap_sync(uuid=ldap.uuid)
+#     print(ldap.uuid)
+#     print(ucm.do_ldap_sync(uuid='ldap.uuid'))
 
 #---Reset Device
 
-# ucm.do_device_reset(device='SEP001100220033')
+#print(ucm.do_device_reset(name='SEP001122337788'))
 
 
 #---Extension Mobility Login
@@ -497,3 +514,32 @@ Runs and Dos
 #---Extension Mobility Logout
 
 # ucm.do_device_logout(device='SEP001100220033', userId='bsimpson')
+
+
+# pro = ucm.get_sip_security_profile(name='Non Secure SIP Trunk Profile')
+# print(pro)
+
+trunk_info = {
+        "name": "trunk",
+        "product": "SIP Trunk",
+        "class": "Trunk",
+        "protocol": "SIP",
+        'locationName': "Hub_None",
+        "protocolSide": "Network",
+        "description": "my new sip trunk",
+        "presenceGroupName": "Standard Presence group",
+        "devicePoolName": "Default",
+        "securityProfileName": "Non Secure SIP Trunk Profile",
+        "sipProfileName": "Standard SIP Profile",
+        "runOnEveryNode": "t",
+        "destinations": {"destination": {
+            "addressIpv4": "4.1.2.3",
+            "port": "5060",
+            "sortOrder": "1"
+        }}
+    }
+trunk = {}
+trunk['sipTrunk'] = trunk_info
+
+trk = ucm.add_sip_trunk(**trunk)
+print(trk)

@@ -1,5 +1,19 @@
 import fs
 
+'''
+get singular = returns dict
+get plural = returns list of dicts
+update = returns dict with return item
+add = returns dict with return item
+delete = returns dict with return item
+do = returns dict with return item
+sqlquery = returns dict with row list of lists
+sqlupdate = returns dict with return item with rowsUpdated item
+reset = returns dict with return item
+list = returns list of dicts
+
+'''
+
 base = [
     'get_ldap_dir',
     'add_location',
@@ -92,8 +106,8 @@ dialplan = [
 ]
 
 dos_and_sql = [
-    'execute_sql_query',
-    'update_sql_query',
+    'sql_query',
+    'sql_update',
     'do_ldap_sync',
     'do_change_dnd_status',
     'do_device_login',
@@ -144,34 +158,63 @@ gateways = [
     'update_sip_trunk'
 ]
 
+def find_assert(function):
+    if function.startswith('add'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith('delete'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith('update'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith(get_ldap):
+        return f'''self.assertIsInstance(ucm.{function}(), list, "Should return a list")'''
+    elif function.startswith('get') and not function.endswith('s'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith('get') and function.endswith('s'):
+        return f'''self.assertIsInstance(ucm.{function}(), list, "Should return a list")'''
+    elif function.startswith('do'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith('sql_query'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith('sql_update'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith('reset'):
+        return f'''self.assertIsInstance(ucm.{function}(), dict, "Should return a dict")'''
+    elif function.startswith('list'):
+        return f'''self.assertIsInstance(ucm.{function}(), list, "Should return a list")'''
+
+
 def generate_tests():
+    t = open("tests.py", "w")
+    t.write("")
+    t.close()
     t = open("tests.py", "a+")
+    t.flush()
     t.write(f'''import unittest\n''')
-    t.write(f'''import ..ciscoaxl\n''')
+    t.write(f'''from axl import *\n''')
     t.write(f'''ucm = axl(username='administrator',password='Dev@1998',cucm='ucm1.presidio.cloud',cucm_version=12.5)\n''')
     t.write("\n")
     t.write(f'''class Tests(unittest.TestCase):\n''')
     for test in base:
         t.write(f'''\tdef test_{test}(self):\n''')
-        t.write(f'''\t\tself.assertEqual(sum([1, 2, 3]), 6, "Should be 6")\n''')
+        t.write(f'''\t\t{find_assert(test)}\n\n''')
     for test in devices:
         t.write(f'''\tdef test_{test}(self):\n''')
-        t.write(f'''\t\tself.assertEqual(sum([1, 2, 3]), 6, "Should be 6")\n''')
+        t.write(f'''\t\t{find_assert(test)}\n\n''')
     for test in dialplan:
         t.write(f'''\tdef test_{test}(self):\n''')
-        t.write(f'''\t\tself.assertEqual(sum([1, 2, 3]), 6, "Should be 6")\n''')
+        t.write(f'''\t\t{find_assert(test)}\n\n''')
     for test in dos_and_sql:
         t.write(f'''\tdef test_{test}(self):\n''')
-        t.write(f'''\t\tself.assertEqual(sum([1, 2, 3]), 6, "Should be 6")\n''')
+        t.write(f'''\t\t{find_assert(test)}\n\n''')
     for test in gateways:
         t.write(f'''\tdef test_{test}(self):\n''')
-        t.write(f'''\t\tself.assertEqual(sum([1, 2, 3]), 6, "Should be 6")\n''')
+        t.write(f'''\t\t{find_assert(test)}\n\n''')
     for test in media:
         t.write(f'''\tdef test_{test}(self):\n''')
-        t.write(f'''\t\tself.assertEqual(sum([1, 2, 3]), 6, "Should be 6")\n''')
+        t.write(f'''\t\t{find_assert(test)}\n\n''')
     for test in users:
         t.write(f'''\tdef test_{test}(self):\n''')
-        t.write(f'''\t\tself.assertEqual(sum([1, 2, 3]), 6, "Should be 6")\n''')
+        t.write(f'''\t\t{find_assert(test)}\n\n''')
     t.write("\n")
     t.write("if __name__ == '__main__':\n")
     t.write("\tunittest.main()\n")

@@ -94,7 +94,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def execute_sql_query(self, query):
+    def sql_query(self, query):
         """
         Execute SQL query
         :param query: SQL Query to execute
@@ -105,14 +105,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def execute_sql_update(self, query):
+    def sql_update(self, query):
         """
         Execute SQL update
         :param query: SQL Update to execute
         :return: result dictionary
         """
         try:
-            return self.client.executeSQLUpdate(query)
+            return self.client.executeSQLUpdate(query)['return']
         except Fault as e:
             return e
 
@@ -139,7 +139,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def do_change_dnd_status(self, userID, status):
+    def do_change_dnd_status(self, **args):
         """
         Do Change DND Status
         :param userID:
@@ -147,23 +147,24 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.doChangeDNDStatus(userID=userID, status=status)
+            return self.client.doChangeDNDStatus(**args)
         except Fault as e:
             return e
 
-    def do_device_login(self, device, userId):
+    def do_device_login(self, **args):
         """
         Do Device Login
-        :param device:
+        :param deviceName:
         :param userId:
+        :param profileName:
         :return: result dictionary
         """
         try:
-            return self.client.doDeviceLogin(deviceName=device, userId=userId)
+            return self.client.doDeviceLogin(**args)
         except Fault as e:
             return e
 
-    def do_device_logout(self, device, userId):
+    def do_device_logout(self, **args):
         """
         Do Device Logout
         :param device:
@@ -171,7 +172,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.doDeviceLogout(deviceName=device, userId=userId)
+            return self.client.doDeviceLogout(**args)
         except Fault as e:
             return e
 
@@ -243,20 +244,7 @@ class axl(object):
         :param within_immersive_kbits: ucm 10
         :return: result dictionary
         """
-        if int(self.cucm_version) >= 10:
-            try:
-                return self.client.addLocation(
-                    {
-                        "name": name,
-                        # CUCM 10.6
-                        "withinAudioBandwidth": within_audio_bw,
-                        "withinVideoBandwidth": within_video_bw,
-                        "withinImmersiveKbits": within_immersive_kbits,
-                    }
-                )
-            except Fault as e:
-                return e
-        else:
+        if self.cucm_version == '8.6' or self.cucm_version == '9.0' or self.cucm_version == '9.5' or self.cucm_version == '10.0':
             try:
                 return self.client.addLocation(
                     {
@@ -264,6 +252,32 @@ class axl(object):
                         # CUCM 8.6
                         "kbits": kbits,
                         "videoKbits": video_kbits,
+                    }
+                )
+            except Fault as e:
+                return e
+        else:
+            try:
+                betweenLocations = []
+                betweenLocation = {}
+                RLocationBetween = {}
+                RLocationBetween['locationName'] = 'Hub_None'
+                RLocationBetween['weight'] = 0
+                RLocationBetween['audioBandwidth'] = within_audio_bw
+                RLocationBetween['videoBandwidth'] = within_video_bw
+                RLocationBetween['immersiveBandwidth'] = within_immersive_kbits
+                betweenLocation['betweenLocation'] = RLocationBetween
+                betweenLocations.append(betweenLocation)
+
+                return self.client.addLocation(
+                    {
+                        "name": name,
+                        # CUCM 10.6
+                        "withinAudioBandwidth": within_audio_bw,
+                        "withinVideoBandwidth": within_video_bw,
+                        "withinImmersiveKbits": within_immersive_kbits,
+                        "betweenLocations": betweenLocations
+
                     }
                 )
             except Fault as e:
@@ -298,14 +312,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_regions(self, tagfilter={"_uuid": "", "name": ""}):
+    def get_regions(self, tagfilter={"uuid": "", "name": ""}):
         """
         Get region details
         :param mini: return a list of tuples of region details
         :return: A list of dictionary's
         """
         try:
-            return self.client.listRegion({"name": "%"}, returnedTags=tagfilter)[1][
+            return self.client.listRegion({"name": "%"}, returnedTags=tagfilter)[
                 "return"
             ]["region"]
         except Fault as e:
@@ -322,18 +336,18 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_region(self, region):
+    def add_region(self, name):
         """
         Add a region
-        :param region: Name of the region to add
+        :param name: Name of the region to add
         :return: result dictionary
         """
         try:
-            return self.client.addRegion({"name": region})
+            return self.client.addRegion({"name": name})
         except Fault as e:
             return e
 
-    def update_region(self, name="", uuid="", moh_region=""):
+    def update_region(self, name="", newName="", moh_region=""):
         """
         Update region and assign region to all other regions
         :param name:
@@ -343,10 +357,8 @@ class axl(object):
         """
         # Get all Regions
         all_regions = self.client.listRegion({"name": "%"}, returnedTags={"name": ""})
-
         # Make list of region names
-        region_names = [str(i["name"]) for i in all_regions[1]["return"]["region"]]
-
+        region_names = [str(i["name"]) for i in all_regions["return"]["region"]]
         # Build list of dictionaries to add to region api call
         region_list = []
 
@@ -386,21 +398,12 @@ class axl(object):
                         "lossyNetwork": "Use System Default",
                     }
                 )
-
-        if name != "" and uuid == "":
-            try:
-                return self.client.updateRegion(
-                    name=name, relatedRegions={"relatedRegion": region_list}
-                )
-            except Fault as e:
-                return e
-        elif name == "" and uuid != "":
-            try:
-                return self.client.updateRegion(
-                    uuid=uuid, relatedRegions={"relatedRegion": region_list}
-                )
-            except Fault as e:
-                return e
+        try:
+            return self.client.updateRegion(
+                name=name, newName=newName, relatedRegions={"relatedRegion": region_list}
+            )
+        except Fault as e:
+            return e
 
     def delete_region(self, **args):
         """
@@ -414,7 +417,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_srsts(self, tagfilter={"_uuid": ""}):
+    def get_srsts(self, tagfilter={"uuid": ""}):
         """
         Get all SRST details
         :param mini: return a list of tuples of SRST details
@@ -427,21 +430,21 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_srst(self, srst):
+    def get_srst(self, name):
         """
         Get SRST information
-        :param srst: SRST name
+        :param name: SRST name
         :return: result dictionary
         """
         try:
-            return self.client.getSrst(name=srst)
+            return self.client.getSrst(name=name)
         except Fault as e:
             return e
 
-    def add_srst(self, srst, ip_address, port=2000, sip_port=5060):
+    def add_srst(self, name, ip_address, port=2000, sip_port=5060):
         """
         Add SRST
-        :param srst: SRST name
+        :param name: SRST name
         :param ip_address: SRST ip address
         :param port: SRST port
         :param sip_port: SIP port
@@ -450,7 +453,7 @@ class axl(object):
         try:
             return self.client.addSrst(
                 {
-                    "name": srst,
+                    "name": name,
                     "port": port,
                     "ipAddress": ip_address,
                     "SipPort": sip_port,
@@ -459,14 +462,26 @@ class axl(object):
         except Fault as e:
             return e
 
-    def delete_srst(self, srst):
+    def delete_srst(self, name):
         """
         Delete a SRST
-        :param srst: The name of the SRST to delete
+        :param name: The name of the SRST to delete
         :return: result dictionary
         """
         try:
-            return self.client.removeSrst(name=srst)
+            return self.client.removeSrst(name=name)
+        except Fault as e:
+            return e
+
+    def update_srst(self, name, newName=''):
+        """
+        Update a SRST
+        :param srst: The name of the SRST to update
+        :param newName: The new name of the SRST
+        :return: result dictionary
+        """
+        try:
+            return self.client.updateSrst(name=name, newName=newName)
         except Fault as e:
             return e
 
@@ -497,7 +512,7 @@ class axl(object):
     def get_device_pool(self, **args):
         """
         Get device pool parameters
-        :param device_pool: device pool name
+        :param name: device pool name
         :return: result dictionary
         """
         try:
@@ -507,10 +522,10 @@ class axl(object):
 
     def add_device_pool(
         self,
-        device_pool,
+        name,
         date_time_group="CMLocal",
         region="Default",
-        location="",
+        location="Hub_None",
         route_group="",
         media_resource_group_list="",
         srst="Disable",
@@ -534,7 +549,7 @@ class axl(object):
         try:
             return self.client.addDevicePool(
                 {
-                    "name": device_pool,
+                    "name": name,
                     "dateTimeSettingName": date_time_group,  # update to state timezone
                     "regionName": region,
                     "locationName": location,
@@ -606,20 +621,20 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_conference_bridge(self, conference_bridge):
+    def get_conference_bridge(self, name):
         """
         Get conference bridge parameters
-        :param conference_bridge: conference bridge name
+        :param name: conference bridge name
         :return: result dictionary
         """
         try:
-            return self.client.getConferenceBridge(name=conference_bridge)
+            return self.client.getConferenceBridge(name=name)
         except Fault as e:
             return e
 
     def add_conference_bridge(
         self,
-        conference_bridge,
+        name,
         description="",
         device_pool="Default",
         location="Hub_None",
@@ -639,7 +654,7 @@ class axl(object):
         try:
             return self.client.addConferenceBridge(
                 {
-                    "name": conference_bridge,
+                    "name": name,
                     "description": description,
                     "devicePoolName": device_pool,
                     "locationName": location,
@@ -650,14 +665,31 @@ class axl(object):
         except Fault as e:
             return e
 
-    def delete_conference_bridge(self, conference_bridge):
+    def update_conference_bridge(self, **args):
         """
-        Delete a Conference bridge
-        :param conference_bridge: The name of the Conference bridge to delete
+        Update a conference bridge
+        :param name: Conference bridge name
+        :param newName: New Conference bridge name
+        :param description: Conference bridge description
+        :param device_pool: Device pool name
+        :param location: Location name
+        :param product: Conference bridge type
+        :param security_profile: Conference bridge security type
         :return: result dictionary
         """
         try:
-            return self.client.removeConferenceBridge(name=conference_bridge)
+            return self.client.updateConferenceBridge(**args)
+        except Fault as e:
+            return e
+
+    def delete_conference_bridge(self, name):
+        """
+        Delete a Conference bridge
+        :param name: The name of the Conference bridge to delete
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeConferenceBridge(name=name)
         except Fault as e:
             return e
 
@@ -676,20 +708,20 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_transcoder(self, transcoder):
+    def get_transcoder(self, name):
         """
         Get conference bridge parameters
-        :param transcoder: conference bridge name
+        :param name: transcoder name
         :return: result dictionary
         """
         try:
-            return self.client.getTranscoder(name=transcoder)
+            return self.client.getTranscoder(name=name)
         except Fault as e:
             return e
 
     def add_transcoder(
         self,
-        transcoder,
+        name,
         description="",
         device_pool="Default",
         product="Cisco IOS Enhanced Media Termination Point",
@@ -705,7 +737,7 @@ class axl(object):
         try:
             return self.client.addTranscoder(
                 {
-                    "name": transcoder,
+                    "name": name,
                     "description": description,
                     "devicePoolName": device_pool,
                     "product": product,
@@ -714,16 +746,111 @@ class axl(object):
         except Fault as e:
             return e
 
-    def delete_transcoder(self, transcoder):
+    def update_transcoder(self, **args):
         """
-        Delete a Transcoder
-        :param transcoder: The name of the Transcoder to delete
+        Add a transcoder
+        :param name: Transcoder name
+        :param newName: New Transcoder name
+        :param description: Transcoder description
+        :param device_pool: Transcoder device pool
+        :param product: Trancoder product
         :return: result dictionary
         """
         try:
-            return self.client.removeTranscoder(name=transcoder)
+            return self.client.updateTranscoder(**args)
         except Fault as e:
             return e
+
+    def delete_transcoder(self, name):
+        """
+        Delete a Transcoder
+        :param name: The name of the Transcoder to delete
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeTranscoder(name=name)
+        except Fault as e:
+            return e
+
+    def get_mtps(
+        self, tagfilter={"name": "", "description": "", "devicePoolName": ""}
+    ):
+        """
+        Get mtps
+        :param mini: List of tuples of transcoder details
+        :return: results dictionary
+        """
+        try:
+            return self.client.listMtp({"name": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["mtp"]
+        except Fault as e:
+            return e
+
+    def get_mtp(self, name):
+        """
+        Get mtp parameters
+        :param name: transcoder name
+        :return: result dictionary
+        """
+        try:
+            return self.client.getMtp(name=name)
+        except Fault as e:
+            return e
+
+    def add_mtp(
+        self,
+        name,
+        description="",
+        device_pool="Default",
+        mtpType="Cisco IOS Enhanced Media Termination Point",
+    ):
+        """
+        Add an mtp
+        :param name: MTP name
+        :param description: MTP description
+        :param device_pool: MTP device pool
+        :param mtpType: MTP Type
+        :return: result dictionary
+        """
+        try:
+            return self.client.addMtp(
+                {
+                    "name": name,
+                    "description": description,
+                    "devicePoolName": device_pool,
+                    "mtpType": mtpType,
+                }
+            )
+        except Fault as e:
+            return e
+
+    def update_mtp(self, **args):
+        """
+        Update an MTP
+        :param name: MTP name
+        :param newName: New MTP name
+        :param description: MTP description
+        :param device_pool: MTP device pool
+        :param mtpType: MTP Type
+        :return: result dictionary
+        """
+        try:
+            return self.client.updateMtp(**args)
+        except Fault as e:
+            return e
+
+    def delete_mtp(self, name):
+        """
+        Delete an MTP
+        :param name: The name of the Transcoder to delete
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeMtp(name=name)
+        except Fault as e:
+            return e
+
 
     def get_h323_gateways(
         self,
@@ -747,50 +874,18 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_h323_gateway(self, h323_gateway):
+    def get_h323_gateway(self, name):
         """
         Get H323 Gateway parameters
-        :param h323_gateway: H323 Gateway name
+        :param name: H323 Gateway name
         :return: result dictionary
         """
         try:
-            return self.client.getH323Gateway(name=h323_gateway)
+            return self.client.getH323Gateway(name=name)
         except Fault as e:
             return e
 
-    def add_h323_gateway(
-        self,
-        h323_gateway,
-        description="",
-        device_pool="Default",
-        location="Hub_None",
-        media_resource_group_list="",
-        prefix_dn="",
-        sig_digits="99",
-        css="",
-        aar_css="",
-        aar_neighborhood="",
-        product="H.323 Gateway",
-        protocol="H.225",
-        protocol_side="Network",
-        pstn_access="true",
-        redirect_in_num_ie="false",
-        redirect_out_num_ie="false",
-        cld_party_ie_num_type="Unknown",
-        clng_party_ie_num_type="Unknown",
-        clng_party_nat_pre="",
-        clng_party_inat_prefix="",
-        clng_party_unknown_prefix="",
-        clng_party_sub_prefix="",
-        clng_party_nat_strip_digits="",
-        clng_party_inat_strip_digits="",
-        clng_party_unknown_strip_digits="",
-        clng_party_sub_strip_digits="",
-        clng_party_nat_trans_css="",
-        clng_party_inat_trans_css="",
-        clng_party_unknown_trans_css="",
-        clng_party_sub_trans_css="",
-    ):
+    def add_h323_gateway(self, **args):
         """
         Add H323 gateway
         :param h323_gateway:
@@ -826,65 +921,29 @@ class axl(object):
         :return:
         """
         try:
-            return self.client.addH323Gateway(
-                {
-                    "name": h323_gateway,
-                    "description": description,
-                    "product": product,
-                    "protocol": protocol,
-                    "protocolSide": protocol_side,
-                    "callingSearchSpaceName": css,
-                    "automatedAlternateRoutingCssName": aar_css,
-                    "devicePoolName": device_pool,
-                    "locationName": location,
-                    "mediaResourceListName": media_resource_group_list,
-                    "aarNeighborhoodName": aar_neighborhood,
-                    "pstnAccess": pstn_access,
-                    "sigDigits": sig_digits,
-                    "prefixDn": prefix_dn,
-                    "redirectInboundNumberIe": redirect_in_num_ie,
-                    "redirectOutboundNumberIe": redirect_out_num_ie,
-                    "calledPartyIeNumberType": cld_party_ie_num_type,
-                    "callingPartyIeNumberType": clng_party_ie_num_type,
-                    "callingPartyNationalPrefix": clng_party_nat_pre,
-                    "callingPartyInternationalPrefix": clng_party_inat_prefix,
-                    "callingPartyUnknownPrefix": clng_party_unknown_prefix,
-                    "callingPartySubscriberPrefix": clng_party_sub_prefix,
-                    "callingPartyNationalStripDigits": clng_party_nat_strip_digits,
-                    "callingPartyInternationalStripDigits": clng_party_inat_strip_digits,
-                    "callingPartyUnknownStripDigits": clng_party_unknown_strip_digits,
-                    "callingPartySubscriberStripDigits": clng_party_sub_strip_digits,
-                    "callingPartyNationalTransformationCssName": clng_party_nat_trans_css,
-                    "callingPartyInternationalTransformationCssName": clng_party_inat_trans_css,
-                    "callingPartyUnknownTransformationCssName": clng_party_unknown_trans_css,
-                    "callingPartySubscriberTransformationCssName": clng_party_sub_trans_css,
-                }
-            )
+            return self.client.addH323Gateway(**args)
         except Fault as e:
             return e
 
-    def update_h323_gateway(self, h323_gateway, **args):
+    def update_h323_gateway(self, **args):
         """
 
-        :param h323_gateway:
-        :param media_resource_group_list:
+        :param name:
         :return:
         """
         try:
-            return self.client.updateH323Gateway(
-                name=h323_gateway, **args
-            )
+            return self.client.updateH323Gateway(**args)
         except Fault as e:
             return e
 
-    def delete_h323_gateway(self, h323_gateway):
+    def delete_h323_gateway(self, name):
         """
         Delete a H323 gateway
-        :param h323_gateway: The name of the H323 gateway to delete
+        :param name: The name of the H323 gateway to delete
         :return: result dictionary
         """
         try:
-            return self.client.removeH323Gateway(name=h323_gateway)
+            return self.client.removeH323Gateway(name=name)
         except Fault as e:
             return e
 
@@ -1228,7 +1287,7 @@ class axl(object):
             return e
 
     def get_route_patterns(
-        self, tagfilter={"pattern": "", "description": "", "_uuid": ""}
+        self, tagfilter={"pattern": "", "description": "", "uuid": ""}
     ):
         """
         Get route patterns
@@ -1299,6 +1358,8 @@ class axl(object):
             "routePartitionName": partition,
             "blockEnable": blockEnable,
             "releaseClause": releaseClause,
+            "useCallingPartyPhoneMask": "Default",
+            "networkLocation": "OnNet"
         }
 
         if gateway == "" and route_list == "":
@@ -1360,30 +1421,30 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_media_resource_group(self, media_resource_group):
+    def get_media_resource_group(self, name):
         """
         Get a media resource group details
         :param media_resource_group: Media resource group name
         :return: result dictionary
         """
         try:
-            return self.client.getMediaResourceGroup(name=media_resource_group)
+            return self.client.getMediaResourceGroup(name=name)
         except Fault as e:
             return e
 
     def add_media_resource_group(
-        self, media_resource_group, description="", multicast="false", members=[]
+        self, name, description="", multicast="false", members=[]
     ):
         """
         Add a media resource group
-        :param media_resource_group: Media resource group name
+        :param name: Media resource group name
         :param description: Media resource description
         :param multicast: Mulicast enabled
         :param members: Media resource group members
         :return: result dictionary
         """
         req = {
-            "name": media_resource_group,
+            "name": name,
             "description": description,
             "multicast": multicast,
             "members": {"member": []},
@@ -1397,14 +1458,28 @@ class axl(object):
         except Fault as e:
             return e
 
-    def delete_media_resource_group(self, media_resource_group):
+    def update_media_resource_group(self, **args):
+        """
+        Update a media resource group
+        :param name: Media resource group name
+        :param description: Media resource description
+        :param multicast: Mulicast enabled
+        :param members: Media resource group members
+        :return: result dictionary
+        """
+        try:
+            return self.client.updateMediaResourceGroup(**args)
+        except Fault as e:
+            return e
+
+    def delete_media_resource_group(self, name):
         """
         Delete a Media resource group
         :param media_resource_group: The name of the media resource group to delete
         :return: result dictionary
         """
         try:
-            return self.client.removeMediaResourceGroup(name=media_resource_group)
+            return self.client.removeMediaResourceGroup(name=name)
         except Fault as e:
             return e
 
@@ -1421,25 +1496,25 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_media_resource_group_list(self, media_resource_group_list):
+    def get_media_resource_group_list(self, name):
         """
         Get a media resource group list details
-        :param media_resource_group_list: Media resource group list name
+        :param name: Media resource group list name
         :return: result dictionary
         """
         try:
-            return self.client.getMediaResourceList(name=media_resource_group_list)
+            return self.client.getMediaResourceList(name=name)
         except Fault as e:
             return e
 
-    def add_media_resource_group_list(self, media_resource_group_list, members=[]):
+    def add_media_resource_group_list(self, name, members=[]):
         """
         Add a media resource group list
         :param media_resource_group_list: Media resource group list name
         :param members: A list of members
         :return:
         """
-        req = {"name": media_resource_group_list, "members": {"member": []}}
+        req = {"name": name, "members": {"member": []}}
 
         if members:
             [
@@ -1453,14 +1528,28 @@ class axl(object):
         except Fault as e:
             return e
 
-    def delete_media_resource_group_list(self, media_resource_group_list):
+    def update_media_resource_group_list(self, **args):
         """
-        Delete a Media resource group list
-        :param media_resource_group_list: The name of the media resource group list to delete
+        Update a media resource group list
+        :param name: Media resource group name
+        :param description: Media resource description
+        :param multicast: Mulicast enabled
+        :param members: Media resource group members
         :return: result dictionary
         """
         try:
-            return self.client.removeMediaResourceList(name=media_resource_group_list)
+            return self.client.updateMediaResourceList(**args)
+        except Fault as e:
+            return e
+
+    def delete_media_resource_group_list(self, name):
+        """
+        Delete a Media resource group list
+        :param name: The name of the media resource group list to delete
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeMediaResourceList(name=name)
         except Fault as e:
             return e
 
@@ -1538,6 +1627,7 @@ class axl(object):
                     "shareLineAppearanceCssName": shared_line_css,
                     "aarNeighborhoodName": aar_neighbourhood,
                     "aarDestinationMask": aar_destination_mask,
+                    "usage": "Device",
                     "callForwardAll": {
                         "forwardToVoiceMail": forward_all_to_vm,
                         "callingSearchSpaceName": call_forward_css,
@@ -1593,16 +1683,22 @@ class axl(object):
         except Fault as e:
             return e
 
-    def delete_directory_number(self, uuid):
+    def delete_directory_number(self, pattern='', routePartitionName='', uuid=''):
         """
         Delete a directory number
         :param directory_number: The name of the directory number to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeLine(uuid=uuid)
-        except Fault as e:
-            return e
+        if uuid != '':
+            try:
+                return self.client.removeLine(uuid=uuid)
+            except Fault as e:
+                return e
+        else:
+            try:
+                return self.client.removeLine(pattern=pattern, routePartitionName=routePartitionName)
+            except Fault as e:
+                return e
 
     def update_directory_number(self, **args):
         """
@@ -1863,11 +1959,18 @@ class axl(object):
             "product": product,
             "class": dev_class,
             "protocol": protocol,
+            "protocolSide": 'User',
             "commonDeviceConfigName": common_device_config,
+            "commonPhoneConfigName": 'Standard Common Phone Profile',
             "softkeyTemplateName": softkey_template,
             "phoneTemplateName": phone_template,
             "devicePoolName": device_pool,
             "locationName": location,
+            "useTrustedRelayPoint": "Off",
+            "builtInBridgeStatus": "Default",
+            "certificateOperation": "No Pending Operation",
+            "packetCaptureMode": "None",
+            "deviceMobilityMode": "Default",
             "enableExtensionMobility": enable_em,
             "callingSearchSpaceName": css,
             "automatedAlternateRoutingCssName": aar_css,
@@ -1909,9 +2012,8 @@ class axl(object):
             req["services"]["service"][0].update(
                 {"urlButtonIndex": em_url_button_index, "urlLabel": em_url_label}
             )
-
         try:
-            resp = self.client.addPhone(req)
+            return self.client.addPhone(req)
         except Fault as e:
             return e
 
@@ -1993,12 +2095,13 @@ class axl(object):
 
     def add_device_profile(
         self,
-        profile,
+        name,
         description="",
         product="Cisco 7962",
         phone_template="Standard 7962G SCCP",
         dev_class="Device Profile",
         protocol="SCCP",
+        protocolSide="User",
         softkey_template="Standard User",
         em_service_name="Extension Mobility",
         lines=[],
@@ -2010,7 +2113,7 @@ class axl(object):
                                                display                           external
             DN     partition    display        ascii          label               mask
         [('77777', 'LINE_PT', 'Jim Smith', 'Jim Smith', 'Jim Smith - 77777', '0294127777')]
-        :param profile:
+        :param name:
         :param description:
         :param product:
         :param phone_template:
@@ -2023,25 +2126,15 @@ class axl(object):
         """
 
         req = {
-            "name": profile,
+            "name": name,
             "description": description,
             "product": product,
             "class": dev_class,
             "protocol": protocol,
+            "protocolSide": protocolSide,
             "softkeyTemplateName": softkey_template,
             "phoneTemplateName": phone_template,
             "lines": {"line": []},
-            "services": {
-                "service": [
-                    {
-                        "telecasterServiceName": em_service_name,
-                        "name": em_service_name,
-                        "url": "http://{0}:8080/emapp/EMAppServlet?device=#DEVICENAME#&EMCC=#EMCC#".format(
-                            self.cucm
-                        ),
-                    }
-                ]
-            },
         }
 
         if lines:
@@ -2060,7 +2153,8 @@ class axl(object):
             ]
 
         try:
-            return self.client.addDeviceProfile(req)
+            blah = self.client.addDeviceProfile(req)
+            return blah
         except Fault as e:
             return e
 
@@ -2113,23 +2207,24 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_user(self, user_id):
+    def get_user(self, userid):
         """
         Get user parameters
         :param user_id: profile name
         :return: result dictionary
         """
         try:
-            return self.client.getUser(userid=user_id)["return"]["user"]
+            return self.client.getUser(userid=userid)["return"]["user"]
         except Fault as e:
             return e
 
     def add_user(
         self,
-        user_id,
-        last_name,
-        first_name,
+        userid,
+        lastName,
+        firstName,
         presenceGroupName="Standard Presence group",
+        phoneProfiles=[]
     ):
         """
         Add a user
@@ -2138,13 +2233,15 @@ class axl(object):
         :param last_name: Last name of the user to add
         :return: result dictionary
         """
+
         try:
             return self.client.addUser(
                 {
-                    "userid": user_id,
-                    "last_name": last_name,
-                    "first_name": first_name,
+                    "userid": userid,
+                    "lastName": lastName,
+                    "firstName": firstName,
                     "presenceGroupName": presenceGroupName,
+                    "phoneProfiles": phoneProfiles
                 }
             )
         except Fault as e:
@@ -2153,7 +2250,7 @@ class axl(object):
     def update_user(self, **args):
         """
         Update end user for credentials
-        :param user_id: User ID
+        :param userid: User ID
         :param password: Web interface password
         :param pin: Extension mobility PIN
         :return: result dictionary
@@ -2195,10 +2292,10 @@ class axl(object):
         else:
             return "Device Profile not found for user"
 
-    def update_user_credentials(self, user_id, password="", pin=""):
+    def update_user_credentials(self, userid, password="", pin=""):
         """
         Update end user for credentials
-        :param user_id: User ID
+        :param userid: User ID
         :param password: Web interface password
         :param pin: Extension mobility PIN
         :return: result dictionary
@@ -2210,27 +2307,27 @@ class axl(object):
         elif password != "" and pin != "":
             try:
                 return self.client.updateUser(
-                    userid=user_id, password=password, pin=pin
+                    userid=userid, password=password, pin=pin
                 )
             except Fault as e:
                 return e
 
         elif password != "":
             try:
-                return self.client.updateUser(userid=user_id, password=password)
+                return self.client.updateUser(userid=userid, password=password)
             except Fault as e:
                 return e
 
         elif pin != "":
             try:
-                return self.client.updateUser(userid=user_id, pin=pin)
+                return self.client.updateUser(userid=userid, pin=pin)
             except Fault as e:
                 return e
 
     def delete_user(self, **args):
         """
         Delete a user
-        :param user_id: The name of the user to delete
+        :param userid: The name of the user to delete
         :return: result dictionary
         """
         try:
@@ -2250,7 +2347,7 @@ class axl(object):
                 returnedTags={
                     "pattern": "",
                     "description": "",
-                    "_uuid": "",
+                    "uuid": "",
                     "routePartitionName": "",
                     "callingSearchSpaceName": "",
                     "useCallingPartyPhoneMask": "",
@@ -2493,7 +2590,7 @@ class axl(object):
                     "type": "",
                     "routeDetail": "",
                 },
-            )
+            )['return']['routePlan']
         except Fault as e:
             return e
 
@@ -2543,7 +2640,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_called_party_xform(self, **args):
+    def add_called_party_xform(self, 
+        pattern='', 
+        description='', 
+        partition='',
+        calledPartyPrefixDigits='',
+        calledPartyTransformationmask='',
+        digitDiscardInstructionName=''
+        ):
         """
         Add a called party transformation pattern
         :param pattern: pattern - required
@@ -2560,7 +2664,16 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addCalledPartyTransformationPattern(**args)
+            return self.client.addCalledPartyTransformationPattern(
+                {
+                    "pattern": pattern,
+                    "description": description,
+                    "routePartitionName": partition,
+                    "calledPartyPrefixDigits": calledPartyPrefixDigits,
+                    "calledPartyTransformationmask": calledPartyTransformationmask,
+                    "digitDiscardInstructionName": digitDiscardInstructionName
+                }
+            )
         except Fault as e:
             return e
 
@@ -2627,7 +2740,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_calling_party_xform(self, **args):
+    def add_calling_party_xform(self,
+        pattern='', 
+        description='', 
+        partition='',
+        callingPartyPrefixDigits='',
+        callingPartyTransformationmask='',
+        digitDiscardInstructionName=''
+        ):
         """
         Add a calling party transformation pattern
         :param pattern: pattern - required
@@ -2644,7 +2764,16 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.addCallingPartyTransformationPattern(**args)
+            return self.client.addCallingPartyTransformationPattern(
+                {
+                    "pattern": pattern,
+                    "description": description,
+                    "routePartitionName": partition,
+                    "callingPartyPrefixDigits": callingPartyPrefixDigits,
+                    "callingPartyTransformationmask": callingPartyTransformationmask,
+                    "digitDiscardInstructionName": digitDiscardInstructionName
+                }
+            )
         except Fault as e:
             return e
 
@@ -2729,6 +2858,24 @@ class axl(object):
         except Fault as e:
             return e
 
+    def delete_sip_trunk(self, **args):
+        try:
+            return self.client.removeSipTrunk(**args)
+        except Fault as e:
+            return e
+
+    def get_sip_security_profile(self, name):
+        try:
+            return self.client.getSipTrunkSecurityProfile(name=name)['return']
+        except Fault as e:
+            return e
+
+    def get_sip_profile(self, name):
+        try:
+            return self.client.getSipProfile(name=name)['return']
+        except Fault as e:
+            return e
+
     def add_sip_trunk(self, **args):
         """
         Add a SIP Trunk
@@ -2751,30 +2898,6 @@ class axl(object):
         except Fault as e:
             return e
 
-    def update_dhcp_subnet(self, **args):
-        """
-        Update DHCP Subnet
-        :param uuid:
-        :param dhcpServerName:
-        :param subnetIpAddress:
-        :param subnetMask:
-        :param domainName:
-        :param tftpServerName:
-        :param primaryTftpServerIpAddress:
-        :param secondaryTftpServerIpAddress:
-        :param primaryRouterIpAddress:
-        :param primaryStartIpAddress:
-        :param primaryEndIpAddress:
-        :param secondaryStartIpAddress:
-        :param secondaryEndIpAddress:
-
-        :return:
-        """
-        try:
-            return self.client.updateDhcpSubnet(**args)
-        except Fault as e:
-            return e
-
     def list_process_nodes(self):
         try:
             return self.client.listProcessNode(
@@ -2784,14 +2907,63 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_call_manager_group(self, **args):
+    def add_call_manager_group(self, name, members):
         """
         Add call manager group
         :param name: name of cmg
-        :param members[]: array of mbmers
+        :param members[]: array of members
+        :return: result dictionary
+        """
+        
+        try:
+            return self.client.addCallManagerGroup({"name": name, "members": members})
+        except Fault as e:
+            return e
+
+    def get_call_manager_group(self, name):
+        """
+        Get call manager group
+        :param name: name of cmg
         :return: result dictionary
         """
         try:
-            return self.client.addCallManagerGroup({**args})
+            return self.client.getCallManagerGroup(name=name)
+        except Fault as e:
+            return e
+
+    def get_call_manager_groups(self):
+        """
+        Get call manager groups
+        :param name: name of cmg
+        :return: result dictionary
+        """
+        try:
+            return self.client.listCallManagerGroup({"name": "%"}, returnedTags={
+                "name": ""
+            })['return']['callManagerGroup']
+        except Fault as e:
+            return e
+
+    def update_call_manager_group(self, **args):
+        """
+        Update call manager group
+        :param name: name of cmg
+        :return: result dictionary
+        """
+        try:
+            return self.client.listCallManagerGroup({**args}, returnedTags={
+                "name": ""
+            })
+        except Fault as e:
+            return e
+
+    def delete_call_manager_group(self, name):
+        """
+        Delete call manager group
+        :param name: name of cmg
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeCallManagerGroup({"name": name})
         except Fault as e:
             return e
