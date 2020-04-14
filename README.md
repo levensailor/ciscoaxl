@@ -123,7 +123,7 @@ for trans in ucm.get_translations():
 #### Get Specific Translation Pattern
 
 ```python
-trans = ucm.get_translation(pattern='2XXX', partition='xlates-pt')
+trans = ucm.get_translation(pattern='2XXX', routePartitionName='xlates-pt')
 print(trans.description)
 ```
 
@@ -133,19 +133,19 @@ print(trans.description)
 ported = ['12324625544', '12324625545', '12324625546']
 
 for num in ported:
-    ucm.add_translation(pattern=num, partition='pstn_pt',calledPartyTransformationMask='1102', callingSearchSpaceName='GW_CSS')
+    ucm.add_translation(pattern=num, routePartitionName='pstn_pt',calledPartyTransformationMask='1102', callingSearchSpaceName='GW_CSS')
 ```
 
 #### Delete Translation Pattern
 
 ```python
-ucm.delete_translation(pattern='34567', partition='xlates-pt')
+ucm.delete_translation(pattern='34567', routePartitionName='xlates-pt')
 ```
 
 #### Update Translation Pattern
 
 ```python
-ucm.update_translation(pattern='1234', partition='xlates-pt', newPattern='4567')
+ucm.update_translation(pattern='1234', routePartitionName='xlates-pt', newPattern='4567')
 ```
 
 ## Device Pools
@@ -182,7 +182,7 @@ ucm.delete_device_pool(device_pool='Hollywood_DP')
 ucm.update_device_pool(name='RTP_DP', regionName='G711_RGN')
 ```
 
-## CSS and Partitions
+## CSS and routePartitionNames
 
 #### Get Calling Search Spaces
 
@@ -220,30 +220,30 @@ ucm.update_calling_search_space(calling_search_space='VIP_CSS')
 ucm.delete_calling_search_space(calling_search_space='VIP_CSS')
 ```
 
-#### Get Partitions
+#### Get routePartitionNames
 
 ```python
-for pt in ucm.get_partitions():
+for pt in ucm.get_routePartitionNames():
     print(pt.name)
 ```
 
-#### Get Specific Partition
+#### Get Specific routePartitionName
 
 ```python
-pt = ucm.get_partition(partition='pstn-pt')
+pt = ucm.get_routePartitionName(routePartitionName='pstn-pt')
 print(pt.name)
 ```
 
-#### Add Partition
+#### Add routePartitionName
 
 ```python
-ucm.add_partition(partition='VIP_PT', description='Very Important Peep')
+ucm.add_routePartitionName(routePartitionName='VIP_PT', description='Very Important Peep')
 ```
 
-#### Delete Partition
+#### Delete routePartitionName
 
 ```python
-ucm.delete_partition(name='VIP_PT')
+ucm.delete_routePartitionName(name='VIP_PT')
 ```
 
 ## Regions and Locations
@@ -312,7 +312,7 @@ for dn in ucm.get_directory_numbers():
 #### Get Specific Directory Number
 
 ```python
-dn = ucm.get_directory_number(directory_number='2888',partition='losfeliz-pt')
+dn = ucm.get_directory_number(directory_number='2888',routeroutePartitionNameName='losfeliz-pt')
 print(dn.uuid)
 ```
 
@@ -321,7 +321,7 @@ print(dn.uuid)
 ```python
 ucm.add_directory_number(
     pattern='1102',
-    partition='ABQ_PT'
+    routeroutePartitionNameName='ABQ_PT'
     )
 ```
 
@@ -502,7 +502,7 @@ print(rp.description)
 ```python
 ucm.add_route_pattern(
     pattern='999',
-    partition='losfeliz-pt',
+    routePartitionName='losfeliz-pt',
     description='Movie Times',
     route_list='stdloc-rl'
     )
@@ -511,7 +511,7 @@ ucm.add_route_pattern(
 #### Delete Route Pattern
 
 ```python
-ucm.delete_route_pattern(pattern='999', partition='losfeliz-pt')
+ucm.delete_route_pattern(pattern='999', routePartitionName='losfeliz-pt')
 ```
 
 ## Runs and Dos
