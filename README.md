@@ -182,7 +182,7 @@ ucm.delete_device_pool(device_pool='Hollywood_DP')
 ucm.update_device_pool(name='RTP_DP', regionName='G711_RGN')
 ```
 
-## CSS and routePartitionNames
+## CSS and Partitions
 
 #### Get Calling Search Spaces
 
@@ -220,30 +220,30 @@ ucm.update_calling_search_space(calling_search_space='VIP_CSS')
 ucm.delete_calling_search_space(calling_search_space='VIP_CSS')
 ```
 
-#### Get routePartitionNames
+#### Get Partitions
 
 ```python
-for pt in ucm.get_routePartitionNames():
+for pt in ucm.get_partitions():
     print(pt.name)
 ```
 
-#### Get Specific routePartitionName
+#### Get Specific Partition
 
 ```python
-pt = ucm.get_routePartitionName(routePartitionName='pstn-pt')
+pt = ucm.get_partition(routePartitionName='pstn-pt')
 print(pt.name)
 ```
 
-#### Add routePartitionName
+#### Add Partition
 
 ```python
-ucm.add_routePartitionName(routePartitionName='VIP_PT', description='Very Important Peep')
+ucm.add_partition(routePartitionName='VIP_PT', description='Very Important Peep')
 ```
 
-#### Delete routePartitionName
+#### Delete Partition
 
 ```python
-ucm.delete_routePartitionName(name='VIP_PT')
+ucm.delete_partition(name='VIP_PT')
 ```
 
 ## Regions and Locations
@@ -312,7 +312,7 @@ for dn in ucm.get_directory_numbers():
 #### Get Specific Directory Number
 
 ```python
-dn = ucm.get_directory_number(directory_number='2888',routeroutePartitionNameName='losfeliz-pt')
+dn = ucm.get_directory_number(directory_number='2888',routePartitionName='losfeliz-pt')
 print(dn.uuid)
 ```
 
@@ -321,7 +321,7 @@ print(dn.uuid)
 ```python
 ucm.add_directory_number(
     pattern='1102',
-    routeroutePartitionNameName='ABQ_PT'
+    routePartitionName='ABQ_PT'
     )
 ```
 
