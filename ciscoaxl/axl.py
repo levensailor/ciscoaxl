@@ -2813,15 +2813,17 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_sip_trunks(self):
+    def get_sip_trunks(
+        self, 
+        tagfilter={
+            "name": "",
+            "sipProfileName": "",
+            "callingSearchSpaceName": ""
+        }):
         try:
             return self.client.listSipTrunk(
                 {"name": "%"},
-                returnedTags={
-                    "name": "",
-                    "sipProfileName": "",
-                    "callingSearchSpaceName": "",
-                },
+                returnedTags=tagfilter,
             )["return"]["sipTrunk"]
         except Fault as e:
             return e
