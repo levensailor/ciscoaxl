@@ -112,7 +112,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.executeSQLUpdate(query)['return']
+            return self.client.executeSQLUpdate(query)["return"]
         except Fault as e:
             return e
 
@@ -244,7 +244,12 @@ class axl(object):
         :param within_immersive_kbits: ucm 10
         :return: result dictionary
         """
-        if self.cucm_version == '8.6' or self.cucm_version == '9.0' or self.cucm_version == '9.5' or self.cucm_version == '10.0':
+        if (
+            self.cucm_version == "8.6"
+            or self.cucm_version == "9.0"
+            or self.cucm_version == "9.5"
+            or self.cucm_version == "10.0"
+        ):
             try:
                 return self.client.addLocation(
                     {
@@ -261,12 +266,12 @@ class axl(object):
                 betweenLocations = []
                 betweenLocation = {}
                 RLocationBetween = {}
-                RLocationBetween['locationName'] = 'Hub_None'
-                RLocationBetween['weight'] = 0
-                RLocationBetween['audioBandwidth'] = within_audio_bw
-                RLocationBetween['videoBandwidth'] = within_video_bw
-                RLocationBetween['immersiveBandwidth'] = within_immersive_kbits
-                betweenLocation['betweenLocation'] = RLocationBetween
+                RLocationBetween["locationName"] = "Hub_None"
+                RLocationBetween["weight"] = 0
+                RLocationBetween["audioBandwidth"] = within_audio_bw
+                RLocationBetween["videoBandwidth"] = within_video_bw
+                RLocationBetween["immersiveBandwidth"] = within_immersive_kbits
+                betweenLocation["betweenLocation"] = RLocationBetween
                 betweenLocations.append(betweenLocation)
 
                 return self.client.addLocation(
@@ -276,8 +281,7 @@ class axl(object):
                         "withinAudioBandwidth": within_audio_bw,
                         "withinVideoBandwidth": within_video_bw,
                         "withinImmersiveKbits": within_immersive_kbits,
-                        "betweenLocations": betweenLocations
-
+                        "betweenLocations": betweenLocations,
                     }
                 )
             except Fault as e:
@@ -400,7 +404,9 @@ class axl(object):
                 )
         try:
             return self.client.updateRegion(
-                name=name, newName=newName, relatedRegions={"relatedRegion": region_list}
+                name=name,
+                newName=newName,
+                relatedRegions={"relatedRegion": region_list},
             )
         except Fault as e:
             return e
@@ -473,7 +479,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def update_srst(self, name, newName=''):
+    def update_srst(self, name, newName=""):
         """
         Update a SRST
         :param srst: The name of the SRST to update
@@ -772,9 +778,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_mtps(
-        self, tagfilter={"name": "", "description": "", "devicePoolName": ""}
-    ):
+    def get_mtps(self, tagfilter={"name": "", "description": "", "devicePoolName": ""}):
         """
         Get mtps
         :param mini: List of tuples of transcoder details
@@ -850,7 +854,6 @@ class axl(object):
             return self.client.removeMtp(name=name)
         except Fault as e:
             return e
-
 
     def get_h323_gateways(
         self,
@@ -1359,7 +1362,7 @@ class axl(object):
             "blockEnable": blockEnable,
             "releaseClause": releaseClause,
             "useCallingPartyPhoneMask": "Default",
-            "networkLocation": "OnNet"
+            "networkLocation": "OnNet",
         }
 
         if gateway == "" and route_list == "":
@@ -1683,20 +1686,22 @@ class axl(object):
         except Fault as e:
             return e
 
-    def delete_directory_number(self, pattern='', routePartitionName='', uuid=''):
+    def delete_directory_number(self, pattern="", routePartitionName="", uuid=""):
         """
         Delete a directory number
         :param directory_number: The name of the directory number to delete
         :return: result dictionary
         """
-        if uuid != '':
+        if uuid != "":
             try:
                 return self.client.removeLine(uuid=uuid)
             except Fault as e:
                 return e
         else:
             try:
-                return self.client.removeLine(pattern=pattern, routePartitionName=routePartitionName)
+                return self.client.removeLine(
+                    pattern=pattern, routePartitionName=routePartitionName
+                )
             except Fault as e:
                 return e
 
@@ -1959,9 +1964,9 @@ class axl(object):
             "product": product,
             "class": dev_class,
             "protocol": protocol,
-            "protocolSide": 'User',
+            "protocolSide": "User",
             "commonDeviceConfigName": common_device_config,
-            "commonPhoneConfigName": 'Standard Common Phone Profile',
+            "commonPhoneConfigName": "Standard Common Phone Profile",
             "softkeyTemplateName": softkey_template,
             "phoneTemplateName": phone_template,
             "devicePoolName": device_pool,
@@ -2224,7 +2229,7 @@ class axl(object):
         lastName,
         firstName,
         presenceGroupName="Standard Presence group",
-        phoneProfiles=[]
+        phoneProfiles=[],
     ):
         """
         Add a user
@@ -2241,7 +2246,7 @@ class axl(object):
                     "lastName": lastName,
                     "firstName": firstName,
                     "presenceGroupName": presenceGroupName,
-                    "phoneProfiles": phoneProfiles
+                    "phoneProfiles": phoneProfiles,
                 }
             )
         except Fault as e:
@@ -2306,9 +2311,7 @@ class axl(object):
 
         elif password != "" and pin != "":
             try:
-                return self.client.updateUser(
-                    userid=userid, password=password, pin=pin
-                )
+                return self.client.updateUser(userid=userid, password=password, pin=pin)
             except Fault as e:
                 return e
 
@@ -2364,20 +2367,20 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_translation(self, pattern="", partition="", uuid=""):
+    def get_translation(self, pattern="", routePartitionName="", uuid=""):
         """
         Get translation pattern
         :param pattern: translation pattern to match
-        :param partition: partition required if searching pattern
+        :param routePartitionName: routePartitionName required if searching pattern
         :param uuid: translation pattern uuid
         :return: result dictionary
         """
 
-        if pattern != "" and partition != "" and uuid == "":
+        if pattern != "" and routePartitionName != "" and uuid == "":
             try:
                 return self.client.getTransPattern(
                     pattern=pattern,
-                    routePartitionName=partition,
+                    routePartitionName=routePartitionName,
                     returnedTags={
                         "pattern": "",
                         "description": "",
@@ -2392,10 +2395,10 @@ class axl(object):
                         "digitDiscardInstructionName": "",
                         "callingPartyPrefixDigits": "",
                     },
-                )
+                )["return"]["transPattern"]
             except Fault as e:
                 return e
-        elif uuid != "" and pattern == "" and partition == "":
+        elif uuid != "" and pattern == "" and routePartitionName == "":
             try:
                 return self.client.getTransPattern(
                     uuid=uuid,
@@ -2413,7 +2416,7 @@ class axl(object):
                         "digitDiscardInstructionName": "",
                         "callingPartyPrefixDigits": "",
                     },
-                )
+                )["return"]["transPattern"]
             except Fault as e:
                 return e
         else:
@@ -2590,7 +2593,7 @@ class axl(object):
                     "type": "",
                     "routeDetail": "",
                 },
-            )['return']['routePlan']
+            )["return"]["routePlan"]
         except Fault as e:
             return e
 
@@ -2640,14 +2643,15 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_called_party_xform(self, 
-        pattern='', 
-        description='', 
-        partition='',
-        calledPartyPrefixDigits='',
-        calledPartyTransformationmask='',
-        digitDiscardInstructionName=''
-        ):
+    def add_called_party_xform(
+        self,
+        pattern="",
+        description="",
+        partition="",
+        calledPartyPrefixDigits="",
+        calledPartyTransformationmask="",
+        digitDiscardInstructionName="",
+    ):
         """
         Add a called party transformation pattern
         :param pattern: pattern - required
@@ -2671,7 +2675,7 @@ class axl(object):
                     "routePartitionName": partition,
                     "calledPartyPrefixDigits": calledPartyPrefixDigits,
                     "calledPartyTransformationmask": calledPartyTransformationmask,
-                    "digitDiscardInstructionName": digitDiscardInstructionName
+                    "digitDiscardInstructionName": digitDiscardInstructionName,
                 }
             )
         except Fault as e:
@@ -2740,14 +2744,15 @@ class axl(object):
         except Fault as e:
             return e
 
-    def add_calling_party_xform(self,
-        pattern='', 
-        description='', 
-        partition='',
-        callingPartyPrefixDigits='',
-        callingPartyTransformationmask='',
-        digitDiscardInstructionName=''
-        ):
+    def add_calling_party_xform(
+        self,
+        pattern="",
+        description="",
+        partition="",
+        callingPartyPrefixDigits="",
+        callingPartyTransformationmask="",
+        digitDiscardInstructionName="",
+    ):
         """
         Add a calling party transformation pattern
         :param pattern: pattern - required
@@ -2771,7 +2776,7 @@ class axl(object):
                     "routePartitionName": partition,
                     "callingPartyPrefixDigits": callingPartyPrefixDigits,
                     "callingPartyTransformationmask": callingPartyTransformationmask,
-                    "digitDiscardInstructionName": digitDiscardInstructionName
+                    "digitDiscardInstructionName": digitDiscardInstructionName,
                 }
             )
         except Fault as e:
@@ -2814,17 +2819,12 @@ class axl(object):
             return e
 
     def get_sip_trunks(
-        self, 
-        tagfilter={
-            "name": "",
-            "sipProfileName": "",
-            "callingSearchSpaceName": ""
-        }):
+        self, tagfilter={"name": "", "sipProfileName": "", "callingSearchSpaceName": ""}
+    ):
         try:
-            return self.client.listSipTrunk(
-                {"name": "%"},
-                returnedTags=tagfilter,
-            )["return"]["sipTrunk"]
+            return self.client.listSipTrunk({"name": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["sipTrunk"]
         except Fault as e:
             return e
 
@@ -2868,13 +2868,13 @@ class axl(object):
 
     def get_sip_security_profile(self, name):
         try:
-            return self.client.getSipTrunkSecurityProfile(name=name)['return']
+            return self.client.getSipTrunkSecurityProfile(name=name)["return"]
         except Fault as e:
             return e
 
     def get_sip_profile(self, name):
         try:
-            return self.client.getSipProfile(name=name)['return']
+            return self.client.getSipProfile(name=name)["return"]
         except Fault as e:
             return e
 
@@ -2916,7 +2916,7 @@ class axl(object):
         :param members[]: array of members
         :return: result dictionary
         """
-        
+
         try:
             return self.client.addCallManagerGroup({"name": name, "members": members})
         except Fault as e:
@@ -2940,9 +2940,9 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.listCallManagerGroup({"name": "%"}, returnedTags={
-                "name": ""
-            })['return']['callManagerGroup']
+            return self.client.listCallManagerGroup(
+                {"name": "%"}, returnedTags={"name": ""}
+            )["return"]["callManagerGroup"]
         except Fault as e:
             return e
 
@@ -2953,9 +2953,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.listCallManagerGroup({**args}, returnedTags={
-                "name": ""
-            })
+            return self.client.listCallManagerGroup({**args}, returnedTags={"name": ""})
         except Fault as e:
             return e
 
