@@ -12,7 +12,7 @@ setup(
     license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/levensailor/ciscoaxlsdk",
+    url="https://github.com/levensailor/ciscoaxl",
     keywords=["Cisco", "Call Manager", "CUCM", "AXL", "VoIP"],
     packages=["ciscoaxl"],
     package_data={"ciscoaxl": ["*.wsdl", "*.xsd", "schema/*/*"],},
