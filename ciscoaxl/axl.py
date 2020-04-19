@@ -2395,7 +2395,7 @@ class axl(object):
                         "digitDiscardInstructionName": "",
                         "callingPartyPrefixDigits": "",
                     },
-                )["return"]["transPattern"]
+                )
             except Fault as e:
                 return e
         elif uuid != "" and pattern == "" and routePartitionName == "":
@@ -2416,7 +2416,7 @@ class axl(object):
                         "digitDiscardInstructionName": "",
                         "callingPartyPrefixDigits": "",
                     },
-                )["return"]["transPattern"]
+                )
             except Fault as e:
                 return e
         else:
