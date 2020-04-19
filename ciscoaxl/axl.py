@@ -2822,7 +2822,7 @@ class axl(object):
         self, tagfilter={"name": "", "sipProfileName": "", "callingSearchSpaceName": ""}
     ):
         try:
-            return self.client.listSipTrunk({"name": "%"}, returnedTags=tagfilter,)[
+            return self.client.listSipTrunk({"name": "%"}, returnedTags=tagfilter)[
                 "return"
             ]["sipTrunk"]
         except Fault as e:
