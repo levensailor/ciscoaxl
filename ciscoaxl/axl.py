@@ -1853,43 +1853,30 @@ class axl(object):
             return self.client.updateCtiRoutePoint(**args)
         except Fault as e:
             return e
-
-    def get_phones(
-        self,
-        first=1000,
-        skip=0,
-        tagfilter={
+    
+    def get_phones(self, tagfilter={
             "name": "",
             "product": "",
             "description": "",
             "protocol": "",
             "locationName": "",
-            "callingSearchSpaceName": "",
-        },
-    ):
-        """
-        Get phone details
-        :param mini: return a list of tuples of phone details
-        :return: A list of dictionaries. If > 1000 records are returned, a list of list of dictionaries will be returned
-        """
-        paginated = []
-        try:
-            return self.client.listPhone(
-                {"name": "%"}, returnedTags=tagfilter, first=first, skip=skip
-            )["return"]["phone"]
-        except Fault as e:
-            return e
-
-            if len(resp) >= 1000:
-                skip = first + skip
-                first += first
-                paginated.append(resp)
-                self.get_phones(first=first, skip=skip)
-            else:
-                if first > 1000:
-                    return paginated
+            "callingSearchSpaceName": ""
+        }):
+        skip=0
+        a = []
+        def inner(skip):
+            while True:
+                res = self.client.listPhone(
+                            {"name": "%"}, returnedTags=tagfilter, first=1000, skip=skip
+                        )["return"]
+                skip=skip+1000
+                if res is not None and 'phone' in res:
+                    yield res['phone']
                 else:
-                    return resp
+                    break
+        for each in inner(skip):
+            a.extend(each)
+        return a
 
     def get_phone(self, **args):
         """

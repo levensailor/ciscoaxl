@@ -13,10 +13,29 @@ version = os.getenv("version")
 
 ucm = axl(username=username, password=password, cucm=cucm, cucm_version=version)
 
+
+
 """
 Users
 """
-# print(ucm.get_ldap_dirs())
+for phone in ucm.get_phones():
+    with open("phones78.csv", "a") as f:
+        f.write(phone['name']+'\n')
+# #         # for k, v in phone.iteritems():
+# #         #     f.write(k+','+v)
+
+# for batch in ucm.get_phones():
+#     for each in batch:
+#         with open("test8.csv", "a") as f:
+#             f.write(each['name']+'\n')
+
+# for phone in list(ucm.get_phones()):
+#     print(phone)
+    # for each in phone:
+    #     print(each)
+    # with open("test.csv", 'w') as fs:
+    #     fs.write(phone)
+
 """Get All Users"""
 # for user in ucm.get_users():
 #     try:
