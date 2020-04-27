@@ -2185,19 +2185,27 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_users(self, tagfilter={"userid": "", "firstName": "", "lastName": "",}):
+
+    def get_users(self, tagfilter={"userid": "", "firstName": "", "lastName": ""}):
         """
         Get users details
-        :param mini: return a list of tuples of user details
         :return: A list of dictionary's
         """
-
-        try:
-            return self.client.listUser({"userid": "%"}, returnedTags=tagfilter)[
-                "return"
-            ]["user"]
-        except Fault as e:
-            return e
+        skip=0
+        a = []
+        def inner(skip):
+            while True:
+                res = self.client.listUser(
+                            {"userid": "%"}, returnedTags=tagfilter, first=1000, skip=skip
+                        )["return"]
+                skip=skip+1000
+                if res is not None and 'user' in res:
+                    yield res['user']
+                else:
+                    break
+        for each in inner(skip):
+            a.extend(each)
+        return a
 
     def get_user(self, userid):
         """
