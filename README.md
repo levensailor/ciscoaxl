@@ -10,7 +10,55 @@
 pip install ciscoaxl
 ```
 
-## Example Usage
+`testing in a lab is highly recommended. if you don't have a lab of your own, you can reserve a DevNet Sandbox free of charge!`
+
+## Reserve a DevNet Sandbox (if required)
+
+The	DevNet	Sandbox	is	accessible	 through	Cisco	DevNet	at	http://developer.cisco.com
+
+Select	Collaboration	on	the	right	hand category menu	and	then look	for	the	“Collaboration	12.5”	tile.	
+Hit	reserve.
+
+To connect to the lab, you'll need to use VPN.
+
+VPN Credentials will be sent to your DevNet registered email account, or you can view the _OUTPUT_ from the topology page. 
+
+Once connected, you can click on the server, in this case CUCM, and select _ATTRIBUTES_ to find username, password, and hostname / ip address.
+
+
+___
+
+
+## Enable AXL SOAP Service on CUCM:
+
+Enable the AXL SOAP interface
+
+Browse to the CUCM Serviceability page on https://<IP_CUCM>/ccmservice
+
+Tools > Service Activation:
+
+Enable the "Cisco AXL Web Service"
+
+![](2020-05-31-23-25-21.png)
+
+---
+
+## Create an Application User and assign AXL role
+
+CUCM > User Management > Role > Add.
+
+![](2020-05-31-23-27-50.png)
+
+Create a new User Group "AXL Group" in User Management > User Group. 
+
+On the top right drop down list "Related Links", select "Assign Role to User Group" and assign the previously created Role to the new User Group "AXL Group".
+
+Create a new Application User in User Management > User Group.  Add the User Group "AXL Group" to this user so that after saving the roles of the new Application User appear as in the following screen:
+
+![](2020-05-31-23-28-51.png)
+
+
+## SDK Usage 
 
 ```python
 from ciscoaxl import axl
