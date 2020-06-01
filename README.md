@@ -167,7 +167,7 @@ ucm.add_phone(
 #### Delete Phone
 
 ```python
-ucm.delete_phone('SEP004433220043')
+ucm.delete_phone(name='SEP004433220043')
 ```
 
 ## Translations and Transformations
