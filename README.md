@@ -39,23 +39,35 @@ Tools > Service Activation:
 
 Enable the "Cisco AXL Web Service"
 
-![](2020-05-31-23-25-21.png)
+![](docs/2020-06-01-11-13-59.png)
 
 ---
 
-## Create an Application User and assign AXL role
+## Create an AXL Service Account
 
-CUCM > User Management > Role > Add.
+> Step 1 - Create an AXL User Group
 
-![](2020-05-31-23-27-50.png)
+CUCM > User Management > User Group > Add.
 
-Create a new User Group "AXL Group" in User Management > User Group. 
+> Step 2 - Assign the AXL role to the group
 
-On the top right drop down list "Related Links", select "Assign Role to User Group" and assign the previously created Role to the new User Group "AXL Group".
+On the top right drop down list "Related Links". 
 
-Create a new Application User in User Management > User Group.  Add the User Group "AXL Group" to this user so that after saving the roles of the new Application User appear as in the following screen:
 
-![](2020-05-31-23-28-51.png)
+Select "Assign Role to User Group" and select "Standard AXL API Access"
+
+![](docs/2020-06-01-11-29-06.png)
+
+
+> Step 3 - Create a new Application User
+
+CUCM > User Management > Application User > Add.
+
+![](docs/2020-06-01-11-33-25.png)
+
+Add the User Group "AXL Group" to this user so that after saving the roles of the new Application User appear as in the following screen:
+
+![](docs/2020-06-01-11-43-34.png)
 
 
 ## SDK Usage 
@@ -64,7 +76,7 @@ Create a new Application User in User Management > User Group.  Add the User Gro
 from ciscoaxl import axl
 
 cucm = '10.10.20.1'
-username = 'axluser'
+username = 'axlaccess'
 password = 'axlpassword'
 version = '12.5'
 ucm = axl(username=cucm_username,password=cucm_password,cucm=cucm,cucm_version=version)
