@@ -19,7 +19,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "zeep==3.4.0",
-        "urllib3==1.23",
+        "urllib3==1.26.5",
         "requests==2.22.0",
         "six==1.12.0",
     ],
