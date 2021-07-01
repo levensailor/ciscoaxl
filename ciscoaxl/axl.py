@@ -12,7 +12,7 @@ Links:
 import sys
 from pathlib import Path
 import os
-
+import json
 from requests import Session
 from requests.auth import HTTPBasicAuth
 import re
@@ -94,6 +94,34 @@ class axl(object):
         except Fault as e:
             return e
 
+    def run_sql_query(self, query):
+        result = {'num_rows': 0,
+                  'query': query}
+
+        try:
+            sql_result = self.client.executeSQLQuery(sql=query)
+            print(sql_result)
+        except Exception as fault:
+            sql_result = None
+            self.last_exception = fault
+
+        num_rows = 0
+        result_rows = []
+
+        if sql_result is not None:
+            if sql_result['return'] is not None:
+                for row in sql_result['return']['row']:
+                    result_rows.append({})
+                    for column in row:
+                        result_rows[num_rows][column.tag] = column.text
+                    num_rows += 1
+
+        result['num_rows'] = num_rows
+        if num_rows > 0:
+            result['rows'] = result_rows
+
+        return result
+
     def sql_query(self, query):
         """
         Execute SQL query
@@ -101,7 +129,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.executeSQLQuery(query)["return"]
+            return self.client.executeSQLQuery(query)['return']
         except Fault as e:
             return e
 
@@ -1854,7 +1882,7 @@ class axl(object):
         except Fault as e:
             return e
     
-    def get_phones(self, tagfilter={
+    def get_phones(self, query={"name": "%"}, tagfilter={
             "name": "",
             "product": "",
             "description": "",
@@ -1867,7 +1895,7 @@ class axl(object):
         def inner(skip):
             while True:
                 res = self.client.listPhone(
-                            {"name": "%"}, returnedTags=tagfilter, first=1000, skip=skip
+                            searchCriteria=query, returnedTags=tagfilter, first=1000, skip=skip
                         )["return"]
                 skip=skip+1000
                 if res is not None and 'phone' in res:
@@ -2644,7 +2672,7 @@ class axl(object):
         description="",
         partition="",
         calledPartyPrefixDigits="",
-        calledPartyTransformationmask="",
+        calledPartyTransformationMask="",
         digitDiscardInstructionName="",
     ):
         """
@@ -2669,7 +2697,7 @@ class axl(object):
                     "description": description,
                     "routePartitionName": partition,
                     "calledPartyPrefixDigits": calledPartyPrefixDigits,
-                    "calledPartyTransformationmask": calledPartyTransformationmask,
+                    "calledPartyTransformationMask": calledPartyTransformationMask,
                     "digitDiscardInstructionName": digitDiscardInstructionName,
                 }
             )
@@ -2745,7 +2773,7 @@ class axl(object):
         description="",
         partition="",
         callingPartyPrefixDigits="",
-        callingPartyTransformationmask="",
+        callingPartyTransformationMask="",
         digitDiscardInstructionName="",
     ):
         """
@@ -2770,7 +2798,7 @@ class axl(object):
                     "description": description,
                     "routePartitionName": partition,
                     "callingPartyPrefixDigits": callingPartyPrefixDigits,
-                    "callingPartyTransformationmask": callingPartyTransformationmask,
+                    "callingPartyTransformationMask": callingPartyTransformationMask,
                     "digitDiscardInstructionName": digitDiscardInstructionName,
                 }
             )
@@ -2797,7 +2825,7 @@ class axl(object):
         :param pattern: pattern - required
         :param routePartitionName: partition required
         :param description: Route pattern description
-        :param calledPartyTransformationmask:
+        :param callingPartyTransformationMask:
         :param dialPlanName:
         :param digitDiscardInstructionName:
         :param routeFilterName:
