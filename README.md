@@ -1,4 +1,5 @@
 # Python SDK for Cisco CUCM AXL API
+[![PyPi Status](https://github.com/PresidioCode/ciscoaxl/actions/workflows/python-publish.yml/badge.svg?event=deployment_status)](https://github.com/PresidioCode/ciscoaxl/actions/workflows/python-publish.yml)
 
 ## AXL API Documentation
 
