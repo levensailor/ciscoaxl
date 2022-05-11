@@ -95,8 +95,7 @@ class axl(object):
             return e
 
     def run_sql_query(self, query):
-        result = {'num_rows': 0,
-                  'query': query}
+        result = {"num_rows": 0, "query": query}
 
         try:
             sql_result = self.client.executeSQLQuery(sql=query)
@@ -109,16 +108,16 @@ class axl(object):
         result_rows = []
 
         if sql_result is not None:
-            if sql_result['return'] is not None:
-                for row in sql_result['return']['row']:
+            if sql_result["return"] is not None:
+                for row in sql_result["return"]["row"]:
                     result_rows.append({})
                     for column in row:
                         result_rows[num_rows][column.tag] = column.text
                     num_rows += 1
 
-        result['num_rows'] = num_rows
+        result["num_rows"] = num_rows
         if num_rows > 0:
-            result['rows'] = result_rows
+            result["rows"] = result_rows
 
         return result
 
@@ -129,7 +128,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.executeSQLQuery(query)['return']
+            return self.client.executeSQLQuery(query)["return"]
         except Fault as e:
             return e
 
@@ -144,14 +143,22 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_ldap_dir(self, tagfilter={"name": "", "ldapDn": "", "userSearchBase": "",}):
+    def get_ldap_dir(
+        self,
+        tagfilter={
+            "name": "",
+            "ldapDn": "",
+            "userSearchBase": "",
+        },
+    ):
         """
         Get LDAP Syncs
         :return: result dictionary
         """
         try:
             return self.client.listLdapDirectory(
-                {"name": "%"}, returnedTags=tagfilter,
+                {"name": "%"},
+                returnedTags=tagfilter,
             )["return"]["ldapDirectory"]
         except Fault as e:
             return e
@@ -650,7 +657,8 @@ class axl(object):
         """
         try:
             return self.client.listConferenceBridge(
-                {"name": "%"}, returnedTags=tagfilter,
+                {"name": "%"},
+                returnedTags=tagfilter,
             )["return"]["conferenceBridge"]
         except Fault as e:
             return e
@@ -1049,7 +1057,7 @@ class axl(object):
         Update a Route group
         :param name: The name of the Route group to update
         :param distribution_algorithm: Top Down/Circular
-        :param members: A list of devices to add (must already exist DUH!)        
+        :param members: A list of devices to add (must already exist DUH!)
         :return: result dictionary
         """
         try:
@@ -1279,7 +1287,10 @@ class axl(object):
         if members:
             [
                 req["members"]["member"].append(
-                    {"routePartitionName": i, "index": members.index(i) + 1,}
+                    {
+                        "routePartitionName": i,
+                        "index": members.index(i) + 1,
+                    }
                 )
                 for i in members
             ]
@@ -1327,7 +1338,8 @@ class axl(object):
         """
         try:
             return self.client.listRoutePattern(
-                {"pattern": "%"}, returnedTags=tagfilter,
+                {"pattern": "%"},
+                returnedTags=tagfilter,
             )["return"]["routePattern"]
         except Fault as e:
             return e
@@ -1585,7 +1597,12 @@ class axl(object):
             return e
 
     def get_directory_numbers(
-        self, tagfilter={"pattern": "", "description": "", "routePartitionName": "",}
+        self,
+        tagfilter={
+            "pattern": "",
+            "description": "",
+            "routePartitionName": "",
+        },
     ):
         """
         Get directory numbers
@@ -1881,27 +1898,33 @@ class axl(object):
             return self.client.updateCtiRoutePoint(**args)
         except Fault as e:
             return e
-    
-    def get_phones(self, query={"name": "%"}, tagfilter={
+
+    def get_phones(
+        self,
+        query={"name": "%"},
+        tagfilter={
             "name": "",
             "product": "",
             "description": "",
             "protocol": "",
             "locationName": "",
-            "callingSearchSpaceName": ""
-        }):
-        skip=0
+            "callingSearchSpaceName": "",
+        },
+    ):
+        skip = 0
         a = []
+
         def inner(skip):
             while True:
                 res = self.client.listPhone(
-                            searchCriteria=query, returnedTags=tagfilter, first=1000, skip=skip
-                        )["return"]
-                skip=skip+1000
-                if res is not None and 'phone' in res:
-                    yield res['phone']
+                    searchCriteria=query, returnedTags=tagfilter, first=1000, skip=skip
+                )["return"]
+                skip = skip + 1000
+                if res is not None and "phone" in res:
+                    yield res["phone"]
                 else:
                     break
+
         for each in inner(skip):
             a.extend(each)
         return a
@@ -2087,7 +2110,12 @@ class axl(object):
 
     def get_device_profiles(
         self,
-        tagfilter={"name": "", "product": "", "protocol": "", "phoneTemplateName": "",},
+        tagfilter={
+            "name": "",
+            "product": "",
+            "protocol": "",
+            "phoneTemplateName": "",
+        },
     ):
         """
         Get device profile details
@@ -2096,7 +2124,8 @@ class axl(object):
         """
         try:
             return self.client.listDeviceProfile(
-                {"name": "%"}, returnedTags=tagfilter,
+                {"name": "%"},
+                returnedTags=tagfilter,
             )["return"]["deviceProfile"]
         except Fault as e:
             return e
@@ -2213,24 +2242,25 @@ class axl(object):
         except Fault as e:
             return e
 
-
     def get_users(self, tagfilter={"userid": "", "firstName": "", "lastName": ""}):
         """
         Get users details
         :return: A list of dictionary's
         """
-        skip=0
+        skip = 0
         a = []
+
         def inner(skip):
             while True:
                 res = self.client.listUser(
-                            {"userid": "%"}, returnedTags=tagfilter, first=1000, skip=skip
-                        )["return"]
-                skip=skip+1000
-                if res is not None and 'user' in res:
-                    yield res['user']
+                    {"userid": "%"}, returnedTags=tagfilter, first=1000, skip=skip
+                )["return"]
+                skip = skip + 1000
+                if res is not None and "user" in res:
+                    yield res["user"]
                 else:
                     break
+
         for each in inner(skip):
             a.extend(each)
         return a
@@ -2988,5 +3018,53 @@ class axl(object):
         """
         try:
             return self.client.removeCallManagerGroup({"name": name})
+        except Fault as e:
+            return e
+
+    def get_hunt_pilots(
+        self,
+        tagfilter={
+            "pattern": "",
+            "description": "",
+            "routePartitionName": "",
+        },
+    ):
+        """
+        Get hunt pilots
+        :param mini: return a list of tuples of hunt pilot details
+        :return: A list of dictionary's
+        """
+        try:
+            return self.client.listHuntPilot({"pattern": "%"}, returnedTags=tagfilter,)[
+                "return"
+            ]["huntPilot"]
+        except Fault as e:
+            return e
+
+    def get_hunt_pilot(self, **args):
+        """
+        Get hunt pilot details
+        :param name:
+        :param partition:
+        :return: result dictionary
+        """
+        try:
+            return self.client.getHuntPilot(**args)["return"]["huntPilot"]
+        except Fault as e:
+            return e
+
+    def add_hunt_pilot(self, **args):
+        """
+        Add a Hunt Pilot minimal params needed
+        :param pattern: pattern - required
+        :param routePartitionName: partition required
+        :param description: Hunt Pilot pattern description
+        :param useCallingPartyPhoneMask: "Off" or "On"
+        :param blockEnable: boolean (true or false)
+        :param huntListName:
+        :return: result dictionary
+        """
+        try:
+            return self.client.addHuntPilot({**args})
         except Fault as e:
             return e
