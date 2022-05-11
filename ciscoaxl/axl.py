@@ -59,7 +59,6 @@ class axl(object):
         transport = Transport(session=session, timeout=10, cache=SqliteCache())
         axl_client = Client(wsdl, settings=settings, transport=transport)
 
-        self.wsdl = wsdl
         self.username = username
         self.password = password
         self.wsdl = wsdl
