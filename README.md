@@ -86,7 +86,7 @@ ucm = axl(username=cucm_username,password=cucm_password,cucm=cucm,cucm_version=v
 > Note: all get methods that return more than 1 item have a tagfilter property that can allow more fields to return. Fields are filtered by default to increase performance, but if you need additional fields returned from the axl call, simply add the tagfilter={} to the request. Example:
 
 ```python
-get_phones(tagfilter{ "name": "",
+get_phones(tagfilter={ "name": "",
             "product": "",
             "description": "",
             "protocol": "",
