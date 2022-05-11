@@ -371,7 +371,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getRegion(**args)
+            return self.client.getRegion(**args)["return"]["region"]
         except Fault as e:
             return e
 
@@ -471,14 +471,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_srst(self, name):
+    def get_srst(self, **args):
         """
         Get SRST information
         :param name: SRST name
         :return: result dictionary
         """
         try:
-            return self.client.getSrst(name=name)
+            return self.client.getSrst(**args)["return"]["srst"]
         except Fault as e:
             return e
 
@@ -557,7 +557,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getDevicePool(**args)
+            return self.client.getDevicePool(**args)["return"]["devicePool"]
         except Fault as e:
             return e
 
@@ -663,14 +663,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_conference_bridge(self, name):
+    def get_conference_bridge(self, **args):
         """
         Get conference bridge parameters
         :param name: conference bridge name
         :return: result dictionary
         """
         try:
-            return self.client.getConferenceBridge(name=name)
+            return self.client.getConferenceBridge(**args)["return"]["conferenceBridge"]
         except Fault as e:
             return e
 
@@ -750,14 +750,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_transcoder(self, name):
+    def get_transcoder(self, **args):
         """
         Get conference bridge parameters
         :param name: transcoder name
         :return: result dictionary
         """
         try:
-            return self.client.getTranscoder(name=name)
+            return self.client.getTranscoder(**args)["return"]["transcoder"]
         except Fault as e:
             return e
 
@@ -827,14 +827,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_mtp(self, name):
+    def get_mtp(self, **args):
         """
         Get mtp parameters
         :param name: transcoder name
         :return: result dictionary
         """
         try:
-            return self.client.getMtp(name=name)
+            return self.client.getMtp(**args)["return"]["mtp"]
         except Fault as e:
             return e
 
@@ -913,14 +913,14 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_h323_gateway(self, name):
+    def get_h323_gateway(self, **args):
         """
         Get H323 Gateway parameters
         :param name: H323 Gateway name
         :return: result dictionary
         """
         try:
-            return self.client.getH323Gateway(name=name)
+            return self.client.getH323Gateway(**args)["return"]["h323Gateway"]
         except Fault as e:
             return e
 
@@ -1007,7 +1007,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getRouteGroup(**args)
+            return self.client.getRouteGroup(**args)["return"]["routeGroup"]
         except Fault as e:
             return e
 
@@ -1086,7 +1086,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getRouteList(**args)
+            return self.client.getRouteList(**args)["return"]["routeList"]
         except Fault as e:
             return e
 
@@ -1195,7 +1195,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getRoutePartition(**args)
+            return self.client.getRoutePartition(**args)["return"]["routePartition"]
         except Fault as e:
             return e
 
@@ -1259,7 +1259,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_calling_search_space(self, **css):
+    def get_calling_search_space(self, **args):
         """
         Get Calling search space details
         :param name: Calling search space name
@@ -1267,7 +1267,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getCss(**css)
+            return self.client.getCss(**args)["return"]["css"]
         except Fault as e:
             return e
 
@@ -1362,7 +1362,9 @@ class axl(object):
             if "return" in uuid and uuid["return"] is not None:
                 uuid = uuid["return"]["routePattern"][0]["uuid"]
                 try:
-                    return self.client.getRoutePattern(uuid=uuid)
+                    return self.client.getRoutePattern(uuid=uuid)["return"][
+                        "routePattern"
+                    ]
                 except Fault as e:
                     return e
 
@@ -1464,14 +1466,16 @@ class axl(object):
         except Fault as e:
             return e
 
-    def get_media_resource_group(self, name):
+    def get_media_resource_group(self, **args):
         """
         Get a media resource group details
         :param media_resource_group: Media resource group name
         :return: result dictionary
         """
         try:
-            return self.client.getMediaResourceGroup(name=name)
+            return self.client.getMediaResourceGroup(**args)["return"][
+                "mediaResourceGroup"
+            ]
         except Fault as e:
             return e
 
@@ -1624,7 +1628,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getLine(**args)
+            return self.client.getLine(**args)["return"]["line"]
         except Fault as e:
             return e
 
@@ -1795,7 +1799,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getCtiRoutePoint(**args)
+            return self.client.getCtiRoutePoint(**args)["return"]["ctiRoutePoint"]
         except Fault as e:
             return e
 
@@ -2138,7 +2142,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getDeviceProfile(**args)
+            return self.client.getDeviceProfile(**args)["return"]["deviceProfile"]
         except Fault as e:
             return e
 
@@ -2692,7 +2696,9 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getCalledPartyTransformationPattern(**args)
+            return self.client.getCalledPartyTransformationPattern(**args)["return"][
+                "calledPartyTransformationPattern"
+            ]
         except Fault as e:
             return e
 
@@ -2793,7 +2799,9 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getCallingPartyTransformationPattern(**args)
+            return self.client.getCallingPartyTransformationPattern(**args)["return"][
+                "callingPartyTransformationPattern"
+            ]
         except Fault as e:
             return e
 
@@ -2889,7 +2897,7 @@ class axl(object):
         :return: result dictionary
         """
         try:
-            return self.client.getSipTrunk(**args)
+            return self.client.getSipTrunk(**args)["return"]["sipTrunk"]
         except Fault as e:
             return e
 
