@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ciscoaxl"
-version = "0.2.0"
+version = "0.160"
 description = "Cisco CUCM AXL Library. simple to use."
 authors = ["Jeff Levensailor <jeff@levensailor.com>"]
 license = "MIT"
