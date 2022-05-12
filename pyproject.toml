@@ -1,0 +1,35 @@
+[tool.poetry]
+name = "ciscoaxl"
+version = "0.2.0"
+description = "Cisco CUCM AXL Library. simple to use."
+authors = ["Jeff Levensailor <jeff@levensailor.com>"]
+license = "MIT"
+include = ["*.wsdl", "*.xsd", "schema/*/*"]
+readme = "README.md"
+repository="https://github.com/levensailor/ciscoaxl"
+homepage="https://github.com/levensailor/ciscoaxl"
+keywords=["Cisco", "Call Manager", "CUCM", "AXL", "VoIP"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+zeep = "^4.1.0"
+requests = "^2.27.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+black = "^22.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
