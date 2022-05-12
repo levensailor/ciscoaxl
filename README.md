@@ -404,7 +404,7 @@ for udp in ucm.get_device_profiles():
 #### Get Specific User Device Profile
 
 ```python
-udp = ucm.get_device_profile(profile='udp-bsimpson')
+udp = ucm.get_device_profile(name='udp-bsimpson')
 print(udp.name)
 ```
 
@@ -412,7 +412,7 @@ print(udp.name)
 
 ```python
 ucm.add_device_profile(
-    profile='UDP_MScott',
+    name='UDP_MScott',
     description='Michael Scott - 2901',
     product='Cisco 8861',
     phone_template='Standard 8861 SIP',
