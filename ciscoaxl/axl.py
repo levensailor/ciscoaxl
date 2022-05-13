@@ -3226,7 +3226,6 @@ class axl(object):
         """
         Get line group details
         :param name:
-        :param partition:
         :return: result dictionary
         """
         try:
@@ -3243,7 +3242,7 @@ class axl(object):
         :param huntAlgorithmNoAnswer: "Try next member; then, try next group in Hunt List",
         :param huntAlgorithmBusy: "Try next member; then, try next group in Hunt List",
         :param huntAlgorithmNotAvailable: "Try next member; then, try next group in Hunt List",
-        :param members: dict for each member
+        :param members: dict for each member directory number
         :return: result dictionary
         """
         try:
@@ -3255,10 +3254,13 @@ class axl(object):
         """
         Update a Line Group
         :param name: - required
-        :param callManagerGroup: - required
-        :param description: str
-        :param routeListEnabled: bool
-        :param voiceMailUsage: bool
+        :param distributionAlgorithm: "Longest Idle Time", "Broadcast" etc...
+        :param rnaReversionTimeOut:
+        :param huntAlgorithmNoAnswer: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmBusy: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmNotAvailable: "Try next member; then, try next group in Hunt List",
+        :param members: dict for each member directory number
+        :return: result dictionary
         :return:
         """
         try:
