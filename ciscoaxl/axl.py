@@ -3028,6 +3028,7 @@ class axl(object):
         except Fault as e:
             return e
 
+    # Hunt Pilot Methods
     def get_hunt_pilots(
         self,
         tagfilter={
@@ -3042,9 +3043,14 @@ class axl(object):
         :return: A list of dictionary's
         """
         try:
-            return self.client.listHuntPilot({"pattern": "%"}, returnedTags=tagfilter,)[
-                "return"
-            ]["huntPilot"]
+            response = self.client.listHuntPilot(
+                {"pattern": "%"},
+                returnedTags=tagfilter,
+            )["return"]
+            if response:
+                return response["huntPilot"]
+            else:
+                return response
         except Fault as e:
             return e
 
@@ -3073,5 +3079,202 @@ class axl(object):
         """
         try:
             return self.client.addHuntPilot({**args})
+        except Fault as e:
+            return e
+
+    def update_hunt_pilot(self, **args):
+        """
+        Update a Hunt Pilot
+        :param pattern: pattern - required
+        :param routePartitionName: partition required
+        :param description: Hunt Pilot pattern description
+        :param useCallingPartyPhoneMask: "Off" or "On"
+        :param blockEnable: boolean (true or false)
+        :param huntListName:
+        :return:
+        """
+        try:
+            return self.client.updateHuntPilot(**args)
+        except Fault as e:
+            return e
+
+    def delete_hunt_pilot(self, **args):
+        """
+        Delete a Hunt Pilot
+        :param uuid: The pattern uuid
+        :param pattern: The pattern of the transformation to delete
+        :param partition: The name of the partition
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeHuntPilot(**args)
+        except Fault as e:
+            return e
+
+    # Hunt List Methods
+    def get_hunt_lists(
+        self,
+        tagfilter={
+            "name": "",
+            "callManagerGroupName": "",
+            "routeListEnabled": "",
+            "voiceMailUsage": "",
+            "description": "",
+        },
+    ):
+        """
+        Get hunt lists
+        :param mini: return a list of tuples of hunt pilot details
+        :return: A list of dictionary's
+        """
+        try:
+            response = self.client.listHuntList(
+                {"name": "%"},
+                returnedTags=tagfilter,
+            )["return"]
+            if response:
+                return response["huntList"]
+            else:
+                return response
+        except Fault as e:
+            return e
+
+    def get_hunt_list(self, **args):
+        """
+        Get hunt list details
+        :param name:
+        :param partition:
+        :return: result dictionary
+        """
+        try:
+            return self.client.getHuntList(**args)["return"]["huntList"]
+        except Fault as e:
+            return e
+
+    def add_hunt_list(self, **args):
+        """
+        Add a Hunt list minimal params needed
+        :param name: - required
+        :param callManagerGroup: - required
+        :param description: str
+        :param routeListEnabled: bool
+        :param voiceMailUsage: bool
+        :return: result dictionary
+        """
+        try:
+            return self.client.addHuntList({**args})
+        except Fault as e:
+            return e
+
+    def update_hunt_list(self, **args):
+        """
+        Update a Hunt List
+        :param name: - required
+        :param callManagerGroup: - required
+        :param description: str
+        :param routeListEnabled: bool
+        :param voiceMailUsage: bool
+        :return:
+        """
+        try:
+            return self.client.updateHuntList(**args)
+        except Fault as e:
+            return e
+
+    def delete_hunt_list(self, **args):
+        """
+        Delete a Hunt List
+        :param name: - required
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeHuntList(**args)
+        except Fault as e:
+            return e
+
+    # Line Group Methods
+    def get_line_groups(
+        self,
+        tagfilter={
+            "name": "",
+            "distributionAlgorithm": "",
+            "rnaReversionTimeOut": "",
+            "huntAlgorithmNoAnswer": "",
+            "huntAlgorithmBusy": "",
+            "huntAlgorithmNotAvailable": "",
+            "autoLogOffHunt": "",
+        },
+    ):
+        """
+        Get Line Groups
+        :param mini: return a list of tuples of hunt pilot details
+        :return: A list of dictionary's
+        """
+        try:
+            response = self.client.listLineGroup(
+                {"name": "%"},
+                returnedTags=tagfilter,
+            )["return"]
+            if response:
+                return response["lineGroup"]
+            else:
+                return response
+        except Fault as e:
+            return e
+
+    def get_line_group(self, **args):
+        """
+        Get line group details
+        :param name:
+        :return: result dictionary
+        """
+        try:
+            return self.client.getLineGroup(**args)["return"]["lineGroup"]
+        except Fault as e:
+            return e
+
+    def add_line_group(self, **args):
+        """
+        Add a Line Group minimal params needed
+        :param name: - required
+        :param distributionAlgorithm: "Longest Idle Time", "Broadcast" etc...
+        :param rnaReversionTimeOut:
+        :param huntAlgorithmNoAnswer: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmBusy: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmNotAvailable: "Try next member; then, try next group in Hunt List",
+        :param members: dict for each member directory number
+        :return: result dictionary
+        """
+        try:
+            return self.client.addLineGroup({**args})
+        except Fault as e:
+            return e
+
+    def update_Line_group(self, **args):
+        """
+        Update a Line Group
+        :param name: - required
+        :param distributionAlgorithm: "Longest Idle Time", "Broadcast" etc...
+        :param rnaReversionTimeOut:
+        :param huntAlgorithmNoAnswer: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmBusy: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmNotAvailable: "Try next member; then, try next group in Hunt List",
+        :param members: dict for each member directory number
+        :return: result dictionary
+        :return:
+        """
+        try:
+            return self.client.updateLineGroup(**args)
+        except Fault as e:
+            return e
+
+    def delete_line_group(self, **args):
+        """
+        Delete a Line Group
+        :param name: - required
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeLineGroup(**args)
         except Fault as e:
             return e
