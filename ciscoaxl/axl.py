@@ -3028,6 +3028,7 @@ class axl(object):
         except Fault as e:
             return e
 
+    # Hunt Pilot Methods
     def get_hunt_pilots(
         self,
         tagfilter={
@@ -3110,6 +3111,7 @@ class axl(object):
         except Fault as e:
             return e
 
+    # Hunt List Methods
     def get_hunt_lists(
         self,
         tagfilter={
@@ -3187,5 +3189,90 @@ class axl(object):
         """
         try:
             return self.client.removeHuntList(**args)
+        except Fault as e:
+            return e
+
+    # Line Group Methods
+    def get_line_groups(
+        self,
+        tagfilter={
+            "name": "",
+            "distributionAlgorithm": "",
+            "rnaReversionTimeOut": "",
+            "huntAlgorithmNoAnswer": "",
+            "huntAlgorithmBusy": "",
+            "huntAlgorithmNotAvailable": "",
+            "autoLogOffHunt": "",
+        },
+    ):
+        """
+        Get Line Groups
+        :param mini: return a list of tuples of hunt pilot details
+        :return: A list of dictionary's
+        """
+        try:
+            response = self.client.listLineGroup(
+                {"name": "%"},
+                returnedTags=tagfilter,
+            )["return"]
+            if response:
+                return response["lineGroup"]
+            else:
+                return response
+        except Fault as e:
+            return e
+
+    def get_line_group(self, **args):
+        """
+        Get line group details
+        :param name:
+        :param partition:
+        :return: result dictionary
+        """
+        try:
+            return self.client.getLineGroup(**args)["return"]["lineGroup"]
+        except Fault as e:
+            return e
+
+    def add_line_group(self, **args):
+        """
+        Add a Line Group minimal params needed
+        :param name: - required
+        :param distributionAlgorithm: "Longest Idle Time", "Broadcast" etc...
+        :param rnaReversionTimeOut:
+        :param huntAlgorithmNoAnswer: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmBusy: "Try next member; then, try next group in Hunt List",
+        :param huntAlgorithmNotAvailable: "Try next member; then, try next group in Hunt List",
+        :param members: dict for each member
+        :return: result dictionary
+        """
+        try:
+            return self.client.addLineGroup({**args})
+        except Fault as e:
+            return e
+
+    def update_Line_group(self, **args):
+        """
+        Update a Line Group
+        :param name: - required
+        :param callManagerGroup: - required
+        :param description: str
+        :param routeListEnabled: bool
+        :param voiceMailUsage: bool
+        :return:
+        """
+        try:
+            return self.client.updateLineGroup(**args)
+        except Fault as e:
+            return e
+
+    def delete_line_group(self, **args):
+        """
+        Delete a Line Group
+        :param name: - required
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeLineGroup(**args)
         except Fault as e:
             return e
