@@ -3250,7 +3250,7 @@ class axl(object):
         except Fault as e:
             return e
 
-    def update_Line_group(self, **args):
+    def update_line_group(self, **args):
         """
         Update a Line Group
         :param name: - required
@@ -3276,5 +3276,98 @@ class axl(object):
         """
         try:
             return self.client.removeLineGroup(**args)
+        except Fault as e:
+            return e
+
+    # Call Pickup Group Methods
+    def get_call_pickup_groups(
+        self,
+        tagfilter={
+            "name": "",
+            "pattern": "",
+            "description": "",
+            "usage": "",
+            "routePartitionName": "",
+            "pickupNotification": "",
+            "pickupNotificationTimer": "",
+            "callInfoForPickupNotification": "",
+        },
+    ):
+        """
+        Get Call Pickup Groups
+        :param pattern: return a list of tuples of hunt pilot details
+        :return: A list of dictionary's
+        """
+        try:
+            response = self.client.listCallPickupGroup(
+                {"pattern": "%"},
+                returnedTags=tagfilter,
+            )["return"]
+            if response:
+                return response["callPickupGroup"]
+            else:
+                return response
+        except Fault as e:
+            return e
+
+    def get_call_pickup_group(self, **args):
+        """
+        Get call pickup group details
+        :param pattern:
+        :param name:
+        :param
+        :return: result dictionary
+        """
+        try:
+            return self.client.getCallPickupGroup(**args)["return"]["callPickupGroup"]
+        except Fault as e:
+            return e
+
+    def add_call_pickup_group(self, **args):
+        """
+        Add a Call Pickup Group minimal params needed
+        :param name: - required
+        :param pattern: - required
+        :param description:
+        :param usage:
+        :param routePartitionName:
+        :param pickupNotification:
+        :param pickupNotificationTimer:
+        :param callInfoForPickupNotification:
+        :param members:
+        :return: result dictionary
+        """
+        try:
+            return self.client.addCallPickupGroup({**args})
+        except Fault as e:
+            return e
+
+    def update_call_pickup_group(self, **args):
+        """
+        Update a Call Pickup Group
+        :param name:
+        :param pattern:
+        :param description:
+        :param usage:
+        :param routePartitionName:
+        :param pickupNotification:
+        :param pickupNotificationTimer:
+        :param callInfoForPickupNotification:
+        :param members:
+        :return: result dictionary
+        """
+        try:
+            return self.client.updateCallPickupGroup(**args)
+        except Fault as e:
+            return e
+
+    def delete_call_pickup_group(self, **args):
+        """
+        Delete a Call Pickup Group
+        :param name: - required
+        :return: result dictionary
+        """
+        try:
+            return self.client.removeCallPickupGroup(**args)
         except Fault as e:
             return e
