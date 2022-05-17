@@ -29,7 +29,10 @@ requests = "^2.27.1"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"
 black = "^22.3.0"
-flake8 = {version = "^4.0.1", optional = true}
+flake8 = "^4.0.1"
+isort = "^5.10.1"
+coverage = "^6.3.2"
+bandit = "^1.7.4"
 
 [tool.poetry.extras]
 github = ['flake8']
