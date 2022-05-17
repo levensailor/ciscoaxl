@@ -33,6 +33,7 @@ flake8 = "^4.0.1"
 isort = "^5.10.1"
 coverage = "^6.3.2"
 bandit = "^1.7.4"
+python-decouple = "^3.6"
 
 [tool.poetry.extras]
 github = ['flake8']
