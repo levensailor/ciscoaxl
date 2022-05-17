@@ -9,59 +9,81 @@ version = config("CUCM_VERSION")
 ucm = axl(username=username, password=password, cucm=cucm, cucm_version=version)
 
 
-def test_add_phone():
-    add_phone = ucm.add_phone(
-        name="SEP0023AF482340",
-        description="Robert - 1102",
-        product="Cisco 8861",
-        device_pool="boston",
-        location="Hub_None",
-        phone_template="Standard 8861 SIP",
-        protocol="SIP",
-        css="Device_CSS",
-        subscribe_css="Device_CSS",
-        lines=[
-            (
-                "1102",
-                "Internal_PT",
-                "Robert Smith",
-                "Robert Smith",
-                "Robert Smith - 1102",
-                "+1408202XXXX",
-            )
-        ],
-    )
+class TestPhoneMethods:
+    def test_add_phone(self):
+        add_phone = ucm.add_phone(
+            name="SEP0023AF482340",
+            description="Robert - 1102",
+            product="Cisco 8861",
+            device_pool="boston",
+            location="Hub_None",
+            phone_template="Standard 8861 SIP",
+            protocol="SIP",
+            css="Device_CSS",
+            subscribe_css="Device_CSS",
+            lines=[
+                (
+                    "1102",
+                    "Internal_PT",
+                    "Robert Smith",
+                    "Robert Smith",
+                    "Robert Smith - 1102",
+                    "+1408202XXXX",
+                )
+            ],
+        )
 
-    assert type(add_phone["return"]) == str
+        assert type(add_phone["return"]) == str
 
+    def test_update_phone(self):
+        add_phone = ucm.update_phone(
+            name="SEP0023AF482340",
+            description="Robert - 1102 changed",
+        )
 
-def test_add_phone_bogus_macaddr():
-    add_phone = ucm.add_phone(
-        name="SEP0023AF482340Z",
-        description="Robert - 1102",
-        product="Cisco 8861",
-        device_pool="boston",
-        location="Hub_None",
-        phone_template="Standard 8861 SIP",
-        protocol="SIP",
-        css="Device_CSS",
-        subscribe_css="Device_CSS",
-        lines=[
-            (
-                "1102",
-                "Internal_PT",
-                "Robert Smith",
-                "Robert Smith",
-                "Robert Smith - 1102",
-                "+1408202XXXX",
-            )
-        ],
-    )
+        get_phone = ucm.get_phone(name="SEP0023AF482340")
+        assert type(add_phone["return"]) == str
+        assert get_phone.description == "Robert - 1102 changed"
 
-    assert (
-        add_phone.message
-        == "The specified name has invalid characters or is not formatted correctly for this device type."
-    )
+    def test_delete_phone(self):
+        add_phone = ucm.delete_phone(
+            name="SEP0023AF482340",
+        )
+
+        get_phone = ucm.get_phone(name="SEP0023AF482340")
+        assert type(add_phone["return"]) == str
+        assert (
+            get_phone.message
+            == "Item not valid: The specified SEP0023AF482340 was not found"
+        )
+
+    def test_add_phone_bogus_macaddr(self):
+        add_phone = ucm.add_phone(
+            name="SEP0023AF482340Z",
+            description="Robert - 1102",
+            product="Cisco 8861",
+            device_pool="boston",
+            location="Hub_None",
+            phone_template="Standard 8861 SIP",
+            protocol="SIP",
+            css="Device_CSS",
+            subscribe_css="Device_CSS",
+            lines=[
+                (
+                    "1102",
+                    "Internal_PT",
+                    "Robert Smith",
+                    "Robert Smith",
+                    "Robert Smith - 1102",
+                    "+1408202XXXX",
+                )
+            ],
+        )
+
+        assert (
+            add_phone.message
+            == "The specified name has invalid characters or is not formatted correctly for this device type."
+        )
 
 
 # TODO: add below methods for testing
