@@ -281,3 +281,4 @@ poetry.lock
 # End of https://www.gitignore.io/api/linux,macos,python,pycharm,windows,visualstudiocode
 /.venv
 /.vscode
+.env
