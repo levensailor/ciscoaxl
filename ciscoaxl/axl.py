@@ -15,6 +15,7 @@ import os
 import json
 from requests import Session
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import SSLError, ConnectionError
 import re
 import urllib3
 from zeep import Client, Settings, Plugin
@@ -51,8 +52,35 @@ class axl(object):
         else:
             wsdl = str(Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").absolute())
         session = Session()
+        session.auth = (username, password)
+
+        # validate session before assigning to Transport
+        url = f"https://{cucm}:8443/axl/"
         session.verify = False
-        session.auth = HTTPBasicAuth(username, password)
+        try:
+            ret_code = session.get(url, stream=True, timeout=10).status_code
+        except SSLError:
+            # retry with verify set False
+            session.close()
+            session = Session()
+            session.auth = (username, password)
+            session.verify = False
+            ret_code = session.get(url, stream=True, timeout=10).status_code
+        except ConnectionError:
+            raise Exception(f"{url} cannot be found, please try again") from None
+        if ret_code == 401:
+            raise Exception(
+                f"[401 Unauthorized]: Please check your username and password"
+            )
+        elif ret_code == 403:
+            raise Exception(
+                f"[403 Forbidden]: Please ensure the user '{username}' has AXL access set up"
+            )
+        elif ret_code == 404:
+            raise Exception(
+                f"[404 Not Found]: AXL not found, please check your URL ({url})"
+            )
+
         settings = Settings(
             strict=False, xml_huge_tree=True, xsd_ignore_sequence_order=True
         )
