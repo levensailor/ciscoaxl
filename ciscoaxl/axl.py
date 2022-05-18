@@ -39,7 +39,7 @@ class axl(object):
         :param password: axl password
         :param cucm: UCM IP address
         :param cucm_version: UCM version
-        :param strict_ssl: do not work around an SSL failure, default True
+        :param strict_ssl: do not work around an SSL failure, default False
 
         example usage:
         >>> from axl import AXL
