@@ -33,7 +33,7 @@ class axl(object):
     Python 3.6
     """
 
-    def __init__(self, username, password, cucm, cucm_version, strict_ssl=True):
+    def __init__(self, username, password, cucm, cucm_version, strict_ssl=False):
         """
         :param username: axl username
         :param password: axl password
@@ -2383,7 +2383,7 @@ class axl(object):
         else:
             return "Device Profile not found for user"
 
-    def update_user_credentials(self, userid, password="", pin=""): #nosec
+    def update_user_credentials(self, userid, password="", pin=""):  # nosec
         """
         Update end user for credentials
         :param userid: User ID
@@ -2392,16 +2392,18 @@ class axl(object):
         :return: result dictionary
         """
 
-        if password == "" and pin == "": #nosec
+        if password == "" and pin == "":  # nosec
             return "Password and/or Pin are required"
 
-        elif password != "" and pin != "": #nosec
+        elif password != "" and pin != "":  # nosec
             try:
-                return self.client.updateUser(userid=userid, password=password, pin=pin) #nosec
+                return self.client.updateUser(
+                    userid=userid, password=password, pin=pin
+                )  # nosec
             except Fault as e:
                 return e
 
-        elif password != "": #nosec
+        elif password != "":  # nosec
             try:
                 return self.client.updateUser(userid=userid, password=password)
             except Fault as e:
