@@ -56,7 +56,6 @@ class axl(object):
 
         # validate session before assigning to Transport
         url = f"https://{cucm}:8443/axl/"
-        session.verify = False
         try:
             ret_code = session.get(url, stream=True, timeout=10).status_code
         except SSLError:
