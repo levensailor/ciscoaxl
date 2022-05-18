@@ -83,7 +83,7 @@
 
 # exclude files from testing
 exclude:
-  - axl_generator.py
+  - ciscoaxl/axl_generator.py
 
 # (optional) list included test IDs here, eg '[B101, B406]':
 tests:
