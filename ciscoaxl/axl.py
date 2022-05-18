@@ -73,7 +73,7 @@ class axl(object):
             raise Exception(f"{url} cannot be found, please try again") from None
         if ret_code == 401:
             raise Exception(
-                f"[401 Unauthorized]: Please check your username and password"
+                "[401 Unauthorized]: Please check your username and password"
             )
         elif ret_code == 403:
             raise Exception(
