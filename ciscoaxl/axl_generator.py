@@ -1,4 +1,4 @@
-import xml.etree.cElementTree as ET
+import xml.etree.cElementTree as ET #nosec
 import os
 import pathlib
 import re
