@@ -80,7 +80,7 @@ cucm = '10.10.20.1'
 username = 'axlaccess'
 password = 'axlpassword'
 version = '12.5'
-ucm = axl(username=cucm_username,password=cucm_password,cucm=cucm,cucm_version=version)
+ucm = axl(username=username,password=password,cucm=cucm,cucm_version=version)
 ```
 
 > Note: all get methods that return more than 1 item have a tagfilter property that can allow more fields to return. Fields are filtered by default to increase performance, but if you need additional fields returned from the axl call, simply add the tagfilter={} to the request. Example:
