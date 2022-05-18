@@ -14,7 +14,6 @@ from pathlib import Path
 import os
 import json
 from requests import Session
-from requests.auth import HTTPBasicAuth
 from requests.exceptions import SSLError, ConnectionError
 import re
 import urllib3
