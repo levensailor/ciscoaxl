@@ -2353,7 +2353,7 @@ class axl(object):
         else:
             return "Device Profile not found for user"
 
-    def update_user_credentials(self, userid, password="", pin=""):
+    def update_user_credentials(self, userid, password="", pin=""): #nosec
         """
         Update end user for credentials
         :param userid: User ID
@@ -2362,16 +2362,16 @@ class axl(object):
         :return: result dictionary
         """
 
-        if password == "" and pin == "":
+        if password == "" and pin == "": #nosec
             return "Password and/or Pin are required"
 
-        elif password != "" and pin != "":
+        elif password != "" and pin != "": #nosec
             try:
-                return self.client.updateUser(userid=userid, password=password, pin=pin)
+                return self.client.updateUser(userid=userid, password=password, pin=pin) #nosec
             except Fault as e:
                 return e
 
-        elif password != "":
+        elif password != "": #nosec
             try:
                 return self.client.updateUser(userid=userid, password=password)
             except Fault as e:
