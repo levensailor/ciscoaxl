@@ -34,12 +34,13 @@ class axl(object):
     Python 3.6
     """
 
-    def __init__(self, username, password, cucm, cucm_version):
+    def __init__(self, username, password, cucm, cucm_version, strict_ssl=False):
         """
         :param username: axl username
         :param password: axl password
         :param cucm: UCM IP address
         :param cucm_version: UCM version
+        :param strict_ssl: raise exception on SSL failure, default False
 
         example usage:
         >>> from axl import AXL
@@ -60,6 +61,9 @@ class axl(object):
         try:
             ret_code = session.get(url, stream=True, timeout=10).status_code
         except SSLError:
+            if strict_ssl:
+                raise
+
             # retry with verify set False
             session.close()
             session = Session()
