@@ -86,7 +86,7 @@ tests:
 
 # (optional) list skipped test IDs here, eg '[B101, B406]':
 skips:
-  - B105
+#  - B105
 
 ### (optional) plugin settings - some test plugins require configuration data
 ### that may be given here, per-plugin. All bandit test plugins have a built in
@@ -132,8 +132,10 @@ any_other_function_with_shell_equals_true:
     - subprocess.check_call
     - subprocess.check_output
     - subprocess.run
+
 assert_used:
-  skips: []
+  skips: ["*/test_*.py", "*/test_*.py"]
+
 hardcoded_tmp_directory:
   tmp_dirs:
     - /tmp
