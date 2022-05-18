@@ -82,7 +82,7 @@
 # B703 : django_mark_safe
 
 # exclude files from testing
-exclude: "./ciscoaxl/axl_generator.py"
+exclude: ["*/axl_generator.py"]
 
 # (optional) list included test IDs here, eg '[B101, B406]':
 tests:
