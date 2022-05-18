@@ -34,13 +34,13 @@ class axl(object):
     Python 3.6
     """
 
-    def __init__(self, username, password, cucm, cucm_version, strict_ssl=False):
+    def __init__(self, username, password, cucm, cucm_version, strict_ssl=True):
         """
         :param username: axl username
         :param password: axl password
         :param cucm: UCM IP address
         :param cucm_version: UCM version
-        :param strict_ssl: raise exception on SSL failure, default False
+        :param strict_ssl: do not work around an SSL failure, default True
 
         example usage:
         >>> from axl import AXL
