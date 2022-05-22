@@ -580,7 +580,7 @@ ucm.delete_route_pattern(pattern='999', routePartitionName='losfeliz-pt')
 #### Execute SQL Query
 
 ```sh
-for sql in ucm.execute_sql_query('select * from device where description like "Bart%"'):
+for sql in ucm.run_sql_query('select * from device where description like "Bart%"'):
     print(sql.name)
 ```
 
