@@ -1,12 +1,15 @@
-name: Python CI
+name: CI Integration Testing
 
 on:
-  pull_request_review:
+  pull_request:
+    branches:
+      - master
     types:
-      - submitted
+      - closed
 
 jobs:
   ci:
+    if: ${{ github.event.pull_request.merged }}
     environment: Dev
     runs-on: ubuntu-latest
     strategy:
