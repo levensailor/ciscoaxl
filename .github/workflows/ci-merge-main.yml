@@ -1,10 +1,9 @@
 name: Python CI
 
 on:
-  push:
-    branches: [master]
-  pull_request:
-    # branches: [ master ]
+  pull_request_review:
+    types:
+      - submitted
 
 jobs:
   ci:
@@ -52,6 +51,10 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+      - name: Bandit Security scan
+        run: |
+          poetry run bandit -c bandit.yml -r ciscoaxl
+
       - name: Test with pytest
         run: |
           poetry run coverage run -m pytest -v
@@ -59,7 +62,3 @@ jobs:
       - name: Code Coverage Report
         run: |
           poetry run coverage report -m
-
-      - name: Bandit Security scan
-        run: |
-          poetry run bandit -c bandit.yml -r ciscoaxl
