@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 import json
 from requests import Session
-from requests.auth import HTTPBasicAuth
+from requests.exceptions import SSLError, ConnectionError
 import re
 import urllib3
 from zeep import Client, Settings, Plugin
@@ -33,12 +33,13 @@ class axl(object):
     Python 3.6
     """
 
-    def __init__(self, username, password, cucm, cucm_version):
+    def __init__(self, username, password, cucm, cucm_version, strict_ssl=False):
         """
         :param username: axl username
         :param password: axl password
         :param cucm: UCM IP address
         :param cucm_version: UCM version
+        :param strict_ssl: do not work around an SSL failure, default False
 
         example usage:
         >>> from axl import AXL
@@ -51,8 +52,37 @@ class axl(object):
         else:
             wsdl = str(Path(f"{cwd}/schema/{cucm_version}/AXLAPI.wsdl").absolute())
         session = Session()
-        session.verify = False
-        session.auth = HTTPBasicAuth(username, password)
+        session.auth = (username, password)
+
+        # validate session before assigning to Transport
+        url = f"https://{cucm}:8443/axl/"
+        try:
+            ret_code = session.get(url, stream=True, timeout=10).status_code
+        except SSLError:
+            if strict_ssl:
+                raise
+
+            # retry with verify set False
+            session.close()
+            session = Session()
+            session.auth = (username, password)
+            session.verify = False
+            ret_code = session.get(url, stream=True, timeout=10).status_code
+        except ConnectionError:
+            raise Exception(f"{url} cannot be found, please try again") from None
+        if ret_code == 401:
+            raise Exception(
+                "[401 Unauthorized]: Please check your username and password"
+            )
+        elif ret_code == 403:
+            raise Exception(
+                f"[403 Forbidden]: Please ensure the user '{username}' has AXL access set up"
+            )
+        elif ret_code == 404:
+            raise Exception(
+                f"[404 Not Found]: AXL not found, please check your URL ({url})"
+            )
+
         settings = Settings(
             strict=False, xml_huge_tree=True, xsd_ignore_sequence_order=True
         )
@@ -2353,7 +2383,7 @@ class axl(object):
         else:
             return "Device Profile not found for user"
 
-    def update_user_credentials(self, userid, password="", pin=""): #nosec
+    def update_user_credentials(self, userid, password="", pin=""):  # nosec
         """
         Update end user for credentials
         :param userid: User ID
@@ -2362,16 +2392,18 @@ class axl(object):
         :return: result dictionary
         """
 
-        if password == "" and pin == "": #nosec
+        if password == "" and pin == "":  # nosec
             return "Password and/or Pin are required"
 
-        elif password != "" and pin != "": #nosec
+        elif password != "" and pin != "":  # nosec
             try:
-                return self.client.updateUser(userid=userid, password=password, pin=pin) #nosec
+                return self.client.updateUser(
+                    userid=userid, password=password, pin=pin
+                )  # nosec
             except Fault as e:
                 return e
 
-        elif password != "": #nosec
+        elif password != "":  # nosec
             try:
                 return self.client.updateUser(userid=userid, password=password)
             except Fault as e:
