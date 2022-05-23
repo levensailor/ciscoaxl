@@ -7,10 +7,9 @@ from ciscoaxl.exceptions import DumbProgrammerException
 from ciscoaxl.wsdl import (
     get_return_tags,
     fix_return_tags,
-    validate_arguments,
 )
 import ciscoaxl.configs as cfg
-import asyncio
+from zeep.xsd.valueobjects import CompoundValue
 
 class _StaticIdentity:
     def __init__(self, value: str) -> None:
@@ -81,13 +80,13 @@ def _tag_serialize_filter(tags: Union[list, dict], data: dict) -> dict:
     return working_data
 
 
-"""Decorator that will process the func's `return_tags` parameter
+"""Decorator that will process the func's `tagfilter` parameter
 and perform the following actions:
 
 - Check to see that all provided tags are valid 'returnedTags' base values
-- Convert `return_tags`' list of base tag elements into a nested dict of all needed child tags
+- Convert `tagfilter`' list of base tag elements into a nested dict of all needed child tags
 
-The `element_name` should be the name of the element being called by the func.
+The `element_name` should be the name of the XSD element being called by the func.
 """
 
 
