@@ -1,6 +1,9 @@
 site_name: ciscoaxl
 theme:
-  name: material
+  name: readthedocs
+nav:
+  - Home: index.md
+  - About: about.md
 repo_url: https://github.com/levensailor/ciscoaxl
 plugins:
   - search
