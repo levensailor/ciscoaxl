@@ -1,6 +1,6 @@
 site_name: ciscoaxl
 theme:
   name: material
-repo_url: https://github.com/PresidioCode/ciscoaxl
+repo_url: https://github.com/levensailor/ciscoaxl
 plugins:
   - search
