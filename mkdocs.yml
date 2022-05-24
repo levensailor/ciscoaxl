@@ -1,1 +1,6 @@
-site_name: My Docs
+site_name: ciscoaxl
+theme:
+  name: material
+repo_url: https://github.com/PresidioCode/ciscoaxl
+plugins:
+  - search
