@@ -5,16 +5,16 @@ nav:
   - Installation: index.md
   - Introduction: intro.md
   - API:
-    - Users: ./endpoints/users.md
-    - Devices: ./endpoints/devices.md
-    - Trunks: ./endpoints/trunks.md
-    - Locations: ./endpoints/locations.md
-    - Regions: ./endpoints/regions.md
-    - Device Pools: ./endpoints/devicepools.md
-    - Partitions: ./endpoints/partitions.md
-    - Calling Search Spaces: ./endpoints/css.md
-    - Translation Patterns: ./endpoints/translations.md
-    - Route Patterns: ./endpoints/routepatterns.md
+    - Users: users.md
+    - Devices: devices.md
+    - Trunks: trunks.md
+    - Locations: locations.md
+    - Regions: regions.md
+    - Device Pools: devicepools.md
+    - Partitions: partitions.md
+    - Calling Search Spaces: css.md
+    - Translation Patterns: translations.md
+    - Route Patterns: routepatterns.md
   
 repo_url: https://github.com/levensailor/ciscoaxl
 plugins:
