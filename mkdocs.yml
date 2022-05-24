@@ -5,46 +5,40 @@ nav:
   - Installation: index.md
   - Introduction: intro.md
   - API:
-    - System:
-        - LDAP: ldap.md
-        - Locations: locations.md
-      - Regions: regions.md
-    - Call Routing:
-      - Directory Number: dn.md
-      - Device Pools: devicepools.md
-      - Partitions: partitions.md
-      - Calling Search Spaces: css.md
-      - Translation Patterns: translations.md
-      - Route Patterns: routepatterns.md
-      - Route Group: routegroup.md
-      - Route List: routelist.md
-      - Line Group: linegroup.md
-      - Hunt List: huntlist.md
-      - Hunt Pilot: huntpilot.md
-      - Call Park: callpark.md
-      - Transformations:
-        - Called Party Transformation Pattern: calledxform.md
-        - Calling Party Transformation Pattern: callingxform.md
-        - Transformation Profile: xformprofile.md
-      - Route Plan Report: routeplanreport.md
-    - Media Resources:
-      - Conference Bridge: conferencebridges.md
-      - MTP: mtp.md
-      - Transcoder: xcode.md
-      - Annunciator: ann.md
-    - Advanced Features:
-      - Voicemail Pilot: vmpilot.md
-      - Voicemail Profile: vmprofile.md
+    - LDAP: ldap.md
+    - Locations: locations.md
+    - Regions: regions.md
+    - Directory Number: dn.md
+    - Device Pools: devicepools.md
+    - Partitions: partitions.md
+    - Calling Search Spaces: css.md
+    - Translation Patterns: translations.md
+    - Route Patterns: routepatterns.md
+    - Route Group: routegroup.md
+    - Route List: routelist.md
+    - Line Group: linegroup.md
+    - Hunt List: huntlist.md
+    - Hunt Pilot: huntpilot.md
+    - Call Park: callpark.md
+    - Called Party Transformation Pattern: calledxform.md
+    - Calling Party Transformation Pattern: callingxform.md
+    - Transformation Profile: xformprofile.md
+    - Route Plan Report: routeplanreport.md
+    - Conference Bridge: conferencebridges.md
+    - MTP: mtp.md
+    - Transcoder: xcode.md
+    - Annunciator: ann.md
+    - Voicemail Pilot: vmpilot.md
+    - Voicemail Profile: vmprofile.md
     - Device: 
-      - Phone: phones.md
-      - Trunk: trunks.md
-      - CTI Route Point: cti.md
-      - Gateway: gateway.md
-      - Remote Destination: rd.md
-      - Device Profile: deviceprofile.md
-    - User Management:
-     - End User: users.md
-     - UC Service: ucservice.md
+    - Phone: phones.md
+    - Trunk: trunks.md
+    - CTI Route Point: cti.md
+    - Gateway: gateway.md
+    - Remote Destination: rd.md
+    - Device Profile: deviceprofile.md
+    - End User: users.md
+    - UC Service: ucservice.md
     - SQL: sql.md
 
   
