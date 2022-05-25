@@ -7,29 +7,25 @@ nav:
   - Examples: examples.md
   - API Reference:
     - Users: users.md
-    - Phones: phones.md
-    - Device Profiles: deviceprofiles.md
+    - Devices: phones.md
     - Device Pools: devicepools.md
     - Directory Numbers: dn.md
     - Partitions: partitions.md
     - Calling Search Spaces: css.md
-    - Gateways: gateway.md
-    - Trunks: trunks.md
+    - Trunks and Gateways: trunks.md
     - Locations: locations.md
     - Regions: regions.md
     - Translation Patterns: translations.md
+    - Transformation Patterns: xform.md
     - Route Patterns: routepatterns.md
     - CTI Route Points: cti.md
     - Media Resources: media.md
     - Call Park: callpark.md
     - Call Pickup: callpickup.md
+    - Call Routing: routelist.md
+    - Call Hunting: hunt.md
     - Voicemail: vmprofile.md
-    - Route Lists: routelist.md
-    - Route Groups: routegroup.md
-    - Hunting: hunt.md
     - Remote Destinations: rd.md
-    - Route Plans: routeplans.md
-    - Transformations: xform.md
     - Call Manager Groups: cm.md
     - LDAP: ldap.md
     - SQL: sql.md
