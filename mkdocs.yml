@@ -4,9 +4,10 @@ theme:
 nav:
   - Installation: index.md
   - Introduction: intro.md
-  - API: api.md
   - Examples: examples.md
-
+  - API Reference:
+    - Users: users.md
+    - Phones: phones.md
   
 repo_url: https://github.com/levensailor/ciscoaxl
 plugins:
