@@ -1,6 +1,9 @@
 ![Ciscoaxl](ciscoaxl.png)
+
 Documentation [ciscoaxl.readthedocs.io/en/latest](https://ciscoaxl.readthedocs.io/en/latest).
+
 Repository [github.com/levensailor/ciscoaxl](https://github.com/levensailor/ciscoaxl).
+
 PyPi [pypi.org/project/ciscoaxl/](https://pypi.org/project/ciscoaxl/).
 
 ## AXL API Documentation
@@ -23,7 +26,7 @@ Tools > Service Activation:
 
 Enable the "Cisco AXL Web Service"
 
-![](docs/2020-06-01-11-13-59.png)
+![Axl Service](2020-06-01-11-13-59.png)
 
 ---
 
@@ -40,18 +43,18 @@ On the top right drop down list "Related Links".
 
 Select "Assign Role to User Group" and select "Standard AXL API Access"
 
-![](docs/2020-06-01-11-29-06.png)
+![Axl role](2020-06-01-11-29-06.png)
 
 
 > Step 3 - Create a new Application User
 
 CUCM > User Management > Application User > Add.
 
-![](docs/2020-06-01-11-33-25.png)
+![Application User](2020-06-01-11-33-25.png)
 
 Add the User Group "AXL Group" to this user so that after saving the roles of the new Application User appear as in the following screen:
 
-![](docs/2020-06-01-11-43-34.png)
+![AXL Group](2020-06-01-11-43-34.png)
 
 
 ## SDK Usage 
