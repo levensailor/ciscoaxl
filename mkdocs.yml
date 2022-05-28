@@ -2,8 +2,8 @@ site_name: ciscoaxl
 theme:
   name: readthedocs
 nav:
-  - Installation: index.md
-  - Introduction: intro.md
+  - Introduction: index.md
+  - Installation: install.md
   - Examples: examples.md
   - API Reference:
     - Endpoints:
