@@ -187,7 +187,7 @@ class AXLElement:
             return None
 
     def validate(self, *args, **kwargs) -> None:
-        def choice_peek(choice: AXLElement) -> list[str]:
+        def choice_peek(choice: AXLElement) -> list:
             peek_names: list[str] = []
             for child in choice.children:
                 if not child.name.startswith("[ group"):
@@ -371,13 +371,13 @@ def __get_element_by_name(z_client: Client, element_name: str) -> Element:
     return element
 
 
-def get_return_tags(z_client: Client, element_name: str) -> list[str]:
+def get_return_tags(z_client: Client, element_name: str) -> list:
     try:
         return_tree = get_tree(z_client, element_name)["returnedTags"]
     except KeyError:
         raise WSDLException(f"Element '{element_name}' has no returnedTags sub-element")
 
-    def extract_return_tags(tree: AXLElement) -> list[str]:
+    def extract_return_tags(tree: AXLElement) -> list:
         tags = []
         for child in tree.children:
             if child.type == Choice:
@@ -403,8 +403,8 @@ def get_tree(z_client: Client, element_name: str) -> AXLElement:
 def fix_return_tags(
     z_client: Client,
     element_name: str,
-    tags: list[str],
-    children: Union[list[str], None] = None,
+    tags: list,
+    children: Union[list, None] = None,
 ) -> dict:
     tree = get_tree(z_client, element_name)
 
