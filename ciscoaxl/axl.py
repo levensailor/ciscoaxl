@@ -2448,7 +2448,6 @@ class axl(object):
                     "callingPartyTransformationMask": "",
                     "digitDiscardInstructionName": "",
                     "callingPartyPrefixDigits": "",
-                    "provideOutsideDialtone": "",
                 },
             )["return"]["transPattern"]
         except Fault as e:
