@@ -1,6 +1,15 @@
 site_name: ciscoaxl
 theme:
   name: readthedocs
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        rendering:
+          show_source: false
+    custom_templates: templates
 nav:
   - Introduction: index.md
   - Installation: install.md
@@ -8,7 +17,7 @@ nav:
   - API Reference:
     - Endpoints:
       - Users: users.md
-      - Devices: phones.md
+      - Devices: devices.md
       - Device Pools: devicepools.md
       - Directory Numbers: dn.md
       - Partitions: partitions.md
@@ -32,5 +41,3 @@ nav:
       - SQL: sql.md
   
 repo_url: https://github.com/levensailor/ciscoaxl
-plugins:
-  - search
