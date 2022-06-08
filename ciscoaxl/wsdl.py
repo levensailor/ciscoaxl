@@ -1,5 +1,6 @@
-from typing import Union
+from typing import Any, Dict, List, Union
 from zeep import Client
+from zeep.exceptions import LookupError
 from zeep.xsd.elements.element import Element
 from zeep.xsd.elements.indicators import Choice, Sequence
 from zeep.xsd import Nil, AnyObject
@@ -11,11 +12,18 @@ from ciscoaxl.exceptions import (
     TagNotValid,
     WSDLValueOnlyException,
 )
-# from termcolor import colored
+from termcolor import colored
 
 
 class AXLElement:
+    """An object with a tree-like structure useful for navigating and getting data from XSD elements"""
+
     def __init__(self, element: Union[Element, Choice], parent=None) -> None:
+        """An object with a tree-like structure useful for navigating and getting data from XSD elements
+
+        :param element: An XSD (Zeep) element
+        :param parent: DO NOT USE, for internal recursion only, defaults to None
+        """
         self.elem = element
         self.parent = parent
 
@@ -79,6 +87,11 @@ class AXLElement:
         return f"AXLElement({name=}, {xsd_type=}, {children=})"
 
     def _parent_chain(self) -> str:
+        """Returns a formatted string showing the path of nodes along the tree that leads to this element.
+        If this node has no parent, returns only the name of the node itself.
+
+        :return: A formatted string of parent elements
+        """
         if self.parent is None:
             return self.name
         elif self.type == Choice or self.type == Sequence:
@@ -87,6 +100,10 @@ class AXLElement:
             return self.parent._parent_chain() + "." + self.name
 
     def _parent_chain_required(self) -> bool:
+        """Determines if this node is required when its parent node has been implemented
+
+        :return: True if required by parent, False if not required
+        """
         if self.parent is None and self.needed:
             return True
         elif self.needed:
@@ -94,7 +111,11 @@ class AXLElement:
         else:
             return False
 
-    def children_dict(self, required=False) -> dict:
+    def children_dict(self) -> dict:
+        """Returns a dictionary of all children nodes from this node
+
+        :return: A dictionary of children where a bottom child is given '' as its value
+        """
         c_dict = dict()
         for child in self.children:
             if child.type == Choice or child.type == Sequence:
@@ -102,17 +123,18 @@ class AXLElement:
                 base_name = child.name.split(" ")[1]
                 while f"[ {base_name}{i} ]" in c_dict:
                     i += 1
-                c_dict[f"[ {base_name}{i} ]"] = child.children_dict(required)
+                c_dict[f"[ {base_name}{i} ]"] = child.children_dict()
             elif child.children:
-                c_dict[child.name] = child.children_dict(required)
+                c_dict[child.name] = child.children_dict()
             else:
-                if required and child.needed:
-                    c_dict[child.name] = "(required)"
-                else:
-                    c_dict[child.name] = ""
+                c_dict[child.name] = ""
         return c_dict
 
     def children_names(self) -> list:
+        """Returns a list of strings of all 1st generation children from this node
+
+        :return: A list of strings representing this node's children
+        """
         child_strings = []
         for child in self.children:
             if child.type == Choice or child.type == Sequence:
@@ -127,41 +149,48 @@ class AXLElement:
                 child_strings.append(child.name)
         return child_strings
 
-    # def print_tree(self, indent=0, show_types=False, show_required=False) -> None:
-    #     branch_str = f"{'  ' * indent if indent < 2 else ('  |' * (indent - 1)) + '  '}{'┗ ' if indent else ''}"
-    #     name_str = self.name
-    #     atrib_str = ""
+    def print_tree(self, indent=0, show_types=False, show_required=False) -> None:
+        """Print a color-coded representation of the tree, starting from this node
 
-    #     if self.type == Choice:
-    #         name_str = colored(self.name, "green")
-    #         atrib_str += (
-    #             "(choose only one " + colored("child", "magenta", attrs=["bold"]) + ")"
-    #         )
+        :param indent: DO NOT USE, for recursive purposes only, defaults to 0
+        :param show_types: Shows the types of all elements next to their names, defaults to False
+        :param show_required: Shows ONLY the required elements in the tree, defaults to False
+        """
+        branch_str = f"{'  ' * indent if indent < 2 else ('  |' * (indent - 1)) + '  '}{'┗ ' if indent else ''}"
+        name_str = self.name
+        atrib_str = ""
 
-    #     if show_required and self.needed and self.parent is not None:
-    #         if self._parent_chain_required():
-    #             if self.type not in (Sequence, Choice):
-    #                 name_str = colored(self.name, "cyan")
-    #             atrib_str += colored(" (required)", "blue")
-    #         else:
-    #             atrib_str += colored(" (required if parent is used)", "yellow")
-    #     elif self.parent is not None and self.parent.type == Choice:
-    #         name_str = colored(self.name, "magenta")
-    #         # atrib_str += colored(" (must choose only one)", "magenta")
+        if self.type == Choice:
+            name_str = colored(self.name, "green")
+            atrib_str += (
+                "(choose only one " + colored("child", "magenta", attrs=["bold"]) + ")"
+            )
 
-    #     if (
-    #         show_types
-    #         and self.type not in (Sequence, Choice)
-    #         and self.parent is not None
-    #     ):
-    #         atrib_str += colored(f" ({type(self.type).__name__})", "green")
+        if show_required and self.needed and self.parent is not None:
+            if self._parent_chain_required():
+                if self.type not in (Sequence, Choice):
+                    name_str = colored(self.name, "cyan")
+                atrib_str += colored(" (required)", "blue")
+            else:
+                atrib_str += colored(" (required if parent is used)", "yellow")
+        elif self.parent is not None and self.parent.type == Choice:
+            name_str = colored(self.name, "magenta")
+            # atrib_str += colored(" (must choose only one)", "magenta")
 
-    #     print(branch_str, name_str, atrib_str, sep="")
+        if (
+            show_types
+            and self.type not in (Sequence, Choice)
+            and self.parent is not None
+        ):
+            atrib_str += colored(f" ({type(self.type).__name__})", "green")
 
-    #     for child in self.children:
-    #         child.print_tree(indent + 1, show_types, show_required)
+        print(branch_str, name_str, atrib_str, sep="")
+
+        for child in self.children:
+            child.print_tree(indent + 1, show_types, show_required)
 
     def get(self, name: str, default=None) -> Union["AXLElement", None]:
+        """Wrapper for dict-like get method"""
         if not name:
             return default
         for child in self.children:
@@ -174,6 +203,11 @@ class AXLElement:
             return default
 
     def find(self, name: str) -> Union["AXLElement", None]:
+        """Similar to get(), but does a depth search to find the first node in the tree with a matching name
+
+        :param name: The name of the node to be searched for
+        :return: A node matching the given name, if found, or None if not found
+        """
         if not name:
             return None
 
@@ -187,6 +221,10 @@ class AXLElement:
             return None
 
     def validate(self, *args, **kwargs) -> None:
+        """Validates that the given args and kwargs would be valid in constructing the element at this node.
+        Raises an exception if a given arg/kwarg is not valid, with details on what the issue is.
+        """
+
         def choice_peek(choice: AXLElement) -> list:
             peek_names: list[str] = []
             for child in choice.children:
@@ -266,6 +304,10 @@ class AXLElement:
                             self.validate(**{name: entry})
 
     def return_tags(self) -> dict:
+        """Finds the 'returnedTags' element of the tree and returns a dictionary containing the layout of the accepted tags.
+
+        :return: A nested dictionary of tags
+        """
         if self.parent is not None:
             return self.parent.return_tags()
         elif (tags_element := self.get("returnedTags")) is None:
@@ -286,6 +328,10 @@ class AXLElement:
         return tags_dict
 
     def to_dict(self) -> dict:
+        """Returns a dictionary of the tree with default values suppled where applicable.
+
+        :return: A nested dictionary of children including this node as the parent.
+        """
         if not self.children:
             if hasattr(self.type, "elements"):
                 return {self.name: AnyObject(self.type, {})}
@@ -305,6 +351,10 @@ class AXLElement:
             return {self.name: children_dict}
 
     def needed_only(self) -> Union["AXLElement", None]:
+        """Creates a new AXLElement tree with ONLY the required nodes.
+
+        :return: A copy of this AXLElement tree with non-needed nodes removed.
+        """
         if self.parent is None:
             needed_root = AXLElement(self.elem)
             needed_root.children[:] = [c for c in needed_root.children if c.needed]
@@ -319,28 +369,12 @@ class AXLElement:
             for child in self.children:
                 child.needed_only()
 
-    def branch_needed_only(self, root=None) -> Union["AXLElement", bool]:
-        if root is None:
-            needed_root = AXLElement(self.elem)
-            needed_root.children[:] = [
-                c
-                for c in needed_root.children
-                if c.branch_needed_only(root=needed_root)
-            ]
-            return needed_root
-        elif (
-            self.type == Choice
-            or self.type == Sequence
-            or (self.children and self.needed)
-        ):
-            self.children[:] = [
-                c for c in self.children if c.branch_needed_only(root=root)
-            ]
-            return bool(self.children)
-        else:
-            return self.needed
-
     def first_choice(self, *, root=True) -> "AXLElement":
+        """Given that this node is a Choice node, returns the first node that isn't a Choice or Sequence node.
+
+        :param root: DO NOT USE, recursive use only, defaults to True
+        :return: A child AXLElement node that is not a Choice or Sequence node
+        """
         if root and self.type != Choice:
             raise WSDLException(
                 f"Can't use first choice on non-choice node '{self.name}'"
@@ -364,18 +398,32 @@ class AXLElement:
 
 
 def __get_element_by_name(z_client: Client, element_name: str) -> Element:
+    """Pulls the XSD element from the active Zeep client
+
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: The name of the element needed
+    :return: An AXLElement object
+    """
     try:
         element = z_client.get_element(f"ns0:{element_name}")
     except LookupError:
-        raise WSDLException(f"Could not find element {element_name}")
+        raise WSDLException(f"Could not find element {element_name}") from None
     return element
 
 
 def get_return_tags(z_client: Client, element_name: str) -> list:
+    """Returns a list of the top-most tags in an element's returnedTags node
+
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: THe name of the element needed
+    :return: A list of top-level return tags
+    """
     try:
         return_tree = get_tree(z_client, element_name)["returnedTags"]
     except KeyError:
-        raise WSDLException(f"Element '{element_name}' has no returnedTags sub-element")
+        raise WSDLException(
+            f"Element '{element_name}' has no returnedTags sub-element"
+        ) from None
 
     def extract_return_tags(tree: AXLElement) -> list:
         tags = []
@@ -397,15 +445,24 @@ def get_return_tags(z_client: Client, element_name: str) -> list:
 
 
 def get_tree(z_client: Client, element_name: str) -> AXLElement:
+    """Creates an AXLElement object emulating the XSD element with the given element name.
+
+    :param z_client: _description_
+    :param element_name: _description_
+    :return: _description_
+    """
     return AXLElement(__get_element_by_name(z_client, element_name))
 
 
 def fix_return_tags(
     z_client: Client,
     element_name: str,
-    tags: list,
-    children: Union[list, None] = None,
+    tags: Union[List[str], Dict[str, Any], None],
+    children: Union[List[str], None] = None,
 ) -> dict:
+    if not tags:  # empty list/dict or None
+        tags = get_return_tags(z_client, element_name)
+
     tree = get_tree(z_client, element_name)
 
     if tree.get("returnedTags", None) is None:
@@ -429,26 +486,34 @@ def fix_return_tags(
             return_tags[child] = {}
             return_tags = return_tags[child]
 
+    # fill return_tags with nested tags found in tree
     for tag in tags:
-        # uuid guard
+        # uuid is always included in AXK return, but confuses returnTags, skip it
         if tag == "uuid":
             continue
-        if (found := tag_tree.get(tag, None)) is not None:
-            if found.children:
-                return_tags.update(found.to_dict())
+
+        found_node = tag_tree.get(tag, None)
+        if found_node is not None:
+            if found_node.children:
+                return_tags.update(found_node.to_dict())
             else:
-                return_tags[tag] = Nil
+                return_tags[
+                    tag
+                ] = Nil  # Nil works best for tree leaves (for some reason)
+        # check inside "choice" nodes to find the tag
         elif choice_nodes := [c for c in tag_tree.children if c.type == Choice]:
             for choice in choice_nodes:
-                if (found := choice.get(tag, None)) is not None:
-                    other_choices = [c.name for c in found.children if c.name != tag]
+                if (found_node := choice.get(tag, None)) is not None:
+                    other_choices = [
+                        c.name for c in found_node.children if c.name != tag
+                    ]
                     if any([(c in tags) for c in other_choices]):
                         raise WSDLChoiceException(
                             other_choices + [tag], element_name, return_tags=True
                         )
                     else:
-                        if found.children:
-                            return_tags.update(found.to_dict())
+                        if found_node.children:
+                            return_tags.update(found_node.to_dict())
                         else:
                             return_tags[tag] = Nil
                     break
