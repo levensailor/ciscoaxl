@@ -1,5 +1,5 @@
 from functools import wraps, partial
-from typing import Callable, TypeVar, Union, Sequence
+from typing import Callable, List, OrderedDict, TypeVar, Union, Sequence
 import inspect
 from zeep.helpers import serialize_object
 from zeep.xsd.valueobjects import CompoundValue
@@ -45,6 +45,19 @@ def _tag_serialize_filter(tags: Union[list, dict], data: dict) -> dict:
                 for i, d in enumerate(deepcopy(value)):
                     if type(d) == dict:
                         value[i] = check_value(d)
+                    elif hasattr(d, "__values__"):
+                        d_odict = d.__values__
+                        d_filtered = check_value(dict(d_odict))
+                        d.__values__ = OrderedDict(d_filtered)
+                        value[i] = d
+            elif hasattr(value, "__values__"):
+                if "_value_1" in value:
+                    d_copy[tag] = value["_value_1"]
+                else:
+                    value_odict = value.__values__
+                    value_filtered = check_value(dict(value_odict))
+                    value.__values__ = OrderedDict(value_filtered)
+                    d_copy[tag] = value
         return d_copy
 
     # ctiid may not have use, remove if there
@@ -75,11 +88,32 @@ def _tag_serialize_filter(tags: Union[list, dict], data: dict) -> dict:
                 working_data[tag] = value["_value_1"]
             else:
                 working_data[tag] = check_value(value)
+        elif hasattr(value, "__values__"):
+            if "_value_1" in value:
+                working_data[tag] = value["_value_1"]
+            else:
+                value_odict = value.__values__
+                value_filtered = check_value(dict(value_odict))
+                value.__values__ = OrderedDict(value_filtered)
+                working_data[tag] = value
         elif type(value) == list:
             for i, d in enumerate(deepcopy(value)):
                 if type(d) == dict:
                     value[i] = check_value(d)
     return working_data
+
+
+def _tag_zeep_filter(tags: Union[list, dict], data: CompoundValue) -> CompoundValue:
+    data_odict: OrderedDict = data.__values__
+
+    """Since we are supporting >3.6, we can go back and forth
+    between OrderedDict and dict. For the Zeep object however,
+    we will always want to supply it with its original typing
+    of OrderedDict.
+    """
+    filtered_data: dict = _tag_serialize_filter(tags, dict(data_odict))
+    data.__values__ = OrderedDict(filtered_data)
+    return data
 
 
 """Decorator that will process the func's `tagfilter` parameter
@@ -173,11 +207,11 @@ def check_tags(element_name: str, children: Union[str, Sequence[str], None] = No
 
 def check_tagfilter(element_name: str, children: Union[Sequence, None] = None):
     def check_tagfilter_decorator(func: TCallable) -> TCallable:
-        def processing(func, args, kwargs, children) -> dict:
+        def processing(func, args, kwargs, children) -> Union[tuple, None]:
             parameters = inspect.signature(func).parameters
-            filter_param = parameters.get("tagfilter", Missing)
+            tag_param = parameters.get("tagfilter", Missing)
 
-            if filter_param is Missing:
+            if tag_param is Missing:
                 raise Exception(
                     f"@check_tagfilter can't be used on {func.__name__}, has no 'tagfilter' parameter"
                 )
@@ -186,46 +220,43 @@ def check_tagfilter(element_name: str, children: Union[Sequence, None] = None):
                 children = [children]
             adjust_tags = partial(
                 fix_return_tags,
-                z_client=args[0]._zeep,
-                element_name=element_name,
+                args[0]._zeep,
+                element_name,
                 children=children,
             )
 
-            # user-supplied tagfilters
+            # user supplied tagfilters as kwarg
             if "tagfilter" in kwargs:
                 full_tags = adjust_tags(kwargs["tagfilter"])
                 kwargs["tagfilter"] = full_tags
-            # no default tagfilter, user must supply,
-            # but wasn't supplied as kwarg
-            elif filter_param.default is inspect._empty:
-                filter_arg_index = list(parameters).index("tagfilter")
-                full_tags = adjust_tags(args[filter_arg_index])
-                args[filter_arg_index] = full_tags
-            # no user-supplied value, use default
+            # user supplied tagfilters as arg
+            elif (len(args) - 1) >= list(parameters).index("tagfilter"):
+                tag_arg_index = list(parameters).index("tagfilter")
+                full_tags = adjust_tags(args[tag_arg_index])
+                new_args = list(args)
+                new_args[tag_arg_index] = full_tags
+                args = tuple(new_args)
+            # no user-supplied value, use defined default
             else:
-                full_tags = adjust_tags(filter_param.default)
+                full_tags = adjust_tags(tag_param.default)
                 kwargs["tagfilter"] = full_tags
 
-            return full_tags
+            return_value = func(*args, **kwargs)
 
-        def sanitizing(return_value, tags: dict) -> Union[CompoundValue, list, None]:
+            # leave only requested tags in the return
             if isinstance(return_value, CompoundValue):
-                pass
+                return _tag_zeep_filter(full_tags, return_value)
             elif type(return_value) == list:
                 if len(return_value) == 0:
                     return []
                 elif isinstance(return_value[0], CompoundValue):
-                    pass
-                else:
-                    pass
+                    return [_tag_zeep_filter(full_tags, e) for e in return_value]
             else:
                 return return_value
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            tags = processing(func, args, kwargs, children)
-            return_value = func(*args, **kwargs)
-            return sanitizing(return_value, tags)
+            return processing(func, args, kwargs, children)
 
         return wrapper
 
