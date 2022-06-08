@@ -149,12 +149,12 @@ class AXLElement:
                 child_strings.append(child.name)
         return child_strings
 
-    def print_tree(self, indent=0, show_types=False, show_required=False) -> None:
+    def print_tree(self, indent=0, show_types=False, show_required=True) -> None:
         """Print a color-coded representation of the tree, starting from this node
 
         :param indent: DO NOT USE, for recursive purposes only, defaults to 0
         :param show_types: Shows the types of all elements next to their names, defaults to False
-        :param show_required: Shows ONLY the required elements in the tree, defaults to False
+        :param show_required: Shows if an element is required, or only required if its parent is used, defaults to True
         """
         branch_str = f"{'  ' * indent if indent < 2 else ('  |' * (indent - 1)) + '  '}{'┗ ' if indent else ''}"
         name_str = self.name
@@ -402,7 +402,7 @@ def __get_element_by_name(z_client: Client, element_name: str) -> Element:
 
     :param z_client: The active Zeep client object that has parsed the WSDL schema
     :param element_name: The name of the element needed
-    :return: An AXLElement object
+    :return: A Zeep XSD element
     """
     try:
         element = z_client.get_element(f"ns0:{element_name}")
@@ -447,9 +447,9 @@ def get_return_tags(z_client: Client, element_name: str) -> list:
 def get_tree(z_client: Client, element_name: str) -> AXLElement:
     """Creates an AXLElement object emulating the XSD element with the given element name.
 
-    :param z_client: _description_
-    :param element_name: _description_
-    :return: _description_
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: The name of the element needed
+    :return: An AXLElement object
     """
     return AXLElement(__get_element_by_name(z_client, element_name))
 
@@ -460,6 +460,15 @@ def fix_return_tags(
     tags: Union[List[str], Dict[str, Any], None],
     children: Union[List[str], None] = None,
 ) -> dict:
+    """Takes the given list of tags (or dict, only uses top-level keys) and filters out all of the given element's
+     returnedTags children that are not included in the given tags.
+
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: The name of the element needed
+    :param tags: A list or dict of the wanted tags
+    :param children: If you only need the return tags of a specific child (e.g. you're returning "Line" from getPhone), you can supply the chain of children from the root node down to what you need, defaults to None
+    :return: A dict of tags (with default values) for use in returnedTags
+    """
     if not tags:  # empty list/dict or None
         tags = get_return_tags(z_client, element_name)
 
@@ -528,8 +537,15 @@ def fix_return_tags(
 
 
 def print_element_layout(
-    z_client: Client, element_name: str, show_required=False, show_types=False
+    z_client: Client, element_name: str, show_required=True, show_types=False
 ) -> None:
+    """Prints a color-coded tree of an element
+
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: The name of the element needed
+    :param show_required: Prints information on if a node is required, defaults to True
+    :param show_types: Prints element types next to the element names, defaults to False
+    """
     root: AXLElement = AXLElement(__get_element_by_name(z_client, element_name))
     root.print_tree(show_required=show_required, show_types=show_types)
 
@@ -537,6 +553,12 @@ def print_element_layout(
 def print_required_element_layout(
     z_client: Client, element_name: str, show_types=False
 ) -> None:
+    """Prints a color-coded tree of ONLY the required nodes of an element
+
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: The name of the element needed
+    :param show_types: Prints element types next to the element names, defaults to False
+    """
     root: AXLElement = AXLElement(__get_element_by_name(z_client, element_name))
     root.needed_only().print_tree(show_types=show_types, show_required=True)
 
@@ -544,6 +566,13 @@ def print_required_element_layout(
 def print_return_tags_layout(
     z_client: Client, element_name: str, show_required=False, show_types=False
 ) -> None:
+    """Prints a color-coded tree of the returnedTags nodes in a given element
+
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: The name of the element needed
+    :param show_required: Prints information on if a node is required, defaults to False
+    :param show_types: Prints element types next to the element names, defaults to False
+    """
     root: AXLElement = AXLElement(__get_element_by_name(z_client, element_name))
     if (r_tags := root.find("returnedTags")) is None:
         raise WSDLException(
@@ -556,6 +585,13 @@ def print_return_tags_layout(
 def validate_arguments(
     z_client: Client, element_name: str, child=None, **kwargs
 ) -> None:
+    """Validates that the given kwargs would be valid in constructing the element at this node.
+     Raises an exception if a given kwarg is not valid, with details on what the issue is.
+
+    :param z_client: The active Zeep client object that has parsed the WSDL schema
+    :param element_name: The name of the element needed
+    :param child: A list of children leading down to the node to compare against, defaults to None
+    """
     if not kwargs:
         return None
 
