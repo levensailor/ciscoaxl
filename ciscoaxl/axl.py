@@ -23,6 +23,8 @@ from zeep.cache import SqliteCache
 from zeep.plugins import HistoryPlugin
 from zeep.exceptions import Fault
 
+from ciscoaxl.helpers import check_tagfilter
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -1962,14 +1964,28 @@ class axl(object):
             a.extend(each)
         return a
 
-    def get_phone(self, **args):
+    @check_tagfilter("getPhone")
+    def get_phone(
+        self,
+        name: str,
+        tagfilter={
+            "name": "",
+            "product": "",
+            "description": "",
+            "protocol": "",
+            "locationName": "",
+            "callingSearchSpaceName": "",
+        },
+    ):
         """
         Get device profile parameters
         :param phone: profile name
         :return: result dictionary
         """
         try:
-            return self.client.getPhone(**args)["return"]["phone"]
+            return self.client.getPhone(name=name, returnedTags=tagfilter)["return"][
+                "phone"
+            ]
         except Fault as e:
             return e
 
