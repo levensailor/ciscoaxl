@@ -4,6 +4,7 @@ import inspect
 from zeep.xsd.valueobjects import CompoundValue
 from copy import deepcopy
 from ciscoaxl.wsdl import fix_return_tags
+import ciscoaxl.config as cfg
 
 # import ciscoaxl.configs as cfg
 
@@ -62,7 +63,10 @@ def _tag_serialize_filter(tags: Union[list, dict], data: dict) -> dict:
 
     if tags is None:
         # no tag filtering, but clean up any '_value_1' issues
-        return check_for_value_1(data)
+        if cfg.DISABLE_VALUE1_RESOLVER:
+            return data
+        else:
+            return check_for_value_1(data)
 
     working_data = deepcopy(data)
     for tag, value in data.items():
@@ -72,6 +76,8 @@ def _tag_serialize_filter(tags: Union[list, dict], data: dict) -> dict:
             continue
         elif tag not in tags and len(tags) > 0:
             working_data.pop(tag, None)
+        elif cfg.DISABLE_VALUE1_RESOLVER:
+            working_data[tag] = value
         elif type(value) == dict:
             if "_value_1" in value:
                 working_data[tag] = value["_value_1"]
