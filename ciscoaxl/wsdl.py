@@ -198,7 +198,8 @@ class AXLElement:
             if getattr(child, "name", None) == name:
                 return child
             elif child.type == Choice or child.type == Sequence:
-                if (finding := child.get(name)) is not None:
+                finding = child.get(name)
+                if finding is not None:
                     return finding
         else:
             return default
@@ -216,7 +217,8 @@ class AXLElement:
             if getattr(child, "name", None) == name:
                 return child
             elif child.children:
-                if (result := child.find(name)) is not None:
+                result = child.find(name)
+                if result is not None:
                     return result
         else:
             return None
@@ -311,7 +313,9 @@ class AXLElement:
         """
         if self.parent is not None:
             return self.parent.return_tags()
-        elif (tags_element := self.get("returnedTags")) is None:
+
+        tags_element = self.get("returnedTags")
+        if tags_element is None:
             return {}
 
         def nil_to_str(d: dict) -> dict:
@@ -511,9 +515,11 @@ def fix_return_tags(
                     tag
                 ] = Nil  # Nil works best for tree leaves (for some reason)
         # check inside "choice" nodes to find the tag
-        elif choice_nodes := [c for c in tag_tree.children if c.type == Choice]:
+        elif [c for c in tag_tree.children if c.type == Choice]:
+            choice_nodes = [c for c in tag_tree.children if c.type == Choice]
             for choice in choice_nodes:
-                if (found_node := choice.get(tag, None)) is not None:
+                found_node = choice.get(tag, None)
+                if found_node is not None:
                     other_choices = [
                         c.name for c in found_node.children if c.name != tag
                     ]
@@ -575,7 +581,8 @@ def print_return_tags_layout(
     :param show_types: Prints element types next to the element names, defaults to False
     """
     root: AXLElement = AXLElement(__get_element_by_name(z_client, element_name))
-    if (r_tags := root.find("returnedTags")) is None:
+    r_tags = root.find("returnedTags")
+    if r_tags is None:
         raise WSDLException(
             f"'returnedTags' element cannot be found within '{element_name}'"
         )
