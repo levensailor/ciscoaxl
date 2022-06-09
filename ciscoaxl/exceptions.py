@@ -48,7 +48,12 @@ class WSDLChoiceException(WSDLMissingArguments):
         super().__init__(arguments, element_name, *args)
 
     def __str__(self) -> str:
-        return f"For {self.element}, you can choose only ONE of the following{' for the returned tags' if self.return_tags else ''}:\n{_list_options(self.arguments)}"
+        return (
+            f"For {self.element}, you can choose only ONE of the following"
+            + f"{' for the returned tags' if self.return_tags else ''}:"
+            + "\n"
+            + f"{_list_options(self.arguments)}"
+        )
 
 
 class WSDLDrillDownException(WSDLInvalidArgument):

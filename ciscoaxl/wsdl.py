@@ -239,7 +239,8 @@ class AXLElement:
 
         if args:
             raise WSDLException(
-                f"A non-named argument was supplied for {self.name} with the value {args[0]}. Arguments for AXL API requests must all be named (kwargs)."
+                f"A non-named argument was supplied for {self.name} with the value {args[0]}. "
+                + "Arguments for AXL API requests must all be named (kwargs)."
             )
 
         c_dict = self.children_dict(required=True)
@@ -471,7 +472,8 @@ def fix_return_tags(
     :param z_client: The active Zeep client object that has parsed the WSDL schema
     :param element_name: The name of the element needed
     :param tags: A list or dict of the wanted tags
-    :param children: If you only need the return tags of a specific child (e.g. you're returning "Line" from getPhone), you can supply the chain of children from the root node down to what you need, defaults to None
+    :param children: If you only need the return tags of a specific child (e.g. you're returning "Line" from getPhone),
+    you can supply the chain of children from the root node down to what you need, defaults to None
     :return: A dict of tags (with default values) for use in returnedTags
     """
     if not tags:  # empty list/dict or None
