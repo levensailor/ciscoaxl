@@ -85,7 +85,7 @@ class AXLElement:
         name = self.name
         xsd_type = type(self.type).__name__
         children = len(self.children)
-        return f"AXLElement({name=}, {xsd_type=}, {children=})"
+        return f"AXLElement(name={name}, xsd_type={xsd_type}, children={children})"
 
     def _parent_chain(self) -> str:
         """Returns a formatted string showing the path of nodes along the tree that leads to this element.
