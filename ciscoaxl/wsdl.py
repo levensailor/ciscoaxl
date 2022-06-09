@@ -75,7 +75,8 @@ class AXLElement:
             raise WSDLException(f"Unknown element format '{type(element)}'")
 
     def __getitem__(self, key):
-        if (value := self.get(key, None)) is not None:
+        value = self.get(key, None)
+        if value is not None:
             return value
         else:
             raise KeyError(key)
