@@ -113,6 +113,9 @@ and perform the following actions:
 - Convert `tagfilter`' list/dict of base tag elements into a nested dict of all necessary child tags
 - Filter out all attributes that are not tags included in 'tagfilter' (but always keep UUID if available)
 
+If a user supplies [], {}, or None (or anything else with a false bool value), ALL tags for the given
+element will be supplied for 'tagfilter' instead.
+
 The `element_name` should be the name of the XSD element being called by the func.
 'children' should only be used in very specific situation where your 'returnedTags' needs to be
     a subset of another element's returnedTags node. In that case, 'children' should either be a
