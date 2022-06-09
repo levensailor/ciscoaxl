@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Sequence, List
 import json
 
 
@@ -73,7 +73,7 @@ class WSDLValueOnlyException(WSDLInvalidArgument):
 
 class TagNotValid(Exception):
     def __init__(
-        self, tag: str, valid_tags: list[str], *args, func=None, elem_name=""
+        self, tag: str, valid_tags: List[str], *args, func=None, elem_name=""
     ) -> None:
         self.tag = tag
         self.func = func
