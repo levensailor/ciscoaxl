@@ -111,7 +111,7 @@ and perform the following actions:
 
 - Check to see that all provided tags are valid 'returnedTags' base values
 - Convert `tagfilter`' list/dict of base tag elements into a nested dict of all necessary child tags
-- Filter out all attributes that are not tags included in 'tagfilter' (but always keep UUID if available)
+- Filter out all returned objects' attributes that are not tags included in 'tagfilter' (works on lists of objects too)
 
 If a user supplies [], {}, or None (or anything else with a false bool value), ALL tags for the given
 element will be supplied for 'tagfilter' instead.
