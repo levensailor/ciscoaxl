@@ -6,8 +6,6 @@ from copy import deepcopy
 from ciscoaxl.wsdl import fix_return_tags
 import ciscoaxl.config as cfg
 
-# import ciscoaxl.configs as cfg
-
 
 class _StaticIdentity:
     def __init__(self, value: str) -> None:
