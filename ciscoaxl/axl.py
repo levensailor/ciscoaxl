@@ -2371,7 +2371,7 @@ class axl(object):
             try:
                 return self.client.updateUser(
                     userid=user_id,
-                    phoneProfiles={"profileName": {"_uuid": uuid}},
+                    phoneProfiles={"profileName": {"uuid": uuid}},
                     defaultProfile=default_profile,
                     subscribeCallingSearchSpaceName=subscribe_css,
                     primaryExtension={"pattern": primary_extension},
