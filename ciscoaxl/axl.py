@@ -2277,7 +2277,17 @@ class axl(object):
     def get_users(self, tagfilter={"userid": "", "firstName": "", "lastName": ""}):
         """
         Get users details
-        :return: A list of dictionary's
+        Parameters
+        -------
+        tagfilter : dictionary, optional
+            userid: None or uuid of user
+            firstName: None or first name of user
+            lastName: None or last name of user
+        
+        Returns
+        -------
+        users
+            A list of Users
         """
         skip = 0
         a = []
