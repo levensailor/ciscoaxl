@@ -1,17 +1,22 @@
-# About ciscoaxl
-
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+::: ciscoaxl.axl.axl
+    handler: python
+    selection:
+      members:
+        - get_hunt_pilots
+        - get_hunt_pilot
+        - add_hunt_pilot
+        - delete_hunt_pilot
+        - update_hunt_pilot
+        - get_hunt_lists
+        - get_hunt_list
+        - add_hunt_list
+        - delete_hunt_list
+        - update_hunt_list
+        - get_line_groups
+        - get_line_group
+        - add_line_group
+        - delete_line_group
+        - update_line_group
+    rendering:
+      show_root_heading: false
+      show_source: false

@@ -30,12 +30,9 @@ nav:
       - Route Patterns: routepatterns.md
       - CTI Route Points: cti.md
       - Media Resources: media.md
-      - Call Park: callpark.md
       - Call Pickup: callpickup.md
-      - Call Routing: routelist.md
+      - Call Routing: routing.md
       - Call Hunting: hunt.md
-      - Voicemail: vmprofile.md
-      - Remote Destinations: rd.md
       - Call Manager Groups: cm.md
       - LDAP: ldap.md
       - SQL: sql.md

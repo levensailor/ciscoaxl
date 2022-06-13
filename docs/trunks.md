@@ -1,17 +1,20 @@
-# About ciscoaxl
-
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+::: ciscoaxl.axl.axl
+    handler: python
+    selection:
+      members:
+        - get_sip_trunks
+        - get_sip_trunk
+        - add_sip_trunk
+        - delete_sip_trunk
+        - update_sip_trunk
+        - reset_sip_trunk
+        - get_sip_profile
+        - get_sip_security_profile
+        - get_h323_gateways
+        - get_h323_gateway
+        - add_h323_gateway
+        - delete_h323_gateway
+        - update_h323_gateway
+    rendering:
+      show_root_heading: false
+      show_source: false

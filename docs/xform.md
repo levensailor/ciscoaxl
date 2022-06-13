@@ -1,17 +1,17 @@
-# About ciscoaxl
-
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
-
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+::: ciscoaxl.axl.axl
+    handler: python
+    selection:
+      members:
+        - get_called_party_xforms
+        - get_called_party_xform
+        - add_called_party_xform
+        - delete_called_party_xform
+        - update_called_party_xform
+        - get_calling_party_xforms
+        - get_calling_party_xform
+        - add_calling_party_xform
+        - delete_calling_party_xform
+        - update_calling_party_xform
+    rendering:
+      show_root_heading: false
+      show_source: false
