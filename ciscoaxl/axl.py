@@ -33,12 +33,13 @@ class axl(object):
     Python 3.6
     """
 
-    def __init__(self, username, password, cucm, cucm_version, strict_ssl=False):
+    def __init__(self, username, password, cucm, cucm_version, cucm_port=8443, strict_ssl=False):
         """
         :param username: axl username
         :param password: axl password
         :param cucm: UCM IP address
         :param cucm_version: UCM version
+        :param cucm_port: UCM TCP port
         :param strict_ssl: do not work around an SSL failure, default False
 
         example usage:
@@ -55,7 +56,7 @@ class axl(object):
         session.auth = (username, password)
 
         # validate session before assigning to Transport
-        url = f"https://{cucm}:8443/axl/"
+        url = f"https://{cucm}:{cucm_port}/axl/"
         try:
             ret_code = session.get(url, stream=True, timeout=10).status_code
         except SSLError:
@@ -100,7 +101,7 @@ class axl(object):
         )
         self.client = axl_client.create_service(
             "{http://www.cisco.com/AXLAPIService/}AXLAPIBinding",
-            f"https://{cucm}:8443/axl/",
+            f"https://{cucm}:{cucm_port}/axl/",
         )
 
     def get_locations(
