@@ -2,7 +2,7 @@
 name = "ciscoaxl"
 version = "0.162"
 description = "Cisco CUCM AXL Library. simple to use."
-authors = ["Jeff Levensailor <jeff@levensailor.com>"]
+authors = ["Jeff Levensailor <jeff@levensailor.com>", "Brad Haas <bradh11@gmail.com>"]
 license = "MIT"
 include = ["*.wsdl", "*.xsd", "schema/*/*"]
 readme = "README.md"
