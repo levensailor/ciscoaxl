@@ -36,3 +36,4 @@ urllib3==1.26.9
 watchdog==2.1.8
 zeep==4.1.0
 zipp==3.8.0
+wheel>=0.38.0 # not directly required, pinned by Snyk to avoid a vulnerability
