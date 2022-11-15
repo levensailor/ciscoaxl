@@ -373,7 +373,7 @@ for dn in ucm.get_directory_numbers():
 #### Get Specific Directory Number
 
 ```python
-dn = ucm.get_directory_number(directory_number='2888',routePartitionName='losfeliz-pt')
+dn = ucm.get_directory_number(pattern='2888',routePartitionName='losfeliz-pt')
 print(dn.uuid)
 ```
 
