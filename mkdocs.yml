@@ -1,0 +1,40 @@
+site_name: ciscoaxl
+theme:
+  name: readthedocs
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    handlers:
+      python:
+        rendering:
+          show_source: false
+    custom_templates: templates
+nav:
+  - Introduction: index.md
+  - Installation: install.md
+  - Examples: examples.md
+  - API Reference:
+    - Endpoints:
+      - Users: users.md
+      - Devices: devices.md
+      - Device Pools: devicepools.md
+      - Directory Numbers: dn.md
+      - Partitions: partitions.md
+      - Calling Search Spaces: css.md
+      - Trunks and Gateways: trunks.md
+      - Locations: locations.md
+      - Regions: regions.md
+      - Translation Patterns: translations.md
+      - Transformation Patterns: xform.md
+      - Route Patterns: routepatterns.md
+      - CTI Route Points: cti.md
+      - Media Resources: media.md
+      - Call Pickup: callpickup.md
+      - Call Routing: routing.md
+      - Call Hunting: hunt.md
+      - Call Manager Groups: cm.md
+      - LDAP: ldap.md
+      - SQL: sql.md
+  
+repo_url: https://github.com/levensailor/ciscoaxl

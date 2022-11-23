@@ -62,7 +62,8 @@ jobs:
         run: |
           poetry run coverage report -m
 
-  build:
+  publish:
+    needs: "integration-tests"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "ciscoaxl"
-version = "0.162"
+version = "0.163"
 description = "Cisco CUCM AXL Library. simple to use."
-authors = ["Jeff Levensailor <jeff@levensailor.com>"]
+authors = ["Jeff Levensailor <jeff@levensailor.com>", "Brad Haas <bradh11@gmail.com>"]
 license = "MIT"
 include = ["*.wsdl", "*.xsd", "schema/*/*"]
 readme = "README.md"
@@ -37,6 +37,7 @@ bandit = "^1.7.4"
 python-decouple = "^3.6"
 ipykernel = "^6.13.0"
 notebook = "^6.4.11"
+mkdocstrings = "^0.19.0"
 
 [tool.poetry.extras]
 github = ['flake8']
