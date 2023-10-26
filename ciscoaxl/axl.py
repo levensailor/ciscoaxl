@@ -1983,10 +1983,11 @@ class axl(object):
         location="Hub_None",
         phone_template="Standard 8861 SIP",
         common_device_config="",
-        css="",
+	css="",
         aar_css="",
         subscribe_css="",
-        securityProfileName="",
+        ownerUserName="",
+	securityProfileName="",
         lines=[],
         dev_class="Phone",
         protocol="SCCP",
@@ -1998,6 +1999,8 @@ class axl(object):
         em_url_button_index="1",
         em_url_label="Press here to logon",
         ehook_enable=1,
+	enableActivationID = 'True',
+    	allowMraMode = 'True',
     ):
         """
         lines takes a list of Tuples with properties for each line EG:
@@ -2016,6 +2019,7 @@ class axl(object):
         :param css:
         :param aar_css:
         :param subscribe_css:
+	:param ownerUserName:
         :param lines:
         :param dev_class:
         :param protocol:
@@ -2027,6 +2031,8 @@ class axl(object):
         :param em_url_button_index:
         :param em_url_label:
         :param ehook_enable:
+	:param enableactivationid:
+	:param allowmramode:
         :return:
         """
 
@@ -2039,7 +2045,7 @@ class axl(object):
             "protocolSide": "User",
             "commonDeviceConfigName": common_device_config,
             "commonPhoneConfigName": "Standard Common Phone Profile",
-            "softkeyTemplateName": softkey_template,
+	    "softkeyTemplateName": softkey_template,
             "phoneTemplateName": phone_template,
             "devicePoolName": device_pool,
             "locationName": location,
@@ -2052,6 +2058,9 @@ class axl(object):
             "callingSearchSpaceName": css,
             "automatedAlternateRoutingCssName": aar_css,
             "subscribeCallingSearchSpaceName": subscribe_css,
+	    "ownerUserName": ownerUserName,
+	    "enableActivationID": True,
+	    "allowMraMode": True,
             "lines": {"line": []},
             "services": {"service": []},
             "vendorConfig": [{"ehookEnable": ehook_enable}],
