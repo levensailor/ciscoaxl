@@ -1,6 +1,7 @@
+# Media Resources
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
         - get_conference_bridges
         - get_conference_bridge
@@ -27,6 +28,6 @@
         - add_media_resource_group_list
         - delete_media_resource_group_list
         - update_media_resource_group_list
-    rendering:
       show_root_heading: false
       show_source: false
+      heading_level: 3

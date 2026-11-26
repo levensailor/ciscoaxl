@@ -181,3 +181,15 @@ These return the full envelope instead of the object: `get_location`, `get_route
 5. **Repair the docs build** (`docs/requirements.txt`, mkdocs config) and replace the copied pages.
 
 Then add new endpoints following that convention. Re-run the static schema diff as a check: zero unknown keys and zero missing required fields.
+
+## Recommendations status (2026-11-26)
+
+| Step | Status | Notes |
+|---|---|---|
+| 1 High breakages | **Done** (v0.165) | H1–H27 fixed; H22 docstring completed in v0.166 |
+| 2 Convention | **Done enough for new work** | Aliases + `_build_object` for new/`add*` wrappers; hand-rolled adds kept; full docstring regen deferred |
+| 3 Return/error contract | **Done** (v0.166) | Faults raise (including `run_sql_query`); getters unwrap; empty lists return `[]` |
+| 4 Version gating | **Done** | `_schema_fields` used in `add_location` / `add_phone`; offline tests cover 12.0 vs 15.0 |
+| 5 Docs build | **Done** (v0.166) | Material + mkdocstrings; stub pages replaced; Sphinx orphans removed |
+
+**Deferred:** regenerating every existing docstring from the schema; wiring or deleting unused `wsdl.py` / `helpers.py` / `config.py` / `exceptions.py`.

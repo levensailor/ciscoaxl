@@ -159,29 +159,24 @@ class axl(object):
 
     def run_sql_query(self, query):
         """
-        Execute a SQL query and return rows as dictionaries. Errors are not raised;
-        they are stored on self.last_exception and the result has num_rows 0.
+        Execute a SQL query and return rows as dictionaries.
         :param query: SQL Query to execute
         :return: {'num_rows': int, 'query': str, 'rows': [{column: value}]} ('rows' only when num_rows > 0)
+        :raises zeep.exceptions.Fault: on AXL error
         """
         result = {"num_rows": 0, "query": query}
 
-        try:
-            sql_result = self.client.executeSQLQuery(sql=query)
-        except Exception as fault:
-            sql_result = None
-            self.last_exception = fault
+        sql_result = self.client.executeSQLQuery(sql=query)
 
         num_rows = 0
         result_rows = []
 
-        if sql_result is not None:
-            if sql_result["return"] is not None:
-                for row in sql_result["return"]["row"]:
-                    result_rows.append({})
-                    for column in row:
-                        result_rows[num_rows][column.tag] = column.text
-                    num_rows += 1
+        if sql_result is not None and sql_result["return"] is not None:
+            for row in sql_result["return"]["row"]:
+                result_rows.append({})
+                for column in row:
+                    result_rows[num_rows][column.tag] = column.text
+                num_rows += 1
 
         result["num_rows"] = num_rows
         if num_rows > 0:
@@ -1496,8 +1491,9 @@ class axl(object):
     def get_directory_number(self, **args):
         """
         Get directory number details
-        :param name:
-        :param partition:
+        :param pattern: directory number pattern (or uuid)
+        :param uuid: directory number uuid (or pattern + partition)
+        :param partition: route partition name, optional (AXL name: routePartitionName)
         :return: result dictionary
         """
         return self.client.getLine(**args)["return"]["line"]
@@ -1801,8 +1797,8 @@ class axl(object):
         css="",
         aar_css="",
         subscribe_css="",
-        ownerUserName="",
-        securityProfileName="",
+        owner_user_name="",
+        security_profile_name="",
         lines=[],
         dev_class="Phone",
         protocol="SIP",
@@ -1814,8 +1810,8 @@ class axl(object):
         em_url_button_index="1",
         em_url_label="Press here to logon",
         ehook_enable=None,
-        enableActivationID=False,
-        allowMraMode=False,
+        enable_activation_id=False,
+        allow_mra_mode=False,
         sip_profile="Standard SIP Profile",
         common_phone_config="Standard Common Phone Profile",
     ):
@@ -1836,8 +1832,8 @@ class axl(object):
         :param css: calling search space
         :param aar_css: AAR calling search space
         :param subscribe_css: presence subscribe calling search space
-        :param ownerUserName: owner user ID
-        :param securityProfileName: security profile; SIP phones default to '<product> - Standard SIP Non-Secure Profile'
+        :param owner_user_name: owner user ID (AXL name: ownerUserName)
+        :param security_profile_name: security profile; SIP phones default to '<product> - Standard SIP Non-Secure Profile' (AXL name: securityProfileName)
         :param lines: list of line tuples, see above
         :param dev_class: device class, default 'Phone'
         :param protocol: 'SIP' or 'SCCP'
@@ -1849,8 +1845,8 @@ class axl(object):
         :param em_url_button_index: URL button index
         :param em_url_label: URL button label
         :param ehook_enable: set the vendor config ehookEnable value (1 or 0); omitted when None
-        :param enableActivationID: onboard with an activation code (12.5 and later schemas)
-        :param allowMraMode: allow MRA activation-code onboarding (12.5 and later schemas)
+        :param enable_activation_id: onboard with an activation code (12.5 and later schemas; AXL name: enableActivationID)
+        :param allow_mra_mode: allow MRA activation-code onboarding (12.5 and later schemas; AXL name: allowMraMode)
         :param sip_profile: SIP profile, used when protocol is SIP
         :param common_phone_config: common phone profile name
         :return: result dictionary
@@ -1879,21 +1875,21 @@ class axl(object):
             "callingSearchSpaceName": css,
             "automatedAlternateRoutingCssName": aar_css,
             "subscribeCallingSearchSpaceName": subscribe_css,
-            "ownerUserName": ownerUserName,
+            "ownerUserName": owner_user_name,
         }
 
         if protocol == "SIP":
             req["sipProfileName"] = sip_profile
             req["securityProfileName"] = (
-                securityProfileName or f"{product} - Standard SIP Non-Secure Profile"
+                security_profile_name or f"{product} - Standard SIP Non-Secure Profile"
             )
-        elif securityProfileName:
-            req["securityProfileName"] = securityProfileName
+        elif security_profile_name:
+            req["securityProfileName"] = security_profile_name
 
         phone_fields = self._schema_fields("addPhone", "phone")
         for field, value in (
-            ("enableActivationID", enableActivationID),
-            ("allowMraMode", allowMraMode),
+            ("enableActivationID", enable_activation_id),
+            ("allowMraMode", allow_mra_mode),
         ):
             if field in phone_fields:
                 req[field] = str(value).lower() in ("true", "t", "1")
@@ -2490,9 +2486,9 @@ class axl(object):
         """
         List Route Plan
         :param pattern: Route Plan Contains Pattern
-        :return: results dictionary
+        :return: list of route plan dictionaries, empty when nothing matches
         """
-        return self.client.listRoutePlan(
+        result = self.client.listRoutePlan(
             {"dnOrPattern": pattern},
             returnedTags={
                 "dnOrPattern": "",
@@ -2500,17 +2496,23 @@ class axl(object):
                 "type": "",
                 "routeDetail": "",
             },
-        )["return"]["routePlan"]
+        )
+        if result["return"] is None:
+            return []
+        return result["return"]["routePlan"]
 
     def get_called_party_xforms(self):
         """
         Get called party xforms
         :return: list of dictionaries, empty when nothing matches
         """
-        return self.client.listCalledPartyTransformationPattern(
+        result = self.client.listCalledPartyTransformationPattern(
             {"pattern": "%"},
             returnedTags={"pattern": "", "description": "", "uuid": ""},
-        )["return"]["calledPartyTransformationPattern"]
+        )
+        if result["return"] is None:
+            return []
+        return result["return"]["calledPartyTransformationPattern"]
 
     def _pattern_lookup(self, operation, args):
         """
@@ -2859,11 +2861,14 @@ class axl(object):
     def get_call_manager_groups(self):
         """
         Get call manager groups
-        :return: list of call manager group dictionaries with name
+        :return: list of call manager group dictionaries with name, empty when nothing matches
         """
-        return self.client.listCallManagerGroup(
+        result = self.client.listCallManagerGroup(
             {"name": "%"}, returnedTags={"name": ""}
-        )["return"]["callManagerGroup"]
+        )
+        if result["return"] is None:
+            return []
+        return result["return"]["callManagerGroup"]
 
     def update_call_manager_group(self, **args):
         """
@@ -2912,7 +2917,7 @@ class axl(object):
         if response:
             return response["huntPilot"]
         else:
-            return response
+            return []
 
     def get_hunt_pilot(self, **args):
         """
@@ -2989,7 +2994,7 @@ class axl(object):
         if response:
             return response["huntList"]
         else:
-            return response
+            return []
 
     def get_hunt_list(self, **args):
         """
@@ -3065,7 +3070,7 @@ class axl(object):
         if response:
             return response["lineGroup"]
         else:
-            return response
+            return []
 
     def get_line_group(self, **args):
         """
@@ -3145,7 +3150,7 @@ class axl(object):
         if response:
             return response["callPickupGroup"]
         else:
-            return response
+            return []
 
     def get_call_pickup_group(self, **args):
         """

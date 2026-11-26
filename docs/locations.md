@@ -1,12 +1,13 @@
+# Locations
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
         - get_locations
         - get_location
         - add_location
         - delete_location
         - update_location
-    rendering:
       show_root_heading: false
       show_source: false
+      heading_level: 3

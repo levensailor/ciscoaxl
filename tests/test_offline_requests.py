@@ -98,6 +98,39 @@ class TestErrorContract:
         ucm.recorder.responses["listLocation"] = {"return": None}
         assert ucm.get_locations() == []
 
+    def test_empty_hunt_pilots_returns_empty_list(self, ucm):
+        ucm.recorder.responses["listHuntPilot"] = {"return": None}
+        assert ucm.get_hunt_pilots() == []
+
+    def test_empty_hunt_lists_returns_empty_list(self, ucm):
+        ucm.recorder.responses["listHuntList"] = {"return": None}
+        assert ucm.get_hunt_lists() == []
+
+    def test_empty_line_groups_returns_empty_list(self, ucm):
+        ucm.recorder.responses["listLineGroup"] = {"return": None}
+        assert ucm.get_line_groups() == []
+
+    def test_empty_call_pickup_groups_returns_empty_list(self, ucm):
+        ucm.recorder.responses["listCallPickupGroup"] = {"return": None}
+        assert ucm.get_call_pickup_groups() == []
+
+    def test_empty_route_plan_returns_empty_list(self, ucm):
+        ucm.recorder.responses["listRoutePlan"] = {"return": None}
+        assert ucm.list_route_plan_specific() == []
+
+    def test_empty_call_manager_groups_returns_empty_list(self, ucm):
+        ucm.recorder.responses["listCallManagerGroup"] = {"return": None}
+        assert ucm.get_call_manager_groups() == []
+
+    def test_empty_called_party_xforms_returns_empty_list(self, ucm):
+        ucm.recorder.responses["listCalledPartyTransformationPattern"] = {"return": None}
+        assert ucm.get_called_party_xforms() == []
+
+    def test_run_sql_query_raises_fault(self, ucm):
+        ucm.recorder.responses["executeSQLQuery"] = Fault("SQL error")
+        with pytest.raises(Fault):
+            ucm.run_sql_query("select * from device")
+
     def test_name_or_uuid_required(self, ucm):
         with pytest.raises(ValueError):
             ucm.do_device_reset()
@@ -362,3 +395,13 @@ class TestSchemaVersions:
         ucm.add_device_pool(name="Branch_DP", route_group="RG1")
         ucm.add_transcoder(name="XCODE1")
         assert len(ucm.recorder.calls) == 7
+
+
+class TestSchemaFields:
+    def test_add_phone_enable_activation_id_in_15(self):
+        ucm = make_ucm("15.0")
+        assert "enableActivationID" in ucm._schema_fields("addPhone", "phone")
+
+    def test_add_phone_enable_activation_id_not_in_12(self):
+        ucm = make_ucm("12.0")
+        assert "enableActivationID" not in ucm._schema_fields("addPhone", "phone")

@@ -446,3 +446,9 @@ cython_debug/
 #.idea/
 .gitignore
 .gitignore
+
+# Cursor / local tooling
+.cursor/
+uv.lock
+.env
+.venv/

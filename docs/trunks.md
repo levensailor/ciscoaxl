@@ -1,6 +1,7 @@
+# Trunks and Gateways
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
         - get_sip_trunks
         - get_sip_trunk
@@ -15,6 +16,6 @@
         - add_h323_gateway
         - delete_h323_gateway
         - update_h323_gateway
-    rendering:
       show_root_heading: false
       show_source: false
+      heading_level: 3

@@ -1,8 +1,22 @@
 # CHANGELOG
 
+## v0.166 - 11-26-2026
+### Breaking changes
+- `run_sql_query` raises `zeep.exceptions.Fault` on AXL errors (it no longer swallows faults onto `ucm.last_exception`).
+- `add_phone` parameters `ownerUserName`, `securityProfileName`, `enableActivationID`, and `allowMraMode` are snake_case (`owner_user_name`, `security_profile_name`, `enable_activation_id`, `allow_mra_mode`); the AXL camelCase names still work via aliases.
+
+### Fixed
+- Empty-list contract: hunt pilot/list, line group, and call pickup group list getters return `[]` instead of `None`; route-plan, call-manager-group, and called-party-xform list helpers guard a missing `return`.
+- Docs build: Material theme, `mkdocstrings[python]`, replaced copied stub pages, removed orphaned Sphinx tree.
+- Deleted unused `axl_generator.py`.
+
+### Added
+- Offline tests for empty-list results, `run_sql_query` Fault propagation, and `_schema_fields` version gating.
+- CONTRIBUTING.md with feature-branch and PR workflow.
+
 ## v0.165 - 11-26-2026
 ### Breaking changes
-- AXL errors now raise `zeep.exceptions.Fault` instead of being returned as a value. Wrap calls in `try/except Fault` where you previously checked `isinstance(result, Fault)`. `run_sql_query` still never raises and keeps the error on `ucm.last_exception`.
+- AXL errors now raise `zeep.exceptions.Fault` instead of being returned as a value. Wrap calls in `try/except Fault` where you previously checked `isinstance(result, Fault)`.
 - Single-object getters return the object itself instead of the SOAP envelope: `get_location`, `get_translation`, `get_route_pattern`, `get_media_resource_group_list`, `get_call_manager_group`, `get_sip_profile`, `get_sip_security_profile`, `list_route_plan_specific`.
 - List getters return `[]` when nothing matches instead of raising `TypeError`.
 - `add_called_party_xform` and `add_calling_party_xform` require `pattern`.

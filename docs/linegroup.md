@@ -1,12 +1,15 @@
+# Line Groups
+
+Line groups define the lines that ring together in a hunt list.
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
-        - get_user
-        - get_users
-        - add_user
-        - delete_user
-        - update_user
-    rendering:
+        - get_line_groups
+        - get_line_group
+        - add_line_group
+        - update_line_group
+        - delete_line_group
       show_root_heading: false
       show_source: false
+      heading_level: 3

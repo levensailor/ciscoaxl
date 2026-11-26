@@ -610,7 +610,7 @@ for row in result.get('rows', []):
     print(row['name'])
 ```
 
-`run_sql_query` never raises: on an AXL error it returns `num_rows: 0` and keeps the exception on `ucm.last_exception`. Use `ucm.sql_query()` when you want the `Fault`.
+`run_sql_query` raises `zeep.exceptions.Fault` on AXL errors, same as every other method. On success it returns `{'num_rows': int, 'query': str, 'rows': [...]}` (`rows` only when `num_rows > 0`).
 
 #### Do LDAP Sync on all agreements
 

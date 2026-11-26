@@ -1,14 +1,15 @@
+# Users
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
-        - get_user
         - get_users
+        - get_user
         - add_user
-        - delete_user
         - update_user
         - update_user_em
         - update_user_credentials
-    rendering:
+        - delete_user
       show_root_heading: false
       show_source: false
+      heading_level: 3

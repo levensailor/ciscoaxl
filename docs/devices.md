@@ -1,6 +1,7 @@
+# Devices
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
         - get_phone
         - get_phones
@@ -16,6 +17,6 @@
         - do_device_login
         - do_device_logout
         - do_device_reset
-    rendering:
       show_root_heading: false
       show_source: false
+      heading_level: 3

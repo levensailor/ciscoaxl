@@ -1,17 +1,16 @@
 # About ciscoaxl
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+**ciscoaxl** is a Python SDK for the Cisco Unified Communications Manager (CUCM) AXL API.
 
-## Commands
+| | |
+|---|---|
+| Author | Jeff Levensailor |
+| License | MIT |
+| Repository | [github.com/levensailor/ciscoaxl](https://github.com/levensailor/ciscoaxl) |
+| PyPI | [pypi.org/project/ciscoaxl](https://pypi.org/project/ciscoaxl/) |
+| ReadTheDocs | [ciscoaxl.readthedocs.io](https://ciscoaxl.readthedocs.io/en/latest) |
+| AXL Schema Docs | [developer.cisco.com/docs/axl-schema-reference](https://developer.cisco.com/docs/axl-schema-reference/) |
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## Contributing
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+See [CONTRIBUTING.md](https://github.com/levensailor/ciscoaxl/blob/master/CONTRIBUTING.md) for instructions on creating a feature branch and opening a pull request.

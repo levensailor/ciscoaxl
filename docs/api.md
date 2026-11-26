@@ -1,17 +1,47 @@
-# About ciscoaxl
+# API Reference
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+ciscoaxl wraps the Cisco AXL SOAP API, providing Pythonic methods for every major CUCM object type.
 
-## Commands
+## Class
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+::: ciscoaxl.axl.axl
+    options:
+      members:
+        - __init__
+      show_root_heading: true
+      show_source: false
+      heading_level: 3
 
-## Project layout
+## Coverage
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+| Resource | Methods |
+|----------|---------|
+| Users | get_users, get_user, add_user, update_user, update_user_em, update_user_credentials, delete_user |
+| Phones | get_phones, get_phone, add_phone, update_phone, delete_phone |
+| Device Profiles | get_device_profiles, get_device_profile, add_device_profile, update_device_profile, delete_device_profile |
+| Directory Numbers | get_directory_numbers, get_directory_number, add_directory_number, update_directory_number, delete_directory_number |
+| Device Pools | get_device_pools, get_device_pool, add_device_pool, update_device_pool, delete_device_pool |
+| Calling Search Spaces | get_calling_search_spaces, get_calling_search_space, add_calling_search_space, update_calling_search_space, delete_calling_search_space |
+| Partitions | get_partitions, get_partition, add_partition, update_partition, delete_partition |
+| Route Patterns | get_route_patterns, get_route_pattern, add_route_pattern, update_route_pattern, delete_route_pattern |
+| Route Groups | get_route_groups, get_route_group, add_route_group, update_route_group, delete_route_group |
+| Route Lists | get_route_lists, get_route_list, add_route_list, update_route_list, delete_route_list |
+| Translations | get_translations, get_translation, add_translation, update_translation, delete_translation |
+| Transformations | get_called_party_xforms, get_called_party_xform, add_called_party_xform, update_called_party_xform, delete_called_party_xform |
+| CTI Route Points | get_cti_route_points, get_cti_route_point, add_cti_route_point, update_cti_route_point, delete_cti_route_point |
+| Media Resources | get_media_resource_groups, get_media_resource_group, ... |
+| Regions | get_regions, get_region, add_region, update_region, delete_region |
+| Locations | get_locations, get_location, add_location, update_location, delete_location |
+| Trunks | get_sip_trunks, get_sip_trunk, add_sip_trunk, update_sip_trunk, delete_sip_trunk |
+| Call Manager Groups | get_call_manager_groups, get_call_manager_group, add_call_manager_group, update_call_manager_group, delete_call_manager_group |
+| Hunt Pilots | get_hunt_pilots, get_hunt_pilot, add_hunt_pilot, update_hunt_pilot, delete_hunt_pilot |
+| Hunt Lists | get_hunt_lists, get_hunt_list, add_hunt_list, update_hunt_list, delete_hunt_list |
+| Line Groups | get_line_groups, get_line_group, add_line_group, update_line_group, delete_line_group |
+| Call Pickup | get_call_pickup_groups, get_call_pickup_group, add_call_pickup_group, update_call_pickup_group, delete_call_pickup_group |
+| SQL | run_sql_query, sql_query, sql_update |
+| LDAP | get_ldap_dir, do_ldap_sync |
+| Actions | do_device_login, do_device_logout, do_device_reset, reset_sip_trunk, do_change_dnd_status |
+
+!!! info "Not yet wrapped"
+    Remote Destinations, UC Services, and Voicemail Profiles are not yet implemented.
+    See [rd.md](rd.md), [ucservice.md](ucservice.md), [vm.md](vm.md) for details.

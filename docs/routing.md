@@ -1,6 +1,7 @@
+# Call Routing
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
         - get_route_groups
         - get_route_group
@@ -17,6 +18,6 @@
         - add_srst
         - delete_srst
         - update_srst
-    rendering:
       show_root_heading: false
       show_source: false
+      heading_level: 3

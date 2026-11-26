@@ -1,6 +1,7 @@
+# Transformation Patterns
+
 ::: ciscoaxl.axl.axl
-    handler: python
-    selection:
+    options:
       members:
         - get_called_party_xforms
         - get_called_party_xform
@@ -12,6 +13,6 @@
         - add_calling_party_xform
         - delete_calling_party_xform
         - update_calling_party_xform
-    rendering:
       show_root_heading: false
       show_source: false
+      heading_level: 3
