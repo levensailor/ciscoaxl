@@ -83,6 +83,8 @@ version = '12.5'
 ucm = axl(username=username,password=password,cucm=cucm,cucm_version=version)
 ```
 
+Bundled AXL schema versions: `8.5`, `9.1`, `10.0`, `10.5`, `11.0`, `11.5`, `12.0`, `12.5`, `14.0`, `15.0` (plus `current`). Set `cucm_version` to the AXL schema version that matches your CUCM major release; CUCM 15 SUs use `15.0`.
+
 > Note: all get methods that return more than 1 item have a tagfilter property that can allow more fields to return. Fields are filtered by default to increase performance, but if you need additional fields returned from the axl call, simply add the tagfilter={} to the request. Example:
 
 ```python

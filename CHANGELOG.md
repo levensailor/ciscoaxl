@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased - 11-26-2026
+### Added
+- feat: bundle AXL schema 14.0 and 15.0 (WSDL/XSD) so `cucm_version="14.0"` and `"15.0"` work against CUCM 14 and 15 clusters
+
 ## v0.163 - 11-22-2022
 ### Fixed
 - PR#60 - update readme for pattern vs directory number
