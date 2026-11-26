@@ -34,6 +34,10 @@ from ciscoaxl.p1_dialplan import P1Dialplan
 from ciscoaxl.p1_gateways import P1Gateways
 from ciscoaxl.p1_media import P1Media
 from ciscoaxl.p1_system import P1System
+from ciscoaxl.p2_media import P2Media
+from ciscoaxl.p2_ils import P2Ils
+from ciscoaxl.p2_presence_sec import P2PresenceSec
+from ciscoaxl.p2_system import P2System
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -49,6 +53,10 @@ class axl(
     P1Gateways,
     P1Media,
     P1System,
+    P2Media,
+    P2Ils,
+    P2PresenceSec,
+    P2System,
 ):
     """
     The AXL class sets up the connection to the call manager with methods for configuring UCM.

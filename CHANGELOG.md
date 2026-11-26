@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.169 - 11-26-2026
+### Added
+- feat: wrap P2 AXL objects — media/dial-plan extras (announcements, CMC/FAC, ELIN, H.323 trunks), ILS/remote cluster and Smart Licensing actions, IM&P presence/MRA/VPN/CAPF, and system helpers (change notification, options getters, inactive SQL, authenticate user, self-provisioning)
+- Offline tests for every P2 batch (`tests/test_p2_b*.py`)
+
 ## v0.168 - 11-26-2026
 ### Added
 - feat: wrap P1 AXL objects — lifecycle apply/reset/restart for existing resources, dial-plan helpers (AAR, dial rules, directed park, local route group, route filter, SIP dial/route patterns), MGCP/SCCP gateways and endpoints, media/mobility (Meet-Me, MOH, recording, device mobility, presence groups), and system/LDAP/credential/voicemail-port wrappers
