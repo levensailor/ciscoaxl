@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ciscoaxl"
-version = "0.167"
+version = "0.168"
 description = "Cisco CUCM AXL Library. simple to use."
 authors = ["Jeff Levensailor <jeff@levensailor.com>", "Brad Haas <bradh11@gmail.com>"]
 license = "MIT"
@@ -51,3 +51,6 @@ dev = [
     "pytest>=9.2.0",
     "zeep>=4.3.3",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

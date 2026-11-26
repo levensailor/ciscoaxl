@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.168 - 11-26-2026
+### Added
+- feat: wrap P1 AXL objects — lifecycle apply/reset/restart for existing resources, dial-plan helpers (AAR, dial rules, directed park, local route group, route filter, SIP dial/route patterns), MGCP/SCCP gateways and endpoints, media/mobility (Meet-Me, MOH, recording, device mobility, presence groups), and system/LDAP/credential/voicemail-port wrappers
+- Offline tests for every P1 batch (`tests/test_p1_b*.py`)
+
 ## v0.167 - 11-26-2026
 ### Added
 - feat: wrap P0 AXL objects for day-to-day admin work — device templates (`CommonDeviceConfig`, `CommonPhoneConfig`, `PhoneButtonTemplate`, `SoftKeyTemplate`, `UniversalDeviceTemplate`, `UniversalLineTemplate`), users/mobility (`AppUser`, `UserGroup`, `UserPhoneAssociation`, `UserProfileProvision`, `RemoteDestination`, `RemoteDestinationProfile`), presence/voicemail/dial plan (`ServiceProfile`, `UcService`, `VoiceMailPilot`, `VoiceMailProfile`, `TimePeriod`, `TimeSchedule`, `CallPark`), and security/system/LDAP/phone lifecycle (`PhoneSecurityProfile`, `SipProfile` CRUD, `SipTrunkSecurityProfile`, `DateTimeGroup`, `LdapDirectory`, `LdapSyncStatus`, `CCMVersion`, `RegistrationDynamic`, phone apply/reset/restart/lock/wipe)
