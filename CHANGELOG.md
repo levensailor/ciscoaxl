@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.170 - 11-26-2026
+### Added
+- feat: wrap P3 AXL objects for niche, legacy, IME/CCD/SAF, and network features — IME, CCD/SAF, LBM/SNMP/DHCP/WLAN, Catalyst 6000/VG224/H.323/gatekeeper, geo-location/billing/cloud onboarding/dial-plan tags, HTTP/infrastructure/MLPP/resource-priority/SDP/VoH/transport settings
+- Offline tests for every P3 batch (`tests/test_p3_b*.py`)
+
 ## v0.169 - 11-26-2026
 ### Added
 - feat: wrap P2 AXL objects — media/dial-plan extras (announcements, CMC/FAC, ELIN, H.323 trunks), ILS/remote cluster and Smart Licensing actions, IM&P presence/MRA/VPN/CAPF, and system helpers (change notification, options getters, inactive SQL, authenticate user, self-provisioning)
