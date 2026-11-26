@@ -249,9 +249,16 @@ def accept_aliases(method):
 
 
 def apply_aliases(cls):
-    """Class decorator: wrap every public method of cls with accept_aliases."""
-    for name, member in list(vars(cls).items()):
-        if not name.startswith("_") and inspect.isfunction(member):
+    """Class decorator: wrap every public method of cls (and its bases) with accept_aliases."""
+    seen = set()
+    for base in cls.__mro__:
+        if base is object:
+            continue
+        for name, member in list(vars(base).items()):
+            if name in seen or name.startswith("_") or not inspect.isfunction(member):
+                continue
+            seen.add(name)
+            # Bind the wrapped function onto cls so aliases apply even for mixin methods.
             setattr(cls, name, accept_aliases(member))
     return cls
 
