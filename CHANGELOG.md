@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.167 - 11-26-2026
+### Added
+- feat: wrap P0 AXL objects for day-to-day admin work — device templates (`CommonDeviceConfig`, `CommonPhoneConfig`, `PhoneButtonTemplate`, `SoftKeyTemplate`, `UniversalDeviceTemplate`, `UniversalLineTemplate`), users/mobility (`AppUser`, `UserGroup`, `UserPhoneAssociation`, `UserProfileProvision`, `RemoteDestination`, `RemoteDestinationProfile`), presence/voicemail/dial plan (`ServiceProfile`, `UcService`, `VoiceMailPilot`, `VoiceMailProfile`, `TimePeriod`, `TimeSchedule`, `CallPark`), and security/system/LDAP/phone lifecycle (`PhoneSecurityProfile`, `SipProfile` CRUD, `SipTrunkSecurityProfile`, `DateTimeGroup`, `LdapDirectory`, `LdapSyncStatus`, `CCMVersion`, `RegistrationDynamic`, phone apply/reset/restart/lock/wipe)
+- Offline tests for every P0 batch (`tests/test_p0_b*.py`)
+
 ## v0.166 - 11-26-2026
 ### Breaking changes
 - `run_sql_query` raises `zeep.exceptions.Fault` on AXL errors (it no longer swallows faults onto `ucm.last_exception`).

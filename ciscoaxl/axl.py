@@ -25,12 +25,16 @@ from zeep.plugins import HistoryPlugin
 from zeep.exceptions import Fault
 
 from ciscoaxl.aliases import AliasingService, apply_aliases, fill_required, translate
+from ciscoaxl.p0_templates import P0Templates
+from ciscoaxl.p0_users import P0Users
+from ciscoaxl.p0_presence import P0Presence
+from ciscoaxl.p0_security import P0Security
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 @apply_aliases
-class axl(object):
+class axl(P0Templates, P0Users, P0Presence, P0Security):
     """
     The AXL class sets up the connection to the call manager with methods for configuring UCM.
     Tested with environment of;

@@ -1,22 +1,21 @@
 # Voicemail
 
-!!! note "Not yet wrapped"
-    Voicemail profile / Unity Connection methods are not yet implemented in this SDK.
-
-    Follow progress or contribute at:
-    [https://github.com/users/levensailor/projects/6](https://github.com/users/levensailor/projects/6)
-
-Voicemail integration in CUCM is typically done via:
-
-- **UC Service** pointing to a Unity Connection server (see [UC Services](ucservice.md))
-- **Voice Mail Profile** attached to Directory Numbers
-- **Voice Mail Pilot** that routes calls to the voicemail server
-
-Once implemented, the API will follow the same pattern as other resources:
-
-```python
-# Future usage (not yet available)
-ucm.get_voice_mail_pilots()
-ucm.add_voice_mail_pilot(dirn='8000', css='allphone-css')
-ucm.get_voice_mail_profiles()
-```
+::: ciscoaxl.axl.axl
+    options:
+      members:
+        - get_voice_mail_pilots
+        - get_voice_mail_pilot
+        - add_voice_mail_pilot
+        - update_voice_mail_pilot
+        - delete_voice_mail_pilot
+        - get_voice_mail_profiles
+        - get_voice_mail_profile
+        - add_voice_mail_profile
+        - update_voice_mail_profile
+        - delete_voice_mail_profile
+        - apply_voice_mail_profile
+        - reset_voice_mail_profile
+        - restart_voice_mail_profile
+      show_root_heading: false
+      show_source: false
+      heading_level: 3
