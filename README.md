@@ -1,5 +1,5 @@
 # Python SDK for Cisco CUCM AXL API
-[![PyPi Status](https://github.com/PresidioCode/ciscoaxl/actions/workflows/python-publish.yml/badge.svg?event=deployment_status)](https://github.com/PresidioCode/ciscoaxl/actions/workflows/python-publish.yml)
+[![PyPi Status](https://github.com/levensailor/ciscoaxl/actions/workflows/python-publish.yml/badge.svg)](https://github.com/levensailor/ciscoaxl/actions/workflows/python-publish.yml)
 
 ## AXL API Documentation
 
@@ -84,6 +84,26 @@ ucm = axl(username=username,password=password,cucm=cucm,cucm_version=version)
 ```
 
 Bundled AXL schema versions: `8.5`, `9.1`, `10.0`, `10.5`, `11.0`, `11.5`, `12.0`, `12.5`, `14.0`, `15.0` (plus `current`). Set `cucm_version` to the AXL schema version that matches your CUCM major release; CUCM 15 SUs use `15.0`.
+
+### How calls behave
+
+| Behavior | What you get |
+|----------|--------------|
+| AXL error (item not found, duplicate, bad value) | `zeep.exceptions.Fault` is raised |
+| `get_<object>()` | The object itself, e.g. `ucm.get_phone(name='SEP...').description` |
+| `get_<objects>()` with no matches | `[]` |
+| Friendly names | `partition`, `device_pool`, `css`, `location`, `device`... are converted to the AXL element names (`routePartitionName`, `devicePoolName`, `callingSearchSpaceName`, ...) |
+| AXL names | Always accepted too, e.g. `routePartitionName='pt'` works wherever `partition='pt'` does |
+| Python booleans | Sent as AXL `true`/`false` |
+
+```python
+from zeep.exceptions import Fault
+
+try:
+    phone = ucm.get_phone(name='SEP001122445566')
+except Fault as error:
+    print(f'AXL said: {error.message}')
+```
 
 > Note: all get methods that return more than 1 item have a tagfilter property that can allow more fields to return. Fields are filtered by default to increase performance, but if you need additional fields returned from the axl call, simply add the tagfilter={} to the request. Example:
 
@@ -186,7 +206,7 @@ for trans in ucm.get_translations():
 #### Get Specific Translation Pattern
 
 ```python
-trans = ucm.get_translation(pattern='2XXX', routePartitionName='xlates-pt')
+trans = ucm.get_translation(pattern='2XXX', partition='xlates-pt')
 print(trans.description)
 ```
 
@@ -196,19 +216,19 @@ print(trans.description)
 ported = ['12324625544', '12324625545', '12324625546']
 
 for num in ported:
-    ucm.add_translation(pattern=num, routePartitionName='pstn_pt',calledPartyTransformationMask='1102', callingSearchSpaceName='GW_CSS')
+    ucm.add_translation(pattern=num, partition='pstn_pt', calledPartyTransformationMask='1102', css='GW_CSS')
 ```
 
 #### Delete Translation Pattern
 
 ```python
-ucm.delete_translation(pattern='34567', routePartitionName='xlates-pt')
+ucm.delete_translation(pattern='34567', partition='xlates-pt')
 ```
 
 #### Update Translation Pattern
 
 ```python
-ucm.update_translation(pattern='1234', routePartitionName='xlates-pt', newPattern='4567')
+ucm.update_translation(pattern='1234', partition='xlates-pt', newPattern='4567')
 ```
 
 ## Device Pools
@@ -266,15 +286,15 @@ print(css.name)
 ```python
 ucm.add_calling_search_space(
     calling_search_space='VIP_CSS',
-    description='Very Important Stuff'
+    description='Very Important Stuff',
     members=['losfeliz-pt','silverlake-pt','pstn-pt']
     )
 ```
 
-#### Delete Calling Search Space
+#### Update Calling Search Space
 
 ```python
-ucm.update_calling_search_space(calling_search_space='VIP_CSS')
+ucm.update_calling_search_space(calling_search_space='VIP_CSS', description='VIPs only')
 ```
 
 #### Delete Calling Search Space
@@ -293,14 +313,14 @@ for pt in ucm.get_partitions():
 #### Get Specific Partition
 
 ```python
-pt = ucm.get_partition(routePartitionName='pstn-pt')
+pt = ucm.get_partition(partition='pstn-pt')
 print(pt.name)
 ```
 
 #### Add Partition
 
 ```python
-ucm.add_partition(routePartitionName='VIP_PT', description='Very Important Peep')
+ucm.add_partition(partition='VIP_PT', description='Very Important Peep')
 ```
 
 #### Delete Partition
@@ -375,7 +395,7 @@ for dn in ucm.get_directory_numbers():
 #### Get Specific Directory Number
 
 ```python
-dn = ucm.get_directory_number(pattern='2888',routePartitionName='losfeliz-pt')
+dn = ucm.get_directory_number(pattern='2888', partition='losfeliz-pt')
 print(dn.uuid)
 ```
 
@@ -384,7 +404,7 @@ print(dn.uuid)
 ```python
 ucm.add_directory_number(
     pattern='1102',
-    routePartitionName='ABQ_PT'
+    partition='ABQ_PT'
     )
 ```
 
@@ -429,7 +449,7 @@ ucm.add_device_profile(
 #### Delete User Device Profile
 
 ```python
-ucm.delete_device_profile('UDP_Mscott')
+ucm.delete_device_profile(name='UDP_Mscott')
 ```
 
 ## CTI Route Points
@@ -556,8 +576,11 @@ for rp in ucm.get_route_patterns():
 #### Get Specific Route Pattern
 
 ```python
-rp = ucm.get_route_pattern(pattern='911')
+rp = ucm.get_route_pattern(pattern='911', partition='pstn-pt')
 print(rp.description)
+```
+
+Leave out `partition` to search every partition; a `LookupError` is raised when nothing matches.
 ```
 
 #### Add Route Pattern
@@ -565,7 +588,7 @@ print(rp.description)
 ```python
 ucm.add_route_pattern(
     pattern='999',
-    routePartitionName='losfeliz-pt',
+    partition='losfeliz-pt',
     description='Movie Times',
     route_list='stdloc-rl'
     )
@@ -574,21 +597,24 @@ ucm.add_route_pattern(
 #### Delete Route Pattern
 
 ```python
-ucm.delete_route_pattern(pattern='999', routePartitionName='losfeliz-pt')
+ucm.delete_route_pattern(pattern='999', partition='losfeliz-pt')
 ```
 
 ## Runs and Dos
 
 #### Execute SQL Query
 
-```sh
-for sql in ucm.run_sql_query('select * from device where description like "Bart%"'):
-    print(sql.name)
+```python
+result = ucm.run_sql_query("select name, description from device where description like 'Bart%'")
+for row in result.get('rows', []):
+    print(row['name'])
 ```
+
+`run_sql_query` never raises: on an AXL error it returns `num_rows: 0` and keeps the exception on `ucm.last_exception`. Use `ucm.sql_query()` when you want the `Fault`.
 
 #### Do LDAP Sync on all agreements
 
-```sh
+```python
 for ldap in ucm.get_ldap_dir():
     ucm.do_ldap_sync(uuid=ldap.uuid)
 ```
@@ -602,11 +628,11 @@ ucm.do_device_reset(device='SEP001100220033')
 #### Extension Mobility Login
 
 ```python
-ucm.do_device_login(device='SEP001100220033', userId='bsimpson')
+ucm.do_device_login(device='SEP001100220033', userId='bsimpson', profileName='UDP_bsimpson', loginDuration=0)
 ```
 
 #### Extension Mobility Logout
 
 ```python
-ucm.do_device_logout(device='SEP001100220033', userId='bsimpson')
+ucm.do_device_logout(device='SEP001100220033')
 ```

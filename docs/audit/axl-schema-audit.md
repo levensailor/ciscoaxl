@@ -39,6 +39,8 @@ Two committee claims were corrected during verification:
 
 ## High severity
 
+> **Status (v0.165):** all High items are resolved. `tests/test_offline_requests.py` covers them by building each request against the bundled schemas.
+
 Items marked **(zeep-verified)** were reproduced offline with `create_message()`.
 
 | # | Method (axl.py line) | Problem | Schema evidence (15.0 xsd) | Fix |

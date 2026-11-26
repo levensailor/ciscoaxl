@@ -17,15 +17,19 @@ from requests import Session
 from requests.exceptions import SSLError, ConnectionError
 import re
 import urllib3
+from lxml import etree
 from zeep import Client, Settings, Plugin
 from zeep.transports import Transport
 from zeep.cache import SqliteCache
 from zeep.plugins import HistoryPlugin
 from zeep.exceptions import Fault
 
+from ciscoaxl.aliases import AliasingService, apply_aliases, fill_required, translate
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+@apply_aliases
 class axl(object):
     """
     The AXL class sets up the connection to the call manager with methods for configuring UCM.
@@ -37,14 +41,17 @@ class axl(object):
         """
         :param username: axl username
         :param password: axl password
-        :param cucm: UCM IP address
-        :param cucm_version: UCM version
-        :param cucm_port: UCM TCP port
-        :param strict_ssl: do not work around an SSL failure, default False
+        :param cucm: UCM IP address or hostname
+        :param cucm_version: AXL schema version folder: 8.5, 9.1, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 14.0, 15.0
+        :param cucm_port: UCM TCP port, default 8443
+        :param strict_ssl: raise on certificate errors instead of retrying unverified, default False
+
+        AXL faults raise zeep.exceptions.Fault. Friendly argument names (partition, device_pool, css...)
+        are converted to AXL element names before each request; AXL names also work.
 
         example usage:
-        >>> from axl import AXL
-        >>> ucm = AXL('axl_user', 'axl_pass', '192.168.200.10')
+        >>> from ciscoaxl import axl
+        >>> ucm = axl('axl_user', 'axl_pass', '192.168.200.10', '15.0')
         """
 
         cwd = os.path.dirname(os.path.abspath(__file__))
@@ -99,10 +106,38 @@ class axl(object):
         self.UUID_PATTERN = re.compile(
             r"^[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}$", re.IGNORECASE
         )
-        self.client = axl_client.create_service(
+        service = axl_client.create_service(
             "{http://www.cisco.com/AXLAPIService/}AXLAPIBinding",
             f"https://{cucm}:{cucm_port}/axl/",
         )
+        self.client = AliasingService(axl_client, service)
+
+    def _schema_fields(self, operation, wrapper=None):
+        """
+        Element names accepted by an AXL operation in the loaded schema version
+        :param operation: AXL operation name, e.g. 'addPhone'
+        :param wrapper: optional wrapper element to descend into, e.g. 'phone'
+        :return: set of element names
+        """
+        request_type = self.client._operations[operation].input.body.type
+        if wrapper is not None:
+            request_type = dict(request_type.elements)[wrapper].type
+        return {name for name, _ in request_type.elements}
+
+    def _build_object(self, operation, wrapper, args, defaults=None):
+        """
+        Build an add* request object: translate friendly names, apply method defaults,
+        then fill remaining required elements from the schema defaults
+        :param operation: AXL operation name, e.g. 'addSipTrunk'
+        :param wrapper: wrapper element of the request, e.g. 'sipTrunk'
+        :param args: caller arguments (friendly or AXL names)
+        :param defaults: method defaults using AXL names, overridden by args
+        :return: request object for the wrapper element
+        """
+        request_type = self.client._operations[operation].input.body.type
+        object_type = dict(request_type.elements)[wrapper].type
+        merged = {**(defaults or {}), **translate(args, object_type)}
+        return fill_required(merged, object_type)
 
     def get_locations(
         self,
@@ -115,17 +150,20 @@ class axl(object):
     ):
         """
         Get location details
-        :param mini: return a list of tuples of location details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listLocation({"name": "%"}, returnedTags=tagfilter,)[
-                "return"
-            ]["location"]
-        except Fault as e:
-            return e
+        return self.client.listLocation({"name": "%"}, returnedTags=tagfilter,)[
+            "return"
+        ]["location"]
 
     def run_sql_query(self, query):
+        """
+        Execute a SQL query and return rows as dictionaries. Errors are not raised;
+        they are stored on self.last_exception and the result has num_rows 0.
+        :param query: SQL Query to execute
+        :return: {'num_rows': int, 'query': str, 'rows': [{column: value}]} ('rows' only when num_rows > 0)
+        """
         result = {"num_rows": 0, "query": query}
 
         try:
@@ -157,10 +195,7 @@ class axl(object):
         :param query: SQL Query to execute
         :return: result dictionary
         """
-        try:
-            return self.client.executeSQLQuery(query)["return"]
-        except Fault as e:
-            return e
+        return self.client.executeSQLQuery(query)["return"]
 
     def sql_update(self, query):
         """
@@ -168,10 +203,7 @@ class axl(object):
         :param query: SQL Update to execute
         :return: result dictionary
         """
-        try:
-            return self.client.executeSQLUpdate(query)["return"]
-        except Fault as e:
-            return e
+        return self.client.executeSQLUpdate(query)["return"]
 
     def get_ldap_dir(
         self,
@@ -185,109 +217,123 @@ class axl(object):
         Get LDAP Syncs
         :return: result dictionary
         """
-        try:
-            return self.client.listLdapDirectory(
-                {"name": "%"},
-                returnedTags=tagfilter,
-            )["return"]["ldapDirectory"]
-        except Fault as e:
-            return e
+        return self.client.listLdapDirectory(
+            {"name": "%"},
+            returnedTags=tagfilter,
+        )["return"]["ldapDirectory"]
 
-    def do_ldap_sync(self, uuid):
+    def do_ldap_sync(self, uuid="", name="", sync=True):
         """
-        Do LDAP Sync
-        :param uuid: uuid
+        Start or cancel an LDAP directory sync
+        :param uuid: LDAP directory uuid (or use name)
+        :param name: LDAP directory name (or use uuid)
+        :param sync: True starts a sync, False cancels a running sync
         :return: result dictionary
         """
-        try:
-            return self.client.doLdapSync(uuid=uuid, sync=True)
-        except Fault as e:
-            return e
+        identifier = self._identify(name=name, uuid=uuid)
+        return self.client.doLdapSync(**identifier, sync=sync)
 
     def do_change_dnd_status(self, **args):
         """
-        Do Change DND Status
-        :param userID:
-        :param status:
+        Change Do Not Disturb status for a user
+        :param userID: user ID (or uuid)
+        :param uuid: user uuid (or userID)
+        :param status: DND on/off, boolean (AXL name: dndStatus) - required
         :return: result dictionary
         """
-        try:
-            return self.client.doChangeDNDStatus(**args)
-        except Fault as e:
-            return e
+        return self.client.doChangeDNDStatus(**args)
 
     def do_device_login(self, **args):
         """
-        Do Device Login
-        :param deviceName:
-        :param userId:
-        :param profileName:
+        Log a user into a device with Extension Mobility
+        :param device: device name or uuid (AXL name: deviceName) - required
+        :param loginDuration: login duration in seconds, 0 for no limit - required
+        :param profileName: device profile name - required
+        :param userId: user ID - required
         :return: result dictionary
         """
-        try:
-            return self.client.doDeviceLogin(**args)
-        except Fault as e:
-            return e
+        return self.client.doDeviceLogin(**args)
 
     def do_device_logout(self, **args):
         """
-        Do Device Logout
-        :param device:
-        :param userId:
+        Log the Extension Mobility user out of a device
+        :param device: device name or uuid (AXL name: deviceName) - required
         :return: result dictionary
         """
-        try:
-            return self.client.doDeviceLogout(**args)
-        except Fault as e:
-            return e
+        return self.client.doDeviceLogout(**args)
 
-    def do_device_reset(self, name="", uuid=""):
+    def do_device_reset(self, name="", uuid="", hard_reset=True):
         """
-        Do Device Reset
-        :param name: device name
-        :param uuid: device uuid
+        Reset a device
+        :param name: device name (or use uuid)
+        :param uuid: device uuid (or use name)
+        :param hard_reset: True for a hard reset (reboot), False for a restart
         :return: result dictionary
         """
-        if name != "" and uuid == "":
-            try:
-                return self.client.doDeviceReset(deviceName=name, isHardReset=True)
-            except Fault as e:
-                return e
-        elif name == "" and uuid != "":
-            try:
-                return self.client.doDeviceReset(uuid=uuid, isHardReset=True)
-            except Fault as e:
-                return e
+        identifier = self._identify(name=name, uuid=uuid)
+        device = identifier.get("name") or identifier.get("uuid")
+        return self.client.doDeviceReset(deviceName=device, isHardReset=hard_reset)
 
     def reset_sip_trunk(self, name="", uuid=""):
         """
         Reset SIP Trunk
-        :param name: device name
-        :param uuid: device uuid
+        :param name: trunk name (or use uuid)
+        :param uuid: trunk uuid (or use name)
         :return: result dictionary
         """
-        if name != "" and uuid == "":
-            try:
-                return self.client.resetSipTrunk(name=name)
-            except Fault as e:
-                return e
-        elif name == "" and uuid != "":
-            try:
-                return self.client.resetSipTrunk(uuid=uuid)
-            except Fault as e:
-                return e
+        return self.client.resetSipTrunk(**self._identify(name=name, uuid=uuid))
+
+    @staticmethod
+    def _lines(lines):
+        """
+        Convert line tuples into the AXL lines structure
+        :param lines: list of tuples (pattern, partition[, display, displayAscii, label, e164Mask])
+                      or AXL line dictionaries
+        :return: {'line': [...]}
+        """
+        fields = ("display", "displayAscii", "label", "e164Mask")
+        converted = []
+        for index, line in enumerate(lines, start=1):
+            if isinstance(line, dict):
+                converted.append({"index": index, **line})
+                continue
+            entry = {
+                "index": index,
+                "dirn": {"pattern": line[0], "routePartitionName": line[1] or None},
+            }
+            entry.update(dict(zip(fields, line[2:])))
+            converted.append(entry)
+        return {"line": converted}
+
+    def _with_lines(self, args):
+        """
+        Convert a 'lines' argument given as tuples into the AXL structure, leaving AXL dicts alone
+        :param args: method keyword arguments
+        :return: args with lines converted
+        """
+        if isinstance(args.get("lines"), list):
+            args["lines"] = self._lines(args["lines"])
+        return args
+
+    def _identify(self, name="", uuid=""):
+        """
+        Build the name-or-uuid identifier AXL expects, requiring exactly one of them
+        :param name: object name
+        :param uuid: object uuid
+        :return: {'name': name} or {'uuid': uuid}
+        """
+        if bool(name) == bool(uuid):
+            raise ValueError("Provide exactly one of name or uuid")
+        return {"name": name} if name else {"uuid": uuid}
 
     def get_location(self, **args):
         """
-        Get device pool parameters
+        Get location parameters
         :param name: location name
         :param uuid: location uuid
-        :return: result dictionary
+        :return: location dictionary
         """
-        try:
-            return self.client.getLocation(**args)
-        except Fault as e:
-            return e
+        return self.client.getLocation(**args)["return"]["location"]
 
     def add_location(
         self,
@@ -297,60 +343,42 @@ class axl(object):
         within_audio_bw=512,
         within_video_bw=-1,
         within_immersive_kbits=-1,
+        hub_location="Hub_None",
     ):
         """
         Add a location
         :param name: Name of the location to add
-        :param cucm_version: ucm version
-        :param kbits: ucm 8.5
-        :param video_kbits: ucm 8.5
-        :param within_audio_bw: ucm 10
-        :param within_video_bw: ucm 10
-        :param within_immersive_kbits: ucm 10
+        :param kbits: audio bandwidth, used only by schemas without withinAudioBandwidth (8.5)
+        :param video_kbits: video bandwidth, used only by schemas without withinAudioBandwidth (8.5)
+        :param within_audio_bw: audio bandwidth within the location (9.1 and later)
+        :param within_video_bw: video bandwidth within the location (9.1 and later)
+        :param within_immersive_kbits: immersive bandwidth within the location (9.1 and later)
+        :param hub_location: location linked to this one (9.1 and later)
         :return: result dictionary
         """
-        if (
-            self.cucm_version == "8.6"
-            or self.cucm_version == "9.0"
-            or self.cucm_version == "9.5"
-            or self.cucm_version == "10.0"
-        ):
-            try:
-                return self.client.addLocation(
-                    {
-                        "name": name,
-                        # CUCM 8.6
-                        "kbits": kbits,
-                        "videoKbits": video_kbits,
-                    }
-                )
-            except Fault as e:
-                return e
-        else:
-            try:
-                betweenLocations = []
-                betweenLocation = {}
-                RLocationBetween = {}
-                RLocationBetween["locationName"] = "Hub_None"
-                RLocationBetween["weight"] = 0
-                RLocationBetween["audioBandwidth"] = within_audio_bw
-                RLocationBetween["videoBandwidth"] = within_video_bw
-                RLocationBetween["immersiveBandwidth"] = within_immersive_kbits
-                betweenLocation["betweenLocation"] = RLocationBetween
-                betweenLocations.append(betweenLocation)
-
-                return self.client.addLocation(
-                    {
-                        "name": name,
-                        # CUCM 10.6
-                        "withinAudioBandwidth": within_audio_bw,
-                        "withinVideoBandwidth": within_video_bw,
-                        "withinImmersiveKbits": within_immersive_kbits,
-                        "betweenLocations": betweenLocations,
-                    }
-                )
-            except Fault as e:
-                return e
+        if "withinAudioBandwidth" not in self._schema_fields("addLocation", "location"):
+            return self.client.addLocation(
+                {"name": name, "kbits": kbits, "videoKbits": video_kbits}
+            )
+        return self.client.addLocation(
+            {
+                "name": name,
+                "withinAudioBandwidth": within_audio_bw,
+                "withinVideoBandwidth": within_video_bw,
+                "withinImmersiveKbits": within_immersive_kbits,
+                "betweenLocations": {
+                    "betweenLocation": [
+                        {
+                            "locationName": hub_location,
+                            "weight": 0,
+                            "audioBandwidth": within_audio_bw,
+                            "videoBandwidth": within_video_bw,
+                            "immersiveBandwidth": within_immersive_kbits,
+                        }
+                    ]
+                },
+            }
+        )
 
     def delete_location(self, **args):
         """
@@ -359,40 +387,31 @@ class axl(object):
         :param uuid: The uuid of the location to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeLocation(**args)
-        except Fault as e:
-            return e
+        return self.client.removeLocation(**args)
 
     def update_location(self, **args):
         """
         Update a Location
-        :param name:
-        :param uuid:
-        :param newName:
-        :param withinAudioBandwidth:
-        :param withinVideoBandwidth:
-        :param withImmersiveKbits:
-        :param betweenLocations:
-        :return:
+        :param name: location name (or uuid)
+        :param uuid: location uuid (or name)
+        :param newName: new location name
+        :param withinAudioBandwidth: audio bandwidth within the location
+        :param withinVideoBandwidth: video bandwidth within the location
+        :param withinImmersiveKbits: immersive bandwidth within the location
+        :param betweenLocations: {'betweenLocation': [{'locationName', 'weight', 'audioBandwidth', 'videoBandwidth', 'immersiveBandwidth'}]}
+        :return: result dictionary
         """
-        try:
-            return self.client.updateLocation(**args)
-        except Fault as e:
-            return e
+        return self.client.updateLocation(**args)
 
     def get_regions(self, tagfilter={"uuid": "", "name": ""}):
         """
         Get region details
-        :param mini: return a list of tuples of region details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listRegion({"name": "%"}, returnedTags=tagfilter)[
-                "return"
-            ]["region"]
-        except Fault as e:
-            return e
+        return self.client.listRegion({"name": "%"}, returnedTags=tagfilter)[
+            "return"
+        ]["region"]
 
     def get_region(self, **args):
         """
@@ -400,10 +419,7 @@ class axl(object):
         :param name: Region name
         :return: result dictionary
         """
-        try:
-            return self.client.getRegion(**args)["return"]["region"]
-        except Fault as e:
-            return e
+        return self.client.getRegion(**args)["return"]["region"]
 
     def add_region(self, name):
         """
@@ -411,18 +427,16 @@ class axl(object):
         :param name: Name of the region to add
         :return: result dictionary
         """
-        try:
-            return self.client.addRegion({"name": name})
-        except Fault as e:
-            return e
+        return self.client.addRegion({"name": name})
 
-    def update_region(self, name="", newName="", moh_region=""):
+    def update_region(self, name, newName=None, moh_region=""):
         """
-        Update region and assign region to all other regions
-        :param name:
-        :param uuid:
-        :param moh_region:
-        :return:
+        Update region and assign region to all other regions.
+        Overwrites every relationship of this region: 256 kbps within itself, 64 kbps to all others.
+        :param name: region name
+        :param newName: new region name, omitted when None
+        :param moh_region: music on hold region name
+        :return: result dictionary
         """
         # Get all Regions
         all_regions = self.client.listRegion({"name": "%"}, returnedTags={"name": ""})
@@ -467,39 +481,29 @@ class axl(object):
                         "lossyNetwork": "Use System Default",
                     }
                 )
-        try:
-            return self.client.updateRegion(
-                name=name,
-                newName=newName,
-                relatedRegions={"relatedRegion": region_list},
-            )
-        except Fault as e:
-            return e
+        update = {"name": name, "relatedRegions": {"relatedRegion": region_list}}
+        if newName:
+            update["newName"] = newName
+        return self.client.updateRegion(**update)
 
     def delete_region(self, **args):
         """
-        Delete a location
+        Delete a region
         :param name: The name of the region to delete
         :param uuid: The uuid of the region to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeRegion(**args)
-        except Fault as e:
-            return e
+        return self.client.removeRegion(**args)
 
     def get_srsts(self, tagfilter={"uuid": ""}):
         """
         Get all SRST details
-        :param mini: return a list of tuples of SRST details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listSrst({"name": "%"}, returnedTags=tagfilter)[
-                "return"
-            ]["srst"]
-        except Fault as e:
-            return e
+        return self.client.listSrst({"name": "%"}, returnedTags=tagfilter)[
+            "return"
+        ]["srst"]
 
     def get_srst(self, **args):
         """
@@ -507,10 +511,7 @@ class axl(object):
         :param name: SRST name
         :return: result dictionary
         """
-        try:
-            return self.client.getSrst(**args)["return"]["srst"]
-        except Fault as e:
-            return e
+        return self.client.getSrst(**args)["return"]["srst"]
 
     def add_srst(self, name, ip_address, port=2000, sip_port=5060):
         """
@@ -521,40 +522,38 @@ class axl(object):
         :param sip_port: SIP port
         :return: result dictionary
         """
-        try:
-            return self.client.addSrst(
-                {
-                    "name": name,
-                    "port": port,
-                    "ipAddress": ip_address,
-                    "SipPort": sip_port,
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addSrst(
+            {
+                "name": name,
+                "port": port,
+                "ipAddress": ip_address,
+                "SipPort": sip_port,
+            }
+        )
 
-    def delete_srst(self, name):
+    def delete_srst(self, name="", uuid=""):
         """
         Delete a SRST
-        :param name: The name of the SRST to delete
+        :param name: The name of the SRST to delete (or uuid)
+        :param uuid: The uuid of the SRST to delete (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeSrst(name=name)
-        except Fault as e:
-            return e
+        return self.client.removeSrst(**self._identify(name=name, uuid=uuid))
 
-    def update_srst(self, name, newName=""):
+    def update_srst(self, name="", newName=None, uuid="", **args):
         """
         Update a SRST
-        :param srst: The name of the SRST to update
-        :param newName: The new name of the SRST
+        :param name: The name of the SRST to update (or uuid)
+        :param newName: The new name of the SRST, omitted when None
+        :param uuid: The uuid of the SRST to update (or name)
+        :param ipAddress: SRST IP address
+        :param port: SRST port
+        :param SipPort: SIP port
         :return: result dictionary
         """
-        try:
-            return self.client.updateSrst(name=name, newName=newName)
-        except Fault as e:
-            return e
+        if newName:
+            args["newName"] = newName
+        return self.client.updateSrst(**self._identify(name=name, uuid=uuid), **args)
 
     def get_device_pools(
         self,
@@ -570,15 +569,12 @@ class axl(object):
     ):
         """
         Get a dictionary of device pools
-        :param mini: return a list of tuples of device pool info
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: a list of dictionary's of device pools information
         """
-        try:
-            return self.client.listDevicePool({"name": "%"}, returnedTags=tagfilter,)[
-                "return"
-            ]["devicePool"]
-        except Fault as e:
-            return e
+        return self.client.listDevicePool({"name": "%"}, returnedTags=tagfilter,)[
+            "return"
+        ]["devicePool"]
 
     def get_device_pool(self, **args):
         """
@@ -586,10 +582,7 @@ class axl(object):
         :param name: device pool name
         :return: result dictionary
         """
-        try:
-            return self.client.getDevicePool(**args)["return"]["devicePool"]
-        except Fault as e:
-            return e
+        return self.client.getDevicePool(**args)["return"]["devicePool"]
 
     def add_device_pool(
         self,
@@ -602,74 +595,69 @@ class axl(object):
         srst="Disable",
         cm_group="Default",
         network_locale="",
+        aar_group=None,
+        local_route_group_name="Standard Local Route Group",
     ):
 
         """
         Add a device pool
-        :param device_pool: Device pool name
+        :param name: Device pool name
         :param date_time_group: Date time group name
         :param region: Region name
         :param location: Location name
-        :param route_group: Route group name
+        :param route_group: Route group used as the local route group, omitted when empty
         :param media_resource_group_list: Media resource group list name
         :param srst: SRST name
         :param cm_group: CM Group name
         :param network_locale: Network locale name
+        :param aar_group: AAR group name, None for no AAR group
+        :param local_route_group_name: Local route group slot that route_group fills
         :return: result dictionary
         """
-        try:
-            return self.client.addDevicePool(
-                {
-                    "name": name,
-                    "dateTimeSettingName": date_time_group,  # update to state timezone
-                    "regionName": region,
-                    "locationName": location,
-                    "localRouteGroup": {
-                        "name": "Standard Local Route Group",
-                        "value": route_group,
-                    },
-                    "mediaResourceListName": media_resource_group_list,
-                    "srstName": srst,
-                    "callManagerGroupName": cm_group,
-                    "networkLocale": network_locale,
-                }
-            )
-        except Fault as e:
-            return e
+        device_pool = {
+            "name": name,
+            "dateTimeSettingName": date_time_group,
+            "regionName": region,
+            "locationName": location,
+            "mediaResourceListName": media_resource_group_list,
+            "srstName": srst,
+            "callManagerGroupName": cm_group,
+            "networkLocale": network_locale,
+            "aarNeighborhoodName": aar_group,
+        }
+        if route_group:
+            device_pool["localRouteGroup"] = {
+                "name": local_route_group_name,
+                "value": route_group,
+            }
+        return self.client.addDevicePool(device_pool)
 
     def update_device_pool(self, **args):
         """
-        Update a device pools route group and media resource group list
-        :param name:
-        :param uuid:
-        :param newName:
-        :param mediaResourceGroupListName:
-        :param dateTimeSettingName:
-        :param callManagerGroupName:
-        :param regionName:
-        :param locationName:
-        :param networkLocale:
-        :param srstName:
-        :param localRouteGroup:
-        :param elinGroup:
-        :param media_resource_group_list:
-        :return:
+        Update a device pool
+        :param name: device pool name (or uuid)
+        :param uuid: device pool uuid (or name)
+        :param newName: new device pool name
+        :param media_resource_group_list: media resource group list name (AXL name: mediaResourceListName)
+        :param date_time_group: date/time group name (AXL name: dateTimeSettingName)
+        :param cm_group: Unified CM group name (AXL name: callManagerGroupName)
+        :param region: region name (AXL name: regionName)
+        :param location: location name (AXL name: locationName)
+        :param network_locale: network locale (AXL name: networkLocale)
+        :param srst: SRST name (AXL name: srstName)
+        :param localRouteGroup: {'name': 'Standard Local Route Group', 'value': route group name}
+        :param elinGroup: ELIN group name
+        :return: result dictionary
         """
-        try:
-            return self.client.updateDevicePool(**args)
-        except Fault as e:
-            return e
+        return self.client.updateDevicePool(**args)
 
     def delete_device_pool(self, **args):
         """
         Delete a Device pool
-        :param device_pool: The name of the Device pool to delete
+        :param device_pool: The name of the Device pool to delete (or name / uuid)
         :return: result dictionary
         """
-        try:
-            return self.client.removeDevicePool(**args)
-        except Fault as e:
-            return e
+        return self.client.removeDevicePool(**args)
 
     def get_conference_bridges(
         self,
@@ -682,16 +670,13 @@ class axl(object):
     ):
         """
         Get conference bridges
-        :param mini: List of tuples of conference bridge details
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: results dictionary
         """
-        try:
-            return self.client.listConferenceBridge(
-                {"name": "%"},
-                returnedTags=tagfilter,
-            )["return"]["conferenceBridge"]
-        except Fault as e:
-            return e
+        return self.client.listConferenceBridge(
+            {"name": "%"},
+            returnedTags=tagfilter,
+        )["return"]["conferenceBridge"]
 
     def get_conference_bridge(self, **args):
         """
@@ -699,10 +684,7 @@ class axl(object):
         :param name: conference bridge name
         :return: result dictionary
         """
-        try:
-            return self.client.getConferenceBridge(**args)["return"]["conferenceBridge"]
-        except Fault as e:
-            return e
+        return self.client.getConferenceBridge(**args)["return"]["conferenceBridge"]
 
     def add_conference_bridge(
         self,
@@ -723,73 +705,60 @@ class axl(object):
         :param security_profile: Conference bridge security type
         :return: result dictionary
         """
-        try:
-            return self.client.addConferenceBridge(
-                {
-                    "name": name,
-                    "description": description,
-                    "devicePoolName": device_pool,
-                    "locationName": location,
-                    "product": product,
-                    "securityProfileName": security_profile,
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addConferenceBridge(
+            {
+                "name": name,
+                "description": description,
+                "devicePoolName": device_pool,
+                "locationName": location,
+                "product": product,
+                "securityProfileName": security_profile,
+            }
+        )
 
     def update_conference_bridge(self, **args):
         """
         Update a conference bridge
-        :param name: Conference bridge name
+        :param name: Conference bridge name (or uuid)
+        :param uuid: Conference bridge uuid (or name)
         :param newName: New Conference bridge name
         :param description: Conference bridge description
-        :param device_pool: Device pool name
-        :param location: Location name
-        :param product: Conference bridge type
-        :param security_profile: Conference bridge security type
+        :param device_pool: Device pool name (AXL name: devicePoolName)
+        :param location: Location name (AXL name: locationName)
+        :param security_profile: Conference bridge security profile (AXL name: securityProfileName)
         :return: result dictionary
         """
-        try:
-            return self.client.updateConferenceBridge(**args)
-        except Fault as e:
-            return e
+        return self.client.updateConferenceBridge(**args)
 
-    def delete_conference_bridge(self, name):
+    def delete_conference_bridge(self, name="", uuid=""):
         """
         Delete a Conference bridge
-        :param name: The name of the Conference bridge to delete
+        :param name: The name of the Conference bridge to delete (or uuid)
+        :param uuid: The uuid of the Conference bridge to delete (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeConferenceBridge(name=name)
-        except Fault as e:
-            return e
+        return self.client.removeConferenceBridge(**self._identify(name=name, uuid=uuid))
 
     def get_transcoders(
         self, tagfilter={"name": "", "description": "", "devicePoolName": ""}
     ):
         """
         Get transcoders
-        :param mini: List of tuples of transcoder details
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: results dictionary
         """
-        try:
-            return self.client.listTranscoder({"name": "%"}, returnedTags=tagfilter,)[
-                "return"
-            ]["transcoder"]
-        except Fault as e:
-            return e
+        return self.client.listTranscoder({"name": "%"}, returnedTags=tagfilter,)[
+            "return"
+        ]["transcoder"]
 
     def get_transcoder(self, **args):
         """
-        Get conference bridge parameters
-        :param name: transcoder name
+        Get transcoder parameters
+        :param name: transcoder name (or uuid)
+        :param uuid: transcoder uuid (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.getTranscoder(**args)["return"]["transcoder"]
-        except Fault as e:
-            return e
+        return self.client.getTranscoder(**args)["return"]["transcoder"]
 
     def add_transcoder(
         self,
@@ -797,76 +766,66 @@ class axl(object):
         description="",
         device_pool="Default",
         product="Cisco IOS Enhanced Media Termination Point",
+        load_information=None,
     ):
         """
         Add a transcoder
-        :param transcoder: Transcoder name
+        :param name: Transcoder name
         :param description: Transcoder description
         :param device_pool: Transcoder device pool
-        :param product: Trancoder product
+        :param product: Transcoder product
+        :param load_information: firmware load, None for the system default
         :return: result dictionary
         """
-        try:
-            return self.client.addTranscoder(
-                {
-                    "name": name,
-                    "description": description,
-                    "devicePoolName": device_pool,
-                    "product": product,
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addTranscoder(
+            {
+                "name": name,
+                "description": description,
+                "devicePoolName": device_pool,
+                "product": product,
+                "loadInformation": load_information,
+            }
+        )
 
     def update_transcoder(self, **args):
         """
-        Add a transcoder
-        :param name: Transcoder name
+        Update a transcoder (product can't be changed after creation)
+        :param name: Transcoder name (or uuid)
+        :param uuid: Transcoder uuid (or name)
         :param newName: New Transcoder name
         :param description: Transcoder description
-        :param device_pool: Transcoder device pool
-        :param product: Trancoder product
+        :param device_pool: Transcoder device pool (AXL name: devicePoolName)
         :return: result dictionary
         """
-        try:
-            return self.client.updateTranscoder(**args)
-        except Fault as e:
-            return e
+        return self.client.updateTranscoder(**args)
 
-    def delete_transcoder(self, name):
+    def delete_transcoder(self, name="", uuid=""):
         """
         Delete a Transcoder
-        :param name: The name of the Transcoder to delete
+        :param name: The name of the Transcoder to delete (or uuid)
+        :param uuid: The uuid of the Transcoder to delete (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeTranscoder(name=name)
-        except Fault as e:
-            return e
+        return self.client.removeTranscoder(**self._identify(name=name, uuid=uuid))
 
     def get_mtps(self, tagfilter={"name": "", "description": "", "devicePoolName": ""}):
         """
         Get mtps
-        :param mini: List of tuples of transcoder details
-        :return: results dictionary
+        :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'description': ''}
+        :return: list of MTP dictionaries
         """
-        try:
-            return self.client.listMtp({"name": "%"}, returnedTags=tagfilter,)[
-                "return"
-            ]["mtp"]
-        except Fault as e:
-            return e
+        return self.client.listMtp({"name": "%"}, returnedTags=tagfilter,)[
+            "return"
+        ]["mtp"]
 
     def get_mtp(self, **args):
         """
         Get mtp parameters
-        :param name: transcoder name
+        :param name: MTP name (or uuid)
+        :param uuid: MTP uuid (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.getMtp(**args)["return"]["mtp"]
-        except Fault as e:
-            return e
+        return self.client.getMtp(**args)["return"]["mtp"]
 
     def add_mtp(
         self,
@@ -883,43 +842,36 @@ class axl(object):
         :param mtpType: MTP Type
         :return: result dictionary
         """
-        try:
-            return self.client.addMtp(
-                {
-                    "name": name,
-                    "description": description,
-                    "devicePoolName": device_pool,
-                    "mtpType": mtpType,
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addMtp(
+            {
+                "name": name,
+                "description": description,
+                "devicePoolName": device_pool,
+                "mtpType": mtpType,
+            }
+        )
 
     def update_mtp(self, **args):
         """
-        Update an MTP
-        :param name: MTP name
+        Update an MTP (mtpType can't be changed after creation)
+        :param name: MTP name (or uuid)
+        :param uuid: MTP uuid (or name)
         :param newName: New MTP name
         :param description: MTP description
-        :param device_pool: MTP device pool
-        :param mtpType: MTP Type
+        :param device_pool: MTP device pool (AXL name: devicePoolName)
+        :param trustedRelayPoint: boolean
         :return: result dictionary
         """
-        try:
-            return self.client.updateMtp(**args)
-        except Fault as e:
-            return e
+        return self.client.updateMtp(**args)
 
-    def delete_mtp(self, name):
+    def delete_mtp(self, name="", uuid=""):
         """
         Delete an MTP
-        :param name: The name of the Transcoder to delete
+        :param name: The name of the MTP to delete (or uuid)
+        :param uuid: The uuid of the MTP to delete (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeMtp(name=name)
-        except Fault as e:
-            return e
+        return self.client.removeMtp(**self._identify(name=name, uuid=uuid))
 
     def get_h323_gateways(
         self,
@@ -933,15 +885,12 @@ class axl(object):
     ):
         """
         Get H323 Gateways
-        :param mini: List of tuples of H323 Gateway details
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: results dictionary
         """
-        try:
-            return self.client.listH323Gateway({"name": "%"}, returnedTags=tagfilter,)[
-                "return"
-            ]["h323Gateway"]
-        except Fault as e:
-            return e
+        return self.client.listH323Gateway({"name": "%"}, returnedTags=tagfilter,)[
+            "return"
+        ]["h323Gateway"]
 
     def get_h323_gateway(self, **args):
         """
@@ -949,85 +898,86 @@ class axl(object):
         :param name: H323 Gateway name
         :return: result dictionary
         """
-        try:
-            return self.client.getH323Gateway(**args)["return"]["h323Gateway"]
-        except Fault as e:
-            return e
+        return self.client.getH323Gateway(**args)["return"]["h323Gateway"]
 
     def add_h323_gateway(self, **args):
         """
-        Add H323 gateway
-        :param h323_gateway:
-        :param description:
-        :param device_pool:
-        :param location:
-        :param media_resource_group_list: Media resource group list name
-        :param prefix_dn:
-        :param sig_digits: Significant digits, 99 = ALL
-        :param css:
-        :param aar_css:
-        :param aar_neighborhood:
-        :param product:
-        :param protocol:
-        :param protocol_side:
-        :param pstn_access:
-        :param redirect_in_num_ie:
-        :param redirect_out_num_ie:
-        :param cld_party_ie_num_type:
-        :param clng_party_ie_num_type:
-        :param clng_party_nat_pre:
-        :param clng_party_inat_prefix:
-        :param clng_party_unknown_prefix:
-        :param clng_party_sub_prefix:
-        :param clng_party_nat_strip_digits:
-        :param clng_party_inat_strip_digits:
-        :param clng_party_unknown_strip_digits:
-        :param clng_party_sub_strip_digits:
-        :param clng_party_nat_trans_css:
-        :param clng_party_inat_trans_css:
-        :param clng_party_unknown_trans_css:
-        :param clng_party_sub_trans_css:
-        :return:
+        Add H323 gateway. Friendly names and AXL element names are both accepted;
+        required elements not given use the schema defaults.
+        :param h323_gateway: gateway name, usually the IP address (AXL name: name) - required
+        :param description: description
+        :param device_pool: device pool name (AXL name: devicePoolName) - required
+        :param location: location name (AXL name: locationName), default Hub_None
+        :param media_resource_group_list: Media resource group list name (AXL name: mediaResourceListName)
+        :param prefix_dn: prefix DN (AXL name: prefixDn)
+        :param sig_digits: Significant digits, 99 = ALL (AXL name: sigDigits)
+        :param css: calling search space (AXL name: callingSearchSpaceName)
+        :param aar_css: AAR calling search space (AXL name: automatedAlternateRoutingCssName)
+        :param aar_neighborhood: AAR group (AXL name: aarNeighborhoodName)
+        :param product: default 'H.323 Gateway'
+        :param protocol: default 'H.225'
+        :param protocol_side: default 'Network' (AXL name: protocolSide)
+        :param pstn_access: boolean (AXL name: pstnAccess)
+        :param redirect_in_num_ie: boolean (AXL name: redirectInboundNumberIe)
+        :param redirect_out_num_ie: boolean (AXL name: redirectOutboundNumberIe)
+        :param cld_party_ie_num_type: (AXL name: calledPartyIeNumberType)
+        :param clng_party_ie_num_type: (AXL name: callingPartyIeNumberType)
+        :param clng_party_nat_pre: (AXL name: callingPartyNationalPrefix)
+        :param clng_party_inat_prefix: (AXL name: callingPartyInternationalPrefix)
+        :param clng_party_unknown_prefix: (AXL name: callingPartyUnknownPrefix)
+        :param clng_party_sub_prefix: (AXL name: callingPartySubscriberPrefix)
+        :param clng_party_nat_strip_digits: (AXL name: callingPartyNationalStripDigits)
+        :param clng_party_inat_strip_digits: (AXL name: callingPartyInternationalStripDigits)
+        :param clng_party_unknown_strip_digits: (AXL name: callingPartyUnknownStripDigits)
+        :param clng_party_sub_strip_digits: (AXL name: callingPartySubscriberStripDigits)
+        :param clng_party_nat_trans_css: (AXL name: callingPartyNationalTransformationCssName)
+        :param clng_party_inat_trans_css: (AXL name: callingPartyInternationalTransformationCssName)
+        :param clng_party_unknown_trans_css: (AXL name: callingPartyUnknownTransformationCssName)
+        :param clng_party_sub_trans_css: (AXL name: callingPartySubscriberTransformationCssName)
+        :return: result dictionary
         """
-        try:
-            return self.client.addH323Gateway(**args)
-        except Fault as e:
-            return e
+        gateway = self._build_object(
+            "addH323Gateway",
+            "h323Gateway",
+            args,
+            defaults={
+                "product": "H.323 Gateway",
+                "class": "Gateway",
+                "protocol": "H.225",
+                "protocolSide": "Network",
+                "locationName": "Hub_None",
+            },
+        )
+        return self.client.addH323Gateway(gateway)
 
     def update_h323_gateway(self, **args):
         """
-
-        :param name:
-        :return:
-        """
-        try:
-            return self.client.updateH323Gateway(**args)
-        except Fault as e:
-            return e
-
-    def delete_h323_gateway(self, name):
-        """
-        Delete a H323 gateway
-        :param name: The name of the H323 gateway to delete
+        Update an H323 gateway. Accepts the same friendly names as add_h323_gateway.
+        :param name: gateway name (or uuid)
+        :param uuid: gateway uuid (or name)
+        :param newName: new gateway name
         :return: result dictionary
         """
-        try:
-            return self.client.removeH323Gateway(name=name)
-        except Fault as e:
-            return e
+        return self.client.updateH323Gateway(**args)
+
+    def delete_h323_gateway(self, name="", uuid=""):
+        """
+        Delete a H323 gateway
+        :param name: The name of the H323 gateway to delete (or uuid)
+        :param uuid: The uuid of the H323 gateway to delete (or name)
+        :return: result dictionary
+        """
+        return self.client.removeH323Gateway(**self._identify(name=name, uuid=uuid))
 
     def get_route_groups(self, tagfilter={"name": "", "distributionAlgorithm": ""}):
         """
         Get route groups
-        :param mini: return a list of tuples of route group details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listRouteGroup({"name": "%"}, returnedTags=tagfilter)[
-                "return"
-            ]["routeGroup"]
-        except Fault as e:
-            return e
+        return self.client.listRouteGroup({"name": "%"}, returnedTags=tagfilter)[
+            "return"
+        ]["routeGroup"]
 
     def get_route_group(self, **args):
         """
@@ -1036,77 +986,60 @@ class axl(object):
         :param uuid: route group uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getRouteGroup(**args)["return"]["routeGroup"]
-        except Fault as e:
-            return e
+        return self.client.getRouteGroup(**args)["return"]["routeGroup"]
 
     def add_route_group(self, name, distribution_algorithm="Top Down", members=[]):
         """
         Add a route group
         :param name: Route group name
-        :param distribution_algorithm: Top Down/Circular
-        :param members: A list of devices to add (must already exist DUH!)
+        :param distribution_algorithm: Top Down, Circular, Longest Idle Time or Broadcast
+        :param members: A list of existing gateway/trunk device names, in selection order
+        :return: result dictionary
         """
         req = {
             "name": name,
             "distributionAlgorithm": distribution_algorithm,
-            "members": {"member": []},
+            "members": {
+                "member": [
+                    {"deviceName": device, "deviceSelectionOrder": order, "port": 0}
+                    for order, device in enumerate(members, start=1)
+                ]
+            },
         }
-
-        if members:
-            [
-                req["members"]["member"].append(
-                    {
-                        "deviceName": i,
-                        "deviceSelectionOrder": members.index(i) + 1,
-                        "port": 0,
-                    }
-                )
-                for i in members
-            ]
-
-        try:
-            return self.client.addRouteGroup(req)
-        except Fault as e:
-            return e
+        return self.client.addRouteGroup(req)
 
     def delete_route_group(self, **args):
         """
         Delete a Route group
-        :param name: The name of the Route group to delete
+        :param name: The name of the Route group to delete (or uuid)
+        :param uuid: The uuid of the Route group to delete (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeRouteGroup(**args)
-        except Fault as e:
-            return e
+        return self.client.removeRouteGroup(**args)
 
     def update_route_group(self, **args):
         """
         Update a Route group
-        :param name: The name of the Route group to update
-        :param distribution_algorithm: Top Down/Circular
-        :param members: A list of devices to add (must already exist DUH!)
+        :param name: The name of the Route group to update (or uuid)
+        :param uuid: The uuid of the Route group to update (or name)
+        :param newName: new route group name
+        :param distribution_algorithm: Top Down, Circular, Longest Idle Time or Broadcast
+        :param members: replaces all members: {'member': [{'deviceName', 'deviceSelectionOrder', 'port'}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
         """
-        try:
-            return self.client.updateRouteGroup(**args)
-        except Fault as e:
-            return e
+        return self.client.updateRouteGroup(**args)
 
     def get_route_lists(self, tagfilter={"name": "", "description": ""}):
         """
         Get route lists
-        :param mini: return a list of tuples of route list details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listRouteList({"name": "%"}, returnedTags=tagfilter)[
-                "return"
-            ]["routeList"]
-        except Fault as e:
-            return e
+        return self.client.listRouteList({"name": "%"}, returnedTags=tagfilter)[
+            "return"
+        ]["routeList"]
 
     def get_route_list(self, **args):
         """
@@ -1115,10 +1048,7 @@ class axl(object):
         :param uuid: route list uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getRouteList(**args)["return"]["routeList"]
-        except Fault as e:
-            return e
+        return self.client.getRouteList(**args)["return"]["routeList"]
 
     def add_route_list(
         self,
@@ -1134,10 +1064,10 @@ class axl(object):
         Add a route list
         :param name: Route list name
         :param description: Route list description
-        :param cm_group_name: Route list call mangaer group name
+        :param cm_group_name: Route list call manager group name
         :param route_list_enabled: Enable route list
         :param run_on_all_nodes: Run route list on all nodes
-        :param members: A list of route groups
+        :param members: A list of route group names, in selection order
         :return: Result dictionary
         """
         req = {
@@ -1146,34 +1076,22 @@ class axl(object):
             "callManagerGroupName": cm_group_name,
             "routeListEnabled": route_list_enabled,
             "runOnEveryNode": run_on_all_nodes,
-            "members": {"member": []},
-        }
-
-        if members:
-            [
-                req["members"]["member"].append(
+            "members": {
+                "member": [
                     {
-                        "routeGroupName": i,
-                        "selectionOrder": members.index(i) + 1,
-                        "calledPartyTransformationMask": "",
-                        "callingPartyTransformationMask": "",
-                        "digitDiscardInstructionName": "",
-                        "callingPartyPrefixDigits": "",
-                        "prefixDigitsOut": "",
+                        "routeGroupName": group,
+                        "selectionOrder": order,
                         "useFullyQualifiedCallingPartyNumber": "Default",
                         "callingPartyNumberingPlan": "Cisco CallManager",
                         "callingPartyNumberType": "Cisco CallManager",
                         "calledPartyNumberingPlan": "Cisco CallManager",
                         "calledPartyNumberType": "Cisco CallManager",
                     }
-                )
-                for i in members
-            ]
-
-        try:
-            return self.client.addRouteList(req)
-        except Fault as e:
-            return e
+                    for order, group in enumerate(members, start=1)
+                ]
+            },
+        }
+        return self.client.addRouteList(req)
 
     def delete_route_list(self, **args):
         """
@@ -1182,112 +1100,89 @@ class axl(object):
         :param uuid: The uuid of the Route list to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeRouteList(**args)
-        except Fault as e:
-            return e
+        return self.client.removeRouteList(**args)
 
     def update_route_list(self, **args):
         """
         Update a Route list
-        :param name: The name of the Route list to update
-        :param uuid: The uuid of the Route list to update
+        :param name: The name of the Route list to update (or uuid)
+        :param uuid: The uuid of the Route list to update (or name)
+        :param newName: new route list name
         :param description: Route list description
-        :param cm_group_name: Route list call mangaer group name
-        :param route_list_enabled: Enable route list
-        :param run_on_all_nodes: Run route list on all nodes
-        :param members: A list of route groups
+        :param cm_group_name: Route list call manager group name (AXL name: callManagerGroupName)
+        :param route_list_enabled: Enable route list (AXL name: routeListEnabled)
+        :param run_on_all_nodes: Run route list on all nodes (AXL name: runOnEveryNode)
+        :param members: replaces all members: {'member': [{'routeGroupName', 'selectionOrder', 'useFullyQualifiedCallingPartyNumber'}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
         """
-        try:
-            return self.client.updateRouteList(**args)
-        except Fault as e:
-            return e
+        return self.client.updateRouteList(**args)
 
     def get_partitions(self, tagfilter={"name": "", "description": ""}):
         """
         Get partitions
-        :param mini: return a list of tuples of partition details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listRoutePartition(
-                {"name": "%"}, returnedTags=tagfilter
-            )["return"]["routePartition"]
-        except Fault as e:
-            return e
+        return self.client.listRoutePartition(
+            {"name": "%"}, returnedTags=tagfilter
+        )["return"]["routePartition"]
 
     def get_partition(self, **args):
         """
         Get partition details
-        :param partition: Partition name
-        :param uuid: UUID name
+        :param partition: Partition name (AXL name: name)
+        :param uuid: Partition uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getRoutePartition(**args)["return"]["routePartition"]
-        except Fault as e:
-            return e
+        return self.client.getRoutePartition(**args)["return"]["routePartition"]
 
-    def add_partition(self, name, description="", time_schedule_name="All the time"):
+    def add_partition(self, name, description="", time_schedule_name=None):
         """
         Add a partition
         :param name: Name of the partition to add
-        :param description: Partition description
-        :param time_schedule_name: Name of the time schedule to use
+        :param description: Partition description, max 50 characters
+        :param time_schedule_name: Name of an existing time schedule, None for always active
         :return: result dictionary
         """
-        try:
-            return self.client.addRoutePartition(
-                {
-                    "name": name,
-                    "description": description,
-                    "timeScheduleIdName": time_schedule_name,
-                }
-            )
-        except Fault as e:
-            return e
+        partition = {"name": name, "description": description}
+        if time_schedule_name:
+            partition["timeScheduleIdName"] = time_schedule_name
+        return self.client.addRoutePartition(partition)
 
     def delete_partition(self, **args):
         """
         Delete a partition
-        :param partition: The name of the partition to delete
+        :param partition: The name of the partition to delete (AXL name: name)
+        :param uuid: The uuid of the partition to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeRoutePartition(**args)
-        except Fault as e:
-            return e
+        return self.client.removeRoutePartition(**args)
 
     def update_partition(self, **args):
         """
-        Update calling search space
-        :param uuid: CSS UUID
-        :param name: CSS Name
-        :param description:
-        :param newName:
-        :param timeScheduleIdName:
-        :param useOriginatingDeviceTimeZone:
-        :param timeZone:
+        Update a partition
+        :param uuid: Partition uuid (or name)
+        :param name: Partition name (or uuid)
+        :param description: Partition description, max 50 characters
+        :param newName: new partition name
+        :param timeScheduleIdName: time schedule name
+        :param useOriginatingDeviceTimeZone: boolean
+        :param timeZone: time zone when not using the originating device's
         :return: result dictionary
         """
-        try:
-            return self.client.updateRoutePartition(**args)
-        except Fault as e:
-            return e
+        return self.client.updateRoutePartition(**args)
 
     def get_calling_search_spaces(self, tagfilter={"name": "", "description": ""}):
         """
         Get calling search spaces
-        :param mini: return a list of tuples of css details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listCss({"name": "%"}, returnedTags=tagfilter)["return"][
-                "css"
-            ]
-        except Fault as e:
-            return e
+        return self.client.listCss({"name": "%"}, returnedTags=tagfilter)["return"][
+            "css"
+        ]
 
     def get_calling_search_space(self, **args):
         """
@@ -1296,10 +1191,7 @@ class axl(object):
         :param uuid: Calling search space uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getCss(**args)["return"]["css"]
-        except Fault as e:
-            return e
+        return self.client.getCss(**args)["return"]["css"]
 
     def add_calling_search_space(self, name, description="", members=[]):
         """
@@ -1312,97 +1204,78 @@ class axl(object):
         req = {
             "name": name,
             "description": description,
-            "members": {"member": []},
+            "members": {
+                "member": [
+                    {"routePartitionName": partition, "index": index}
+                    for index, partition in enumerate(members, start=1)
+                ]
+            },
         }
-        if members:
-            [
-                req["members"]["member"].append(
-                    {
-                        "routePartitionName": i,
-                        "index": members.index(i) + 1,
-                    }
-                )
-                for i in members
-            ]
-
-        try:
-            return self.client.addCss(req)
-        except Fault as e:
-            return e
+        return self.client.addCss(req)
 
     def delete_calling_search_space(self, **args):
         """
         Delete a Calling search space
-        :param calling_search_space: The name of the partition to delete
+        :param calling_search_space: The name of the calling search space to delete (AXL name: name)
+        :param uuid: The uuid of the calling search space to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeCss(**args)
-        except Fault as e:
-            return e
+        return self.client.removeCss(**args)
 
     def update_calling_search_space(self, **args):
         """
         Update calling search space
-        :param uuid: CSS UUID
-        :param name: CSS Name
-        :param description:
-        :param newName:
-        :param members:
-        :param removeMembers:
-        :param addMembers:
+        :param uuid: CSS uuid (or name)
+        :param name: CSS name (or uuid)
+        :param description: CSS description, max 50 characters
+        :param newName: new CSS name
+        :param members: replaces all members: {'member': [{'routePartitionName', 'index'}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
         """
-        try:
-            return self.client.updateCss(**args)
-        except Fault as e:
-            return e
+        return self.client.updateCss(**args)
 
     def get_route_patterns(
         self, tagfilter={"pattern": "", "description": "", "uuid": ""}
     ):
         """
         Get route patterns
-        :param mini: return a list of tuples of route pattern details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listRoutePattern(
-                {"pattern": "%"},
-                returnedTags=tagfilter,
-            )["return"]["routePattern"]
-        except Fault as e:
-            return e
+        return self.client.listRoutePattern(
+            {"pattern": "%"},
+            returnedTags=tagfilter,
+        )["return"]["routePattern"]
 
-    def get_route_pattern(self, pattern="", uuid=""):
+    def get_route_pattern(self, pattern="", uuid="", partition=""):
         """
         Get route pattern
-        :param pattern: route pattern
-        :param uuid: route pattern uuid
-        :return: result dictionary
+        :param pattern: route pattern (or uuid)
+        :param uuid: route pattern uuid (or pattern)
+        :param partition: route pattern partition; when omitted, the first pattern match in any partition is returned
+        :return: route pattern dictionary
         """
-        if uuid == "" and pattern != "":
-            # Cant get pattern directly so get UUID first
-            try:
-                uuid = self.client.listRoutePattern(
-                    {"pattern": pattern}, returnedTags={"uuid": ""}
-                )
-            except Fault as e:
-                return e
-            if "return" in uuid and uuid["return"] is not None:
-                uuid = uuid["return"]["routePattern"][0]["uuid"]
-                try:
-                    return self.client.getRoutePattern(uuid=uuid)["return"][
-                        "routePattern"
-                    ]
-                except Fault as e:
-                    return e
-
-        elif uuid != "" and pattern == "":
-            try:
-                return self.client.getRoutePattern(uuid=uuid)
-            except Fault as e:
-                return e
+        if bool(pattern) == bool(uuid):
+            raise ValueError("Provide exactly one of pattern or uuid")
+        if pattern and partition:
+            identifier = {
+                "pattern": pattern,
+                "routePartitionName": partition,
+                "dialPlanName": None,
+                "routeFilterName": None,
+            }
+        elif pattern:
+            matches = self.client.listRoutePattern(
+                {"pattern": pattern}, returnedTags={"uuid": ""}
+            )["return"]["routePattern"]
+            if not matches:
+                raise LookupError(f"Route pattern '{pattern}' not found")
+            identifier = {"uuid": matches[0]["uuid"]}
+        else:
+            identifier = {"uuid": uuid}
+        return self.client.getRoutePattern(**identifier)["return"]["routePattern"]
 
     def add_route_pattern(
         self,
@@ -1413,101 +1286,91 @@ class axl(object):
         partition="",
         blockEnable=False,
         patternUrgency=False,
-        releaseClause="Call Rejected",
+        releaseClause="No Error",
     ):
         """
         Add a route pattern
         :param pattern: Route pattern - required
-        :param gateway: Destination gateway - required
-        :param route_list: Destination route list - required
-               Either a gateway or route list can be used at the same time
+        :param gateway: Destination gateway - provide exactly one of gateway or route_list
+        :param route_list: Destination route list - provide exactly one of gateway or route_list
         :param description: Route pattern description
         :param partition: Route pattern partition
+        :param blockEnable: block the pattern instead of routing it
+        :param patternUrgency: route immediately on match (urgent priority)
+        :param releaseClause: release cause when blocked, e.g. 'Call Rejected'; default 'No Error'
         :return: result dictionary
         """
+        if bool(gateway) == bool(route_list):
+            raise ValueError("Provide exactly one of gateway or route_list")
+        destination = {"gatewayName": gateway} if gateway else {"routeListName": route_list}
 
         req = {
             "pattern": pattern,
             "description": description,
-            "destination": {},
+            "destination": destination,
             "routePartitionName": partition,
             "blockEnable": blockEnable,
+            "patternUrgency": patternUrgency,
             "releaseClause": releaseClause,
             "useCallingPartyPhoneMask": "Default",
             "networkLocation": "OnNet",
         }
-
-        if gateway == "" and route_list == "":
-            return "Either a gateway OR route list, is a required parameter"
-
-        elif gateway != "" and route_list != "":
-            return "Enter a gateway OR route list, not both"
-
-        elif gateway != "":
-            req["destination"].update({"gatewayName": gateway})
-        elif route_list != "":
-            req["destination"].update({"routeListName": route_list})
-        try:
-            return self.client.addRoutePattern(req)
-        except Fault as e:
-            return e
+        return self.client.addRoutePattern(req)
 
     def delete_route_pattern(self, **args):
         """
         Delete a route pattern
-        :param uuid: The pattern uuid
+        :param uuid: The pattern uuid (or pattern + partition)
         :param pattern: The pattern of the route to delete
-        :param partition: The name of the partition
+        :param partition: The name of the partition (AXL name: routePartitionName)
+        :param dialPlanName: dial plan, usually omitted
+        :param routeFilterName: route filter, usually omitted
         :return: result dictionary
         """
-        try:
-            return self.client.removeRoutePattern(**args)
-        except Fault as e:
-            return e
+        if "uuid" not in args:
+            args.setdefault("dialPlanName", None)
+            args.setdefault("routeFilterName", None)
+        return self.client.removeRoutePattern(**args)
 
     def update_route_pattern(self, **args):
         """
         Update a route pattern
-        :param uuid: The pattern uuid
+        :param uuid: The pattern uuid (or pattern + partition)
         :param pattern: The pattern of the route to update
-        :param partition: The name of the partition
-        :param gateway: Destination gateway - required
-        :param route_list: Destination route list - required
-               Either a gateway or route list can be used at the same time
+        :param partition: The name of the partition (AXL name: routePartitionName)
+        :param newPattern: new pattern
+        :param new_partition: new partition (AXL name: newRoutePartitionName)
+        :param gateway: Destination gateway (AXL name: destination.gatewayName)
+        :param route_list: Destination route list (AXL name: destination.routeListName)
+               Provide at most one of gateway or route_list
         :param description: Route pattern description
-        :param partition: Route pattern partition
         :return: result dictionary
         """
-        try:
-            return self.client.updateRoutePattern(**args)
-        except Fault as e:
-            return e
+        if "uuid" not in args:
+            args.setdefault("dialPlanName", None)
+            args.setdefault("routeFilterName", None)
+        return self.client.updateRoutePattern(**args)
 
     def get_media_resource_groups(self, tagfilter={"name": "", "description": ""}):
         """
         Get media resource groups
-        :param mini: return a list of tuples of route pattern details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'description': ''}
+        :return: list of media resource group dictionaries
         """
-        try:
-            return self.client.listMediaResourceGroup(
-                {"name": "%"}, returnedTags=tagfilter
-            )["return"]["mediaResourceGroup"]
-        except Fault as e:
-            return e
+        return self.client.listMediaResourceGroup(
+            {"name": "%"}, returnedTags=tagfilter
+        )["return"]["mediaResourceGroup"]
 
     def get_media_resource_group(self, **args):
         """
         Get a media resource group details
-        :param media_resource_group: Media resource group name
+        :param media_resource_group: Media resource group name (AXL name: name)
+        :param uuid: Media resource group uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getMediaResourceGroup(**args)["return"][
-                "mediaResourceGroup"
-            ]
-        except Fault as e:
-            return e
+        return self.client.getMediaResourceGroup(**args)["return"][
+            "mediaResourceGroup"
+        ]
 
     def add_media_resource_group(
         self, name, description="", multicast="false", members=[]
@@ -1516,119 +1379,102 @@ class axl(object):
         Add a media resource group
         :param name: Media resource group name
         :param description: Media resource description
-        :param multicast: Mulicast enabled
-        :param members: Media resource group members
+        :param multicast: Multicast enabled
+        :param members: list of media resource device names
         :return: result dictionary
         """
         req = {
             "name": name,
             "description": description,
             "multicast": multicast,
-            "members": {"member": []},
+            "members": {"member": [{"deviceName": device} for device in members]},
         }
-
-        if members:
-            [req["members"]["member"].append({"deviceName": i}) for i in members]
-
-        try:
-            return self.client.addMediaResourceGroup(req)
-        except Fault as e:
-            return e
+        return self.client.addMediaResourceGroup(req)
 
     def update_media_resource_group(self, **args):
         """
         Update a media resource group
-        :param name: Media resource group name
+        :param name: Media resource group name (or uuid)
+        :param uuid: Media resource group uuid (or name)
+        :param newName: new media resource group name
         :param description: Media resource description
-        :param multicast: Mulicast enabled
-        :param members: Media resource group members
+        :param multicast: Multicast enabled
+        :param members: replaces all members: {'member': [{'deviceName': name}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
         """
-        try:
-            return self.client.updateMediaResourceGroup(**args)
-        except Fault as e:
-            return e
+        return self.client.updateMediaResourceGroup(**args)
 
-    def delete_media_resource_group(self, name):
+    def delete_media_resource_group(self, name="", uuid=""):
         """
         Delete a Media resource group
-        :param media_resource_group: The name of the media resource group to delete
+        :param name: The name of the media resource group to delete (or uuid)
+        :param uuid: The uuid of the media resource group to delete (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeMediaResourceGroup(name=name)
-        except Fault as e:
-            return e
+        return self.client.removeMediaResourceGroup(**self._identify(name=name, uuid=uuid))
 
     def get_media_resource_group_lists(self, tagfilter={"name": ""}):
         """
-        Get media resource groups
-        :param mini: return a list of tuples of route pattern details
-        :return: A list of dictionary's
+        Get media resource group lists
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of media resource group list dictionaries
         """
-        try:
-            return self.client.listMediaResourceList(
-                {"name": "%"}, returnedTags=tagfilter
-            )["return"]["mediaResourceList"]
-        except Fault as e:
-            return e
+        return self.client.listMediaResourceList(
+            {"name": "%"}, returnedTags=tagfilter
+        )["return"]["mediaResourceList"]
 
-    def get_media_resource_group_list(self, name):
+    def get_media_resource_group_list(self, name="", uuid=""):
         """
         Get a media resource group list details
-        :param name: Media resource group list name
-        :return: result dictionary
+        :param name: Media resource group list name (or uuid)
+        :param uuid: Media resource group list uuid (or name)
+        :return: media resource group list dictionary
         """
-        try:
-            return self.client.getMediaResourceList(name=name)
-        except Fault as e:
-            return e
+        return self.client.getMediaResourceList(**self._identify(name=name, uuid=uuid))[
+            "return"
+        ]["mediaResourceList"]
 
     def add_media_resource_group_list(self, name, members=[]):
         """
         Add a media resource group list
-        :param media_resource_group_list: Media resource group list name
-        :param members: A list of members
-        :return:
+        :param name: Media resource group list name
+        :param members: list of media resource group names, in priority order
+        :return: result dictionary
         """
-        req = {"name": name, "members": {"member": []}}
-
-        if members:
-            [
-                req["members"]["member"].append(
-                    {"order": members.index(i), "mediaResourceGroupName": i}
-                )
-                for i in members
-            ]
-        try:
-            return self.client.addMediaResourceList(req)
-        except Fault as e:
-            return e
+        req = {
+            "name": name,
+            "members": {
+                "member": [
+                    {"order": order, "mediaResourceGroupName": group}
+                    for order, group in enumerate(members)
+                ]
+            },
+        }
+        return self.client.addMediaResourceList(req)
 
     def update_media_resource_group_list(self, **args):
         """
         Update a media resource group list
-        :param name: Media resource group name
-        :param description: Media resource description
-        :param multicast: Mulicast enabled
-        :param members: Media resource group members
+        :param name: Media resource group list name (or uuid)
+        :param uuid: Media resource group list uuid (or name)
+        :param newName: new media resource group list name
+        :param members: replaces all members: {'member': [{'mediaResourceGroupName', 'order'}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
         """
-        try:
-            return self.client.updateMediaResourceList(**args)
-        except Fault as e:
-            return e
+        return self.client.updateMediaResourceList(**args)
 
-    def delete_media_resource_group_list(self, name):
+    def delete_media_resource_group_list(self, name="", uuid=""):
         """
         Delete a Media resource group list
-        :param name: The name of the media resource group list to delete
+        :param name: The name of the media resource group list to delete (or uuid)
+        :param uuid: The uuid of the media resource group list to delete (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeMediaResourceList(name=name)
-        except Fault as e:
-            return e
+        return self.client.removeMediaResourceList(**self._identify(name=name, uuid=uuid))
 
     def get_directory_numbers(
         self,
@@ -1640,15 +1486,12 @@ class axl(object):
     ):
         """
         Get directory numbers
-        :param mini: return a list of tuples of directory number details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listLine({"pattern": "%"}, returnedTags=tagfilter,)[
-                "return"
-            ]["line"]
-        except Fault as e:
-            return e
+        return self.client.listLine({"pattern": "%"}, returnedTags=tagfilter,)[
+            "return"
+        ]["line"]
 
     def get_directory_number(self, **args):
         """
@@ -1657,10 +1500,7 @@ class axl(object):
         :param partition:
         :return: result dictionary
         """
-        try:
-            return self.client.getLine(**args)["return"]["line"]
-        except Fault as e:
-            return e
+        return self.client.getLine(**args)["return"]["line"]
 
     def add_directory_number(
         self,
@@ -1697,129 +1537,121 @@ class axl(object):
         :param forward_to_vm: Forward to voice mail checkbox
         :return: result dictionary
         """
-        try:
-            return self.client.addLine(
-                {
-                    "pattern": pattern,
-                    "routePartitionName": partition,
-                    "description": description,
-                    "alertingName": alerting_name,
-                    "asciiAlertingName": ascii_alerting_name,
-                    "voiceMailProfileName": vm_profile_name,
-                    "shareLineAppearanceCssName": shared_line_css,
-                    "aarNeighborhoodName": aar_neighbourhood,
-                    "aarDestinationMask": aar_destination_mask,
-                    "usage": "Device",
-                    "callForwardAll": {
-                        "forwardToVoiceMail": forward_all_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": forward_all_destination,
-                    },
-                    "callForwardBusy": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardBusyInt": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardNoAnswer": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardNoAnswerInt": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardNoCoverage": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardNoCoverageInt": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardOnFailure": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardNotRegistered": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                    "callForwardNotRegisteredInt": {
-                        "forwardToVoiceMail": forward_to_vm,
-                        "callingSearchSpaceName": call_forward_css,
-                        "destination": call_forward_destination,
-                    },
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addLine(
+            {
+                "pattern": pattern,
+                "routePartitionName": partition,
+                "description": description,
+                "alertingName": alerting_name,
+                "asciiAlertingName": ascii_alerting_name,
+                "voiceMailProfileName": vm_profile_name,
+                "shareLineAppearanceCssName": shared_line_css,
+                "aarNeighborhoodName": aar_neighbourhood,
+                "aarDestinationMask": aar_destination_mask,
+                "usage": "Device",
+                "callForwardAll": {
+                    "forwardToVoiceMail": forward_all_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "secondaryCallingSearchSpaceName": None,
+                    "destination": forward_all_destination,
+                },
+                "callForwardBusy": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardBusyInt": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardNoAnswer": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardNoAnswerInt": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardNoCoverage": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardNoCoverageInt": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardOnFailure": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardNotRegistered": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+                "callForwardNotRegisteredInt": {
+                    "forwardToVoiceMail": forward_to_vm,
+                    "callingSearchSpaceName": call_forward_css,
+                    "destination": call_forward_destination,
+                },
+            }
+        )
 
-    def delete_directory_number(self, pattern="", routePartitionName="", uuid=""):
+    def delete_directory_number(
+        self, pattern="", routePartitionName="", uuid="", partition=""
+    ):
         """
         Delete a directory number
-        :param directory_number: The name of the directory number to delete
+        :param pattern: Directory number (or uuid)
+        :param routePartitionName: Route partition name, same as partition
+        :param uuid: Directory number uuid (or pattern)
+        :param partition: Route partition name, empty for the <None> partition
         :return: result dictionary
         """
-        if uuid != "":
-            try:
-                return self.client.removeLine(uuid=uuid)
-            except Fault as e:
-                return e
-        else:
-            try:
-                return self.client.removeLine(
-                    pattern=pattern, routePartitionName=routePartitionName
-                )
-            except Fault as e:
-                return e
+        if bool(pattern) == bool(uuid):
+            raise ValueError("Provide exactly one of pattern or uuid")
+        if uuid:
+            return self.client.removeLine(uuid=uuid)
+        return self.client.removeLine(
+            pattern=pattern, routePartitionName=partition or routePartitionName or None
+        )
 
     def update_directory_number(self, **args):
         """
         Update a directory number
-        :param pattern: Directory number
-        :param partition: Route partition name
+        :param pattern: Directory number (or uuid)
+        :param partition: Route partition name (AXL name: routePartitionName)
+        :param uuid: Directory number uuid (or pattern + partition)
+        :param newPattern: new directory number
+        :param new_partition: new partition (AXL name: newRoutePartitionName)
         :param description: Directory number description
-        :param alerting_name: Alerting name
-        :param ascii_alerting_name: ASCII alerting name
-        :param shared_line_css: Calling search space
-        :param aar_neighbourhood: AAR group
-        :param call_forward_css: Call forward calling search space
-        :param vm_profile_name: Voice mail profile
-        :param aar_destination_mask: AAR destination mask
-        :param call_forward_destination: Call forward destination
-        :param forward_all_to_vm: Forward all to voice mail checkbox
-        :param forward_all_destination: Forward all destination
-        :param forward_to_vm: Forward to voice mail checkbox
+        :param alerting_name: Alerting name (AXL name: alertingName)
+        :param ascii_alerting_name: ASCII alerting name (AXL name: asciiAlertingName)
+        :param shared_line_css: Shared line appearance CSS (AXL name: shareLineAppearanceCssName)
+        :param aar_neighbourhood: AAR group (AXL name: aarNeighborhoodName)
+        :param vm_profile_name: Voice mail profile (AXL name: voiceMailProfileName)
+        :param aar_destination_mask: AAR destination mask (AXL name: aarDestinationMask)
+        :param callForwardAll: {'forwardToVoiceMail', 'callingSearchSpaceName', 'destination'}
+        :param callForwardBusy: same shape as callForwardAll; likewise callForwardNoAnswer, callForwardNotRegistered, etc.
         :return: result dictionary
         """
-        try:
-            return self.client.updateLine(**args)
-        except Fault as e:
-            return e
+        return self.client.updateLine(**args)
 
     def get_cti_route_points(self, tagfilter={"name": "", "description": ""}):
         """
         Get CTI route points
-        :param mini: return a list of tuples of CTI route point details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listCtiRoutePoint({"name": "%"}, returnedTags=tagfilter)[
-                "return"
-            ]["ctiRoutePoint"]
-        except Fault as e:
-            return e
+        return self.client.listCtiRoutePoint({"name": "%"}, returnedTags=tagfilter)[
+            "return"
+        ]["ctiRoutePoint"]
 
     def get_cti_route_point(self, **args):
         """
@@ -1828,10 +1660,7 @@ class axl(object):
         :param uuid: CTI route point uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getCtiRoutePoint(**args)["return"]["ctiRoutePoint"]
-        except Fault as e:
-            return e
+        return self.client.getCtiRoutePoint(**args)["return"]["ctiRoutePoint"]
 
     def add_cti_route_point(
         self,
@@ -1847,6 +1676,7 @@ class axl(object):
         protocol_slide="User",
         use_trusted_relay_point="Default",
         lines=[],
+        protocol_side=None,
     ):
         """
         Add CTI route point
@@ -1861,10 +1691,11 @@ class axl(object):
         :param product: CTI device type
         :param dev_class: CTI device type
         :param protocol: CTI protocol
-        :param protocol_slide: CTI protocol slide
+        :param protocol_side: protocol side, default 'User'
+        :param protocol_slide: deprecated misspelling of protocol_side
         :param use_trusted_relay_point: Use trusted relay point: (Default, On, Off)
         :param lines: A list of tuples of [(directory_number, partition)]
-        :return:
+        :return: result dictionary
         """
 
         req = {
@@ -1873,65 +1704,46 @@ class axl(object):
             "product": product,
             "class": dev_class,
             "protocol": protocol,
-            "protocolSide": protocol_slide,
+            "protocolSide": protocol_side or protocol_slide,
             "commonDeviceConfigName": common_device_config,
             "callingSearchSpaceName": css,
             "devicePoolName": device_pool,
             "locationName": location,
             "useTrustedRelayPoint": use_trusted_relay_point,
-            "lines": {"line": []},
         }
-
         if lines:
-            [
-                req["lines"]["line"].append(
-                    {
-                        "index": lines.index(i) + 1,
-                        "dirn": {"pattern": i[0], "routePartitionName": i[1]},
-                    }
-                )
-                for i in lines
-            ]
+            req["lines"] = self._lines(lines)
 
-        try:
-            return self.client.addCtiRoutePoint(req)
-        except Fault as e:
-            return e
+        return self.client.addCtiRoutePoint(req)
 
     def delete_cti_route_point(self, **args):
         """
         Delete a CTI route point
-        :param cti_route_point: The name of the CTI route point to delete
+        :param cti_route_point: The name of the CTI route point to delete (AXL name: name)
+        :param uuid: The uuid of the CTI route point to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeCtiRoutePoint(**args)
-        except Fault as e:
-            return e
+        return self.client.removeCtiRoutePoint(**args)
 
     def update_cti_route_point(self, **args):
         """
-        Add CTI route point
-        lines should be a list of tuples containing the pattern and partition
+        Update CTI route point (product, class and protocol can't be changed after creation)
+        lines can be a list of tuples containing the pattern and partition
         EG: [('77777', 'AU_PHONE_PT')]
-        :param name: CTI route point name
+        :param name: CTI route point name (or uuid)
+        :param uuid: CTI route point uuid (or name)
+        :param newName: new CTI route point name
         :param description: CTI route point description
         :param device_pool: Device pool name
         :param location: Location name
         :param common_device_config: Common device config name
         :param css: Calling search space name
-        :param product: CTI device type
-        :param dev_class: CTI device type
-        :param protocol: CTI protocol
-        :param protocol_slide: CTI protocol slide
+        :param protocol_side: protocol side
         :param use_trusted_relay_point: Use trusted relay point: (Default, On, Off)
-        :param lines: A list of tuples of [(directory_number, partition)]
-        :return:
+        :param lines: replaces all lines: list of tuples [(directory_number, partition)]
+        :return: result dictionary
         """
-        try:
-            return self.client.updateCtiRoutePoint(**args)
-        except Fault as e:
-            return e
+        return self.client.updateCtiRoutePoint(**self._with_lines(args))
 
     def get_phones(
         self,
@@ -1945,6 +1757,12 @@ class axl(object):
             "callingSearchSpaceName": "",
         },
     ):
+        """
+        Get phones, paging through results 1000 at a time
+        :param query: AXL search criteria, e.g. {'name': 'SEP%'} or {'devicePoolName': 'Default'}
+        :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'product': ''}
+        :return: list of phone dictionaries, empty when nothing matches
+        """
         skip = 0
         a = []
 
@@ -1969,28 +1787,25 @@ class axl(object):
         :param phone: profile name
         :return: result dictionary
         """
-        try:
-            return self.client.getPhone(**args)["return"]["phone"]
-        except Fault as e:
-            return e
+        return self.client.getPhone(**args)["return"]["phone"]
 
     def add_phone(
         self,
         name,
         description="",
-        product="Cisco 7941",
+        product="Cisco 8861",
         device_pool="Default",
         location="Hub_None",
         phone_template="Standard 8861 SIP",
         common_device_config="",
-	css="",
+        css="",
         aar_css="",
         subscribe_css="",
         ownerUserName="",
-	securityProfileName="",
+        securityProfileName="",
         lines=[],
         dev_class="Phone",
-        protocol="SCCP",
+        protocol="SIP",
         softkey_template="Standard User",
         enable_em="true",
         em_service_name="Extension Mobility",
@@ -1998,9 +1813,11 @@ class axl(object):
         em_url_button_enable=False,
         em_url_button_index="1",
         em_url_label="Press here to logon",
-        ehook_enable=1,
-	enableActivationID = 'True',
-    	allowMraMode = 'True',
+        ehook_enable=None,
+        enableActivationID=False,
+        allowMraMode=False,
+        sip_profile="Standard SIP Profile",
+        common_phone_config="Standard Common Phone Profile",
     ):
         """
         lines takes a list of Tuples with properties for each line EG:
@@ -2009,31 +1826,34 @@ class axl(object):
             DN     partition    display        ascii          label               mask
         [('77777', 'LINE_PT', 'Jim Smith', 'Jim Smith', 'Jim Smith - 77777', '0294127777')]
         Add A phone
-        :param name:
-        :param description:
-        :param product:
-        :param device_pool:
-        :param location:
-        :param phone_template:
-        :param common_device_config:
-        :param css:
-        :param aar_css:
-        :param subscribe_css:
-	:param ownerUserName:
-        :param lines:
-        :param dev_class:
-        :param protocol:
-        :param softkey_template:
-        :param enable_em:
-        :param em_service_name:
-        :param em_service_url:
-        :param em_url_button_enable:
-        :param em_url_button_index:
-        :param em_url_label:
-        :param ehook_enable:
-	:param enableactivationid:
-	:param allowmramode:
-        :return:
+        :param name: device name, e.g. SEP001122334455
+        :param description: description
+        :param product: phone model, e.g. 'Cisco 8861'
+        :param device_pool: device pool name
+        :param location: location name
+        :param phone_template: phone button template matching product and protocol
+        :param common_device_config: common device configuration name
+        :param css: calling search space
+        :param aar_css: AAR calling search space
+        :param subscribe_css: presence subscribe calling search space
+        :param ownerUserName: owner user ID
+        :param securityProfileName: security profile; SIP phones default to '<product> - Standard SIP Non-Secure Profile'
+        :param lines: list of line tuples, see above
+        :param dev_class: device class, default 'Phone'
+        :param protocol: 'SIP' or 'SCCP'
+        :param softkey_template: softkey template name
+        :param enable_em: allow Extension Mobility logins
+        :param em_service_name: Extension Mobility IP phone service name
+        :param em_service_url: subscribe the phone to the Extension Mobility service
+        :param em_url_button_enable: also add the service as a URL button (needs em_service_url)
+        :param em_url_button_index: URL button index
+        :param em_url_label: URL button label
+        :param ehook_enable: set the vendor config ehookEnable value (1 or 0); omitted when None
+        :param enableActivationID: onboard with an activation code (12.5 and later schemas)
+        :param allowMraMode: allow MRA activation-code onboarding (12.5 and later schemas)
+        :param sip_profile: SIP profile, used when protocol is SIP
+        :param common_phone_config: common phone profile name
+        :return: result dictionary
         """
 
         req = {
@@ -2044,11 +1864,12 @@ class axl(object):
             "protocol": protocol,
             "protocolSide": "User",
             "commonDeviceConfigName": common_device_config,
-            "commonPhoneConfigName": "Standard Common Phone Profile",
-	    "softkeyTemplateName": softkey_template,
+            "commonPhoneConfigName": common_phone_config,
+            "softkeyTemplateName": softkey_template,
             "phoneTemplateName": phone_template,
             "devicePoolName": device_pool,
             "locationName": location,
+            "primaryPhoneName": None,
             "useTrustedRelayPoint": "Off",
             "builtInBridgeStatus": "Default",
             "certificateOperation": "No Pending Operation",
@@ -2058,98 +1879,88 @@ class axl(object):
             "callingSearchSpaceName": css,
             "automatedAlternateRoutingCssName": aar_css,
             "subscribeCallingSearchSpaceName": subscribe_css,
-	    "ownerUserName": ownerUserName,
-	    "enableActivationID": True,
-	    "allowMraMode": True,
-            "lines": {"line": []},
-            "services": {"service": []},
-            "vendorConfig": [{"ehookEnable": ehook_enable}],
+            "ownerUserName": ownerUserName,
         }
 
+        if protocol == "SIP":
+            req["sipProfileName"] = sip_profile
+            req["securityProfileName"] = (
+                securityProfileName or f"{product} - Standard SIP Non-Secure Profile"
+            )
+        elif securityProfileName:
+            req["securityProfileName"] = securityProfileName
+
+        phone_fields = self._schema_fields("addPhone", "phone")
+        for field, value in (
+            ("enableActivationID", enableActivationID),
+            ("allowMraMode", allowMraMode),
+        ):
+            if field in phone_fields:
+                req[field] = str(value).lower() in ("true", "t", "1")
+
         if lines:
-            [
-                req["lines"]["line"].append(
-                    {
-                        "index": lines.index(i) + 1,
-                        "dirn": {"pattern": i[0], "routePartitionName": i[1]},
-                        "display": i[2],
-                        "displayAscii": i[3],
-                        "label": i[4],
-                        "e164Mask": i[5],
-                    }
-                )
-                for i in lines
-            ]
+            req["lines"] = self._lines(lines)
 
         if em_service_url:
-            req["services"]["service"].append(
-                [
-                    {
-                        "telecasterServiceName": em_service_name,
-                        "name": em_service_name,
-                        "url": "http://{0}:8080/emapp/EMAppServlet?device=#DEVICENAME#&EMCC=#EMCC#".format(
-                            self.cucm
-                        ),
-                    }
-                ]
-            )
+            service = {
+                "telecasterServiceName": em_service_name,
+                "name": em_service_name,
+                "url": "http://{0}:8080/emapp/EMAppServlet?device=#DEVICENAME#&EMCC=#EMCC#".format(
+                    self.cucm
+                ),
+            }
+            if em_url_button_enable:
+                service.update(
+                    {"urlButtonIndex": em_url_button_index, "urlLabel": em_url_label}
+                )
+            req["services"] = {"service": [service]}
 
-        if em_url_button_enable:
-            req["services"]["service"][0].update(
-                {"urlButtonIndex": em_url_button_index, "urlLabel": em_url_label}
-            )
-        try:
-            return self.client.addPhone(req)
-        except Fault as e:
-            return e
+        if ehook_enable is not None:
+            ehook = etree.Element("ehookEnable")
+            ehook.text = str(ehook_enable)
+            req["vendorConfig"] = {"_value_1": [ehook]}
+
+        return self.client.addPhone(req)
 
     def delete_phone(self, **args):
         """
         Delete a phone
-        :param phone: The name of the phone to delete
+        :param phone: The name of the phone to delete (AXL name: name)
+        :param uuid: The uuid of the phone to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removePhone(**args)
-        except Fault as e:
-            return e
+        return self.client.removePhone(**args)
 
     def update_phone(self, **args):
 
         """
-        lines takes a list of Tuples with properties for each line EG:
+        Update a phone (product, class and protocol can't be changed after creation)
+        lines can be a list of Tuples with properties for each line EG:
 
                                                display                           external
             DN     partition    display        ascii          label               mask
         [('77777', 'LINE_PT', 'Jim Smith', 'Jim Smith', 'Jim Smith - 77777', '0294127777')]
-        Add A phone
-        :param name:
-        :param description:
-        :param product:
-        :param device_pool:
-        :param location:
-        :param phone_template:
-        :param common_device_config:
-        :param css:
-        :param aar_css:
-        :param subscribe_css:
-        :param lines:
-        :param dev_class:
-        :param protocol:
-        :param softkey_template:
-        :param enable_em:
-        :param em_service_name:
-        :param em_service_url:
-        :param em_url_button_enable:
-        :param em_url_button_index:
-        :param em_url_label:
-        :param ehook_enable:
-        :return:
+        :param name: device name (or uuid)
+        :param uuid: device uuid (or name)
+        :param newName: new device name
+        :param description: description
+        :param device_pool: device pool name
+        :param location: location name
+        :param phone_template: phone button template
+        :param common_device_config: common device configuration name
+        :param css: calling search space
+        :param aar_css: AAR calling search space
+        :param subscribe_css: presence subscribe calling search space
+        :param lines: replaces all lines: list of line tuples, see above
+        :param addLines: lines to add, AXL structure {'line': [...]} (instead of lines)
+        :param removeLines: lines to remove, AXL structure {'line': [...]} (instead of lines)
+        :param softkey_template: softkey template name
+        :param enable_em: allow Extension Mobility logins
+        :param security_profile: security profile name
+        :param sip_profile: SIP profile name
+        :return: result dictionary
         """
-        try:
-            return self.client.updatePhone(**args)
-        except Fault as e:
-            return e
+        return self.client.updatePhone(**self._with_lines(args))
 
     def get_device_profiles(
         self,
@@ -2162,16 +1973,13 @@ class axl(object):
     ):
         """
         Get device profile details
-        :param mini: return a list of tuples of device profile details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listDeviceProfile(
-                {"name": "%"},
-                returnedTags=tagfilter,
-            )["return"]["deviceProfile"]
-        except Fault as e:
-            return e
+        return self.client.listDeviceProfile(
+            {"name": "%"},
+            returnedTags=tagfilter,
+        )["return"]["deviceProfile"]
 
     def get_device_profile(self, **args):
         """
@@ -2180,10 +1988,7 @@ class axl(object):
         :param uuid: profile uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getDeviceProfile(**args)["return"]["deviceProfile"]
-        except Fault as e:
-            return e
+        return self.client.getDeviceProfile(**args)["return"]["deviceProfile"]
 
     def add_device_profile(
         self,
@@ -2205,16 +2010,17 @@ class axl(object):
                                                display                           external
             DN     partition    display        ascii          label               mask
         [('77777', 'LINE_PT', 'Jim Smith', 'Jim Smith', 'Jim Smith - 77777', '0294127777')]
-        :param name:
-        :param description:
-        :param product:
-        :param phone_template:
-        :param lines:
-        :param dev_class:
-        :param protocol:
-        :param softkey_template:
-        :param em_service_name:
-        :return:
+        :param name: device profile name
+        :param description: description
+        :param product: phone model the profile is for
+        :param phone_template: phone button template matching product and protocol
+        :param lines: list of line tuples, see above
+        :param dev_class: device class, default 'Device Profile'
+        :param protocol: 'SIP' or 'SCCP'
+        :param protocolSide: protocol side, default 'User'
+        :param softkey_template: softkey template name
+        :param em_service_name: Extension Mobility service to subscribe, None for no services
+        :return: result dictionary
         """
 
         req = {
@@ -2226,64 +2032,47 @@ class axl(object):
             "protocolSide": protocolSide,
             "softkeyTemplateName": softkey_template,
             "phoneTemplateName": phone_template,
-            "lines": {"line": []},
         }
-
         if lines:
-            [
-                req["lines"]["line"].append(
-                    {
-                        "index": lines.index(i) + 1,
-                        "dirn": {"pattern": i[0], "routePartitionName": i[1]},
-                        "display": i[2],
-                        "displayAscii": i[3],
-                        "label": i[4],
-                        "e164Mask": i[5],
-                    }
-                )
-                for i in lines
-            ]
+            req["lines"] = self._lines(lines)
+        if em_service_name:
+            req["services"] = {
+                "service": [
+                    {"telecasterServiceName": em_service_name, "name": em_service_name}
+                ]
+            }
 
-        try:
-            blah = self.client.addDeviceProfile(req)
-            return blah
-        except Fault as e:
-            return e
+        return self.client.addDeviceProfile(req)
 
     def delete_device_profile(self, **args):
         """
         Delete a device profile
-        :param profile: The name of the device profile to delete
+        :param profile: The name of the device profile to delete (AXL name: name)
+        :param uuid: The uuid of the device profile to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeDeviceProfile(**args)
-        except Fault as e:
-            return e
+        return self.client.removeDeviceProfile(**args)
 
     def update_device_profile(self, **args):
         """
         Update A Device profile for use with extension mobility
-        lines takes a list of Tuples with properties for each line EG:
+        (product, class and protocol can't be changed after creation)
+        lines can be a list of Tuples with properties for each line EG:
 
                                                display                           external
             DN     partition    display        ascii          label               mask
         [('77777', 'LINE_PT', 'Jim Smith', 'Jim Smith', 'Jim Smith - 77777', '0294127777')]
-        :param profile:
-        :param description:
-        :param product:
-        :param phone_template:
-        :param lines:
-        :param dev_class:
-        :param protocol:
-        :param softkey_template:
-        :param em_service_name:
-        :return:
+        :param profile: device profile name (AXL name: name)
+        :param uuid: device profile uuid
+        :param newName: new device profile name
+        :param description: description
+        :param phone_template: phone button template
+        :param softkey_template: softkey template name
+        :param lines: replaces all lines: list of line tuples, see above
+        :param services: {'service': [{'telecasterServiceName', 'name'}]}
+        :return: result dictionary
         """
-        try:
-            return self.client.updateDeviceProfile(**args)
-        except Fault as e:
-            return e
+        return self.client.updateDeviceProfile(**self._with_lines(args))
 
     def get_users(self, tagfilter={"userid": "", "firstName": "", "lastName": ""}):
         """
@@ -2318,90 +2107,135 @@ class axl(object):
             a.extend(each)
         return a
 
-    def get_user(self, userid):
+    def get_user(self, userid="", user_id="", uuid=""):
         """
         Get user parameters
-        :param user_id: profile name
-        :return: result dictionary
+        :param userid: User ID (or uuid)
+        :param user_id: same as userid
+        :param uuid: user uuid (or userid)
+        :return: user dictionary
         """
-        try:
-            return self.client.getUser(userid=userid)["return"]["user"]
-        except Fault as e:
-            return e
+        userid = userid or user_id
+        if bool(userid) == bool(uuid):
+            raise ValueError("Provide exactly one of userid or uuid")
+        identifier = {"userid": userid} if userid else {"uuid": uuid}
+        return self.client.getUser(**identifier)["return"]["user"]
 
     def add_user(
         self,
-        userid,
-        lastName,
-        firstName,
+        userid="",
+        lastName="",
+        firstName="",
         presenceGroupName="Standard Presence group",
         phoneProfiles=[],
+        user_id="",
+        last_name="",
+        first_name="",
     ):
         """
         Add a user
-        :param user_id: User ID of the user to add
-        :param first_name: First name of the user to add
-        :param last_name: Last name of the user to add
+        :param userid: User ID of the user to add (or user_id) - required
+        :param lastName: Last name of the user to add (or last_name) - required
+        :param firstName: First name of the user to add (or first_name) - optional
+        :param presenceGroupName: presence group name
+        :param phoneProfiles: list of device profile names to associate
         :return: result dictionary
         """
+        userid = userid or user_id
+        lastName = lastName or last_name
+        firstName = firstName or first_name
+        if not userid or not lastName:
+            raise ValueError("userid and lastName are required")
 
-        try:
-            return self.client.addUser(
-                {
-                    "userid": userid,
-                    "lastName": lastName,
-                    "firstName": firstName,
-                    "presenceGroupName": presenceGroupName,
-                    "phoneProfiles": phoneProfiles,
-                }
-            )
-        except Fault as e:
-            return e
+        user = {
+            "userid": userid,
+            "lastName": lastName,
+            "presenceGroupName": presenceGroupName,
+        }
+        if firstName:
+            user["firstName"] = firstName
+        if phoneProfiles:
+            user["phoneProfiles"] = {"profileName": list(phoneProfiles)}
+        return self.client.addUser(user)
 
     def update_user(self, **args):
         """
-        Update end user for credentials
-        :param userid: User ID
+        Update an end user. Any updatable XUser field is accepted.
+        :param userid: User ID (or uuid; user_id also works)
+        :param uuid: user uuid (or userid)
         :param password: Web interface password
         :param pin: Extension mobility PIN
+        :param first_name: first name (AXL name: firstName)
+        :param last_name: last name (AXL name: lastName)
+        :param associatedGroups: replaces all groups: {'userGroup': [{'name': group}]}
+        :param phoneProfiles: replaces all device profiles: {'profileName': [name, ...]}
         :return: result dictionary
         """
-        try:
-            return self.client.updateUser(**args)
-        except Fault as e:
-            return e
+        return self.client.updateUser(**args)
 
     def update_user_em(
-        self, user_id, device_profile, default_profile, subscribe_css, primary_extension
+        self,
+        user_id,
+        device_profile,
+        default_profile,
+        subscribe_css,
+        primary_extension,
+        user_group="Standard CCM End Users",
+        primary_extension_partition=None,
     ):
         """
-        Update end user for extension mobility
+        Update end user for extension mobility. The device profile and user group are added
+        to the user's existing profiles and groups.
         :param user_id: User ID
         :param device_profile: Device profile name
         :param default_profile: Default profile name
         :param subscribe_css: Subscribe CSS
         :param primary_extension: Primary extension, must be a number from the device profile
+        :param user_group: user group to add, None to leave groups unchanged
+        :param primary_extension_partition: partition of the primary extension
         :return: result dictionary
         """
-        try:
-            resp = self.client.getDeviceProfile(name=device_profile)
-        except Fault as e:
-            return e
-        if "return" in resp and resp["return"] is not None:
-            uuid = resp["return"]["deviceProfile"]["uuid"]
-            try:
-                return self.client.updateUser(
-                    userid=user_id,
-                    phoneProfiles={"profileName": {"uuid": uuid}},
-                    defaultProfile=default_profile,
-                    subscribeCallingSearchSpaceName=subscribe_css,
-                    primaryExtension={"pattern": primary_extension},
-                    associatedGroups={"userGroup": {"name": "Standard CCM End Users"}},
-                )
-            except Fault as e:
-                return e
-        else:
-            return "Device Profile not found for user"
+        profile_uuid = self.client.getDeviceProfile(name=device_profile)["return"][
+            "deviceProfile"
+        ]["uuid"]
+        user = self.client.getUser(
+            userid=user_id,
+            returnedTags={
+                "phoneProfiles": {"profileName": ""},
+                "associatedGroups": {"userGroup": {"name": ""}},
+            },
+        )["return"]["user"]
+
+        profiles = [
+            {"uuid": profile["uuid"]}
+            for profile in ((user["phoneProfiles"] or {}).get("profileName") or [])
+            if profile["uuid"]
+        ]
+        if profile_uuid.lower() not in {p["uuid"].lower() for p in profiles}:
+            profiles.append({"uuid": profile_uuid})
+
+        primary = {"pattern": primary_extension}
+        if primary_extension_partition:
+            primary["routePartitionName"] = primary_extension_partition
+
+        update = {
+            "userid": user_id,
+            "phoneProfiles": {"profileName": profiles},
+            "defaultProfile": default_profile,
+            "subscribeCallingSearchSpaceName": subscribe_css,
+            "primaryExtension": primary,
+        }
+        if user_group:
+            groups = [
+                group["name"]
+                for group in ((user["associatedGroups"] or {}).get("userGroup") or [])
+            ]
+            if user_group not in groups:
+                groups.append(user_group)
+            update["associatedGroups"] = {
+                "userGroup": [{"name": group} for group in groups]
+            }
+        return self.client.updateUser(**update)
 
     def update_user_credentials(self, userid, password="", pin=""):  # nosec
         """
@@ -2411,123 +2245,92 @@ class axl(object):
         :param pin: Extension mobility PIN
         :return: result dictionary
         """
-
         if password == "" and pin == "":  # nosec
-            return "Password and/or Pin are required"
+            raise ValueError("Password and/or Pin are required")
 
-        elif password != "" and pin != "":  # nosec
-            try:
-                return self.client.updateUser(
-                    userid=userid, password=password, pin=pin
-                )  # nosec
-            except Fault as e:
-                return e
-
-        elif password != "":  # nosec
-            try:
-                return self.client.updateUser(userid=userid, password=password)
-            except Fault as e:
-                return e
-
-        elif pin != "":
-            try:
-                return self.client.updateUser(userid=userid, pin=pin)
-            except Fault as e:
-                return e
+        credentials = {"userid": userid}
+        if password != "":  # nosec
+            credentials["password"] = password
+        if pin != "":
+            credentials["pin"] = pin
+        return self.client.updateUser(**credentials)
 
     def delete_user(self, **args):
         """
         Delete a user
-        :param userid: The name of the user to delete
+        :param userid: The user ID of the user to delete (or uuid; user_id also works)
+        :param uuid: The uuid of the user to delete
         :return: result dictionary
         """
-        try:
-            return self.client.removeUser(**args)
-        except Fault as e:
-            return e
+        return self.client.removeUser(**args)
 
     def get_translations(self):
         """
         Get translation patterns
-        :param mini: return a list of tuples of route pattern details
-        :return: A list of dictionary's
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listTransPattern(
-                {"pattern": "%"},
-                returnedTags={
-                    "pattern": "",
-                    "description": "",
-                    "uuid": "",
-                    "routePartitionName": "",
-                    "callingSearchSpaceName": "",
-                    "useCallingPartyPhoneMask": "",
-                    "patternUrgency": "",
-                    "provideOutsideDialtone": "",
-                    "prefixDigitsOut": "",
-                    "calledPartyTransformationMask": "",
-                    "callingPartyTransformationMask": "",
-                    "digitDiscardInstructionName": "",
-                    "callingPartyPrefixDigits": "",
-                },
-            )["return"]["transPattern"]
-        except Fault as e:
-            return e
+        return self.client.listTransPattern(
+            {"pattern": "%"},
+            returnedTags={
+                "pattern": "",
+                "description": "",
+                "uuid": "",
+                "routePartitionName": "",
+                "callingSearchSpaceName": "",
+                "useCallingPartyPhoneMask": "",
+                "patternUrgency": "",
+                "provideOutsideDialtone": "",
+                "prefixDigitsOut": "",
+                "calledPartyTransformationMask": "",
+                "callingPartyTransformationMask": "",
+                "digitDiscardInstructionName": "",
+                "callingPartyPrefixDigits": "",
+            },
+        )["return"]["transPattern"]
 
-    def get_translation(self, pattern="", routePartitionName="", uuid=""):
+    def _pattern_identifier(self, pattern="", partition="", uuid=""):
+        """
+        Build the uuid-or-pattern identifier for pattern-based objects
+        :param pattern: pattern (or uuid)
+        :param partition: partition of the pattern, empty for the <None> partition
+        :param uuid: uuid (or pattern)
+        :return: {'uuid': uuid} or {'pattern': pattern, 'routePartitionName': partition}
+        """
+        if bool(pattern) == bool(uuid):
+            raise ValueError("Provide exactly one of pattern or uuid")
+        if uuid:
+            return {"uuid": uuid}
+        return {"pattern": pattern, "routePartitionName": partition or None}
+
+    def get_translation(self, pattern="", routePartitionName="", uuid="", partition=""):
         """
         Get translation pattern
-        :param pattern: translation pattern to match
-        :param routePartitionName: routePartitionName required if searching pattern
-        :param uuid: translation pattern uuid
-        :return: result dictionary
+        :param pattern: translation pattern to match (or uuid)
+        :param routePartitionName: partition of the pattern, same as partition
+        :param uuid: translation pattern uuid (or pattern)
+        :param partition: partition of the pattern, empty for the <None> partition
+        :return: translation pattern dictionary
         """
-
-        if pattern != "" and routePartitionName != "" and uuid == "":
-            try:
-                return self.client.getTransPattern(
-                    pattern=pattern,
-                    routePartitionName=routePartitionName,
-                    returnedTags={
-                        "pattern": "",
-                        "description": "",
-                        "routePartitionName": "",
-                        "callingSearchSpaceName": "",
-                        "useCallingPartyPhoneMask": "",
-                        "patternUrgency": "",
-                        "provideOutsideDialtone": "",
-                        "prefixDigitsOut": "",
-                        "calledPartyTransformationMask": "",
-                        "callingPartyTransformationMask": "",
-                        "digitDiscardInstructionName": "",
-                        "callingPartyPrefixDigits": "",
-                    },
-                )
-            except Fault as e:
-                return e
-        elif uuid != "" and pattern == "" and routePartitionName == "":
-            try:
-                return self.client.getTransPattern(
-                    uuid=uuid,
-                    returnedTags={
-                        "pattern": "",
-                        "description": "",
-                        "routePartitionName": "",
-                        "callingSearchSpaceName": "",
-                        "useCallingPartyPhoneMask": "",
-                        "patternUrgency": "",
-                        "provideOutsideDialtone": "",
-                        "prefixDigitsOut": "",
-                        "calledPartyTransformationMask": "",
-                        "callingPartyTransformationMask": "",
-                        "digitDiscardInstructionName": "",
-                        "callingPartyPrefixDigits": "",
-                    },
-                )
-            except Fault as e:
-                return e
-        else:
-            return "must specify either uuid OR pattern and partition"
+        identifier = self._pattern_identifier(
+            pattern, partition or routePartitionName, uuid
+        )
+        return self.client.getTransPattern(
+            **identifier,
+            returnedTags={
+                "pattern": "",
+                "description": "",
+                "routePartitionName": "",
+                "callingSearchSpaceName": "",
+                "useCallingPartyPhoneMask": "",
+                "patternUrgency": "",
+                "provideOutsideDialtone": "",
+                "prefixDigitsOut": "",
+                "calledPartyTransformationMask": "",
+                "callingPartyTransformationMask": "",
+                "digitDiscardInstructionName": "",
+                "callingPartyPrefixDigits": "",
+            },
+        )["return"]["transPattern"]
 
     def add_translation(
         self,
@@ -2562,53 +2365,41 @@ class axl(object):
         :param digitDiscardInstructionName: - optional
         :param callingPartyPrefixDigits: - optional
         :param blockEnable: - optional
+        :param useCallingPartyPhoneMask: Off, On or Default - optional
+        :param routeNextHopByCgpn: route next hop by calling party number - optional
         :return: result dictionary
         """
-        try:
-            return self.client.addTransPattern(
-                {
-                    "pattern": pattern,
-                    "description": description,
-                    "routePartitionName": partition,
-                    "usage": usage,
-                    "callingSearchSpaceName": callingSearchSpaceName,
-                    "useCallingPartyPhoneMask": useCallingPartyPhoneMask,
-                    "patternUrgency": patternUrgency,
-                    "provideOutsideDialtone": provideOutsideDialtone,
-                    "prefixDigitsOut": prefixDigitsOut,
-                    "calledPartyTransformationMask": calledPartyTransformationMask,
-                    "callingPartyTransformationMask": callingPartyTransformationMask,
-                    "digitDiscardInstructionName": digitDiscardInstructionName,
-                    "callingPartyPrefixDigits": callingPartyPrefixDigits,
-                    "blockEnable": blockEnable,
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addTransPattern(
+            {
+                "pattern": pattern,
+                "description": description,
+                "routePartitionName": partition,
+                "usage": usage,
+                "callingSearchSpaceName": callingSearchSpaceName,
+                "useCallingPartyPhoneMask": useCallingPartyPhoneMask,
+                "patternUrgency": patternUrgency,
+                "provideOutsideDialtone": provideOutsideDialtone,
+                "prefixDigitsOut": prefixDigitsOut,
+                "calledPartyTransformationMask": calledPartyTransformationMask,
+                "callingPartyTransformationMask": callingPartyTransformationMask,
+                "digitDiscardInstructionName": digitDiscardInstructionName,
+                "callingPartyPrefixDigits": callingPartyPrefixDigits,
+                "blockEnable": blockEnable,
+                "routeNextHopByCgpn": routeNextHopByCgpn,
+            }
+        )
 
     def delete_translation(self, pattern="", partition="", uuid=""):
         """
         Delete a translation pattern
-        :param pattern: The pattern of the route to delete
-        :param partition: The name of the partition
-        :param uuid: Required if pattern and partition are not specified
+        :param pattern: The pattern of the translation to delete (or uuid)
+        :param partition: The name of the partition, empty for the <None> partition
+        :param uuid: The uuid of the translation to delete (or pattern)
         :return: result dictionary
         """
-
-        if pattern != "" and partition != "" and uuid == "":
-            try:
-                return self.client.removeTransPattern(
-                    pattern=pattern, routePartitionName=partition
-                )
-            except Fault as e:
-                return e
-        elif uuid != "" and pattern == "" and partition == "":
-            try:
-                return self.client.removeTransPattern(uuid=uuid)
-            except Fault as e:
-                return e
-        else:
-            return "must specify either uuid OR pattern and partition"
+        return self.client.removeTransPattern(
+            **self._pattern_identifier(pattern, partition, uuid)
+        )
 
     def update_translation(
         self,
@@ -2630,13 +2421,15 @@ class axl(object):
         blockEnable="",
     ):
         """
-        Update a translation pattern
-        :param uuid: UUID or Translation + Partition Required
-        :param pattern: Translation pattern
-        :param partition: Route Partition
+        Update a translation pattern. Empty values are left unchanged.
+        :param uuid: translation uuid (or pattern + partition)
+        :param pattern: Translation pattern (or uuid)
+        :param partition: Route Partition, empty for the <None> partition
+        :param newPattern: new translation pattern - optional
+        :param newRoutePartitionName: new partition - optional
         :param description: Description - optional
-        :param usage: Usage
         :param callingSearchSpaceName: Calling Search Space - optional
+        :param useCallingPartyPhoneMask: Off, On or Default - optional
         :param patternUrgency: Pattern Urgency - optional
         :param provideOutsideDialtone: Provide Outside Dial Tone - optional
         :param prefixDigitsOut: Prefix Digits Out - optional
@@ -2648,14 +2441,9 @@ class axl(object):
         :return: result dictionary
         """
 
-        args = {}
+        args = self._pattern_identifier(pattern, partition, uuid)
         if description != "":
             args["description"] = description
-        if pattern != "" and partition != "" and uuid == "":
-            args["pattern"] = pattern
-            args["routePartitionName"] = partition
-        if pattern == "" and partition == "" and uuid != "":
-            args["uuid"] = uuid
         if newPattern != "":
             args["newPattern"] = newPattern
         if newRoutePartitionName != "":
@@ -2680,10 +2468,7 @@ class axl(object):
             args["callingPartyPrefixDigits"] = callingPartyPrefixDigits
         if blockEnable != "":
             args["blockEnable"] = blockEnable
-        try:
-            return self.client.updateTransPattern(**args)
-        except Fault as e:
-            return e
+        return self.client.updateTransPattern(**args)
 
     def list_route_plan(self, pattern=""):
         """
@@ -2691,18 +2476,15 @@ class axl(object):
         :param pattern: Route Plan Contains Pattern
         :return: results dictionary
         """
-        try:
-            return self.client.listRoutePlan(
-                {"dnOrPattern": "%" + pattern + "%"},
-                returnedTags={
-                    "dnOrPattern": "",
-                    "partition": "",
-                    "type": "",
-                    "routeDetail": "",
-                },
-            )["return"]["routePlan"]
-        except Fault as e:
-            return e
+        return self.client.listRoutePlan(
+            {"dnOrPattern": "%" + pattern + "%"},
+            returnedTags={
+                "dnOrPattern": "",
+                "partition": "",
+                "type": "",
+                "routeDetail": "",
+            },
+        )["return"]["routePlan"]
 
     def list_route_plan_specific(self, pattern=""):
         """
@@ -2710,374 +2492,404 @@ class axl(object):
         :param pattern: Route Plan Contains Pattern
         :return: results dictionary
         """
-        try:
-            return self.client.listRoutePlan(
-                {"dnOrPattern": pattern},
-                returnedTags={
-                    "dnOrPattern": "",
-                    "partition": "",
-                    "type": "",
-                    "routeDetail": "",
-                },
-            )
-        except Fault as e:
-            return e
+        return self.client.listRoutePlan(
+            {"dnOrPattern": pattern},
+            returnedTags={
+                "dnOrPattern": "",
+                "partition": "",
+                "type": "",
+                "routeDetail": "",
+            },
+        )["return"]["routePlan"]
 
     def get_called_party_xforms(self):
         """
         Get called party xforms
-        :param mini: return a list of tuples of called party transformation pattern details
-        :return: A list of dictionary's
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listCalledPartyTransformationPattern(
-                {"pattern": "%"},
-                returnedTags={"pattern": "", "description": "", "uuid": ""},
-            )["return"]["calledPartyTransformationPattern"]
-        except Fault as e:
-            return e
+        return self.client.listCalledPartyTransformationPattern(
+            {"pattern": "%"},
+            returnedTags={"pattern": "", "description": "", "uuid": ""},
+        )["return"]["calledPartyTransformationPattern"]
+
+    def _pattern_lookup(self, operation, args):
+        """
+        Complete a pattern-based identifier: when no uuid is given, default the optional
+        dial plan and route filter keys to nil, as the AXL pattern choice requires them
+        :param operation: AXL operation name
+        :param args: method keyword arguments
+        :return: args
+        """
+        fields = self._schema_fields(operation)
+        if "uuid" not in args:
+            for key in ("dialPlanName", "routeFilterName"):
+                if key in fields:
+                    args.setdefault(key, None)
+        return args
 
     def get_called_party_xform(self, **args):
         """
         Get called party xform details
-        :param name:
-        :param partition:
-        :param uuid:
+        :param pattern: transformation pattern (or uuid; name also works)
+        :param partition: partition of the pattern (AXL name: routePartitionName)
+        :param uuid: transformation uuid (or pattern + partition)
         :return: result dictionary
         """
-        try:
-            return self.client.getCalledPartyTransformationPattern(**args)["return"][
-                "calledPartyTransformationPattern"
-            ]
-        except Fault as e:
-            return e
+        args = self._pattern_lookup("getCalledPartyTransformationPattern", args)
+        return self.client.getCalledPartyTransformationPattern(**args)["return"][
+            "calledPartyTransformationPattern"
+        ]
 
     def add_called_party_xform(
         self,
-        pattern="",
+        pattern,
         description="",
         partition="",
         calledPartyPrefixDigits="",
         calledPartyTransformationMask="",
         digitDiscardInstructionName="",
+        **args,
     ):
         """
         Add a called party transformation pattern
         :param pattern: pattern - required
-        :param routePartitionName: partition required
-        :param description: Route pattern description
-        :param calledPartyTransformationmask:
-        :param dialPlanName:
-        :param digitDiscardInstructionName:
-        :param routeFilterName:
-        :param calledPartyPrefixDigits:
-        :param calledPartyNumberingPlan:
-        :param calledPartyNumberType:
-        :param mlppPreemptionDisabled: does anyone use this?
+        :param partition: partition, empty for the <None> partition
+        :param description: transformation pattern description
+        :param calledPartyPrefixDigits: prefix digits
+        :param calledPartyTransformationMask: transformation mask
+        :param digitDiscardInstructionName: digit discard instruction
+        :param dialPlanName: optional
+        :param routeFilterName: optional
+        :param calledPartyNumberingPlan: optional
+        :param calledPartyNumberType: optional
+        :param mlppPreemptionDisabled: boolean, default false - optional
         :return: result dictionary
         """
-        try:
-            return self.client.addCalledPartyTransformationPattern(
-                {
-                    "pattern": pattern,
-                    "description": description,
-                    "routePartitionName": partition,
-                    "calledPartyPrefixDigits": calledPartyPrefixDigits,
-                    "calledPartyTransformationMask": calledPartyTransformationMask,
-                    "digitDiscardInstructionName": digitDiscardInstructionName,
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addCalledPartyTransformationPattern(
+            {
+                "pattern": pattern,
+                "description": description,
+                "routePartitionName": partition or None,
+                "calledPartyPrefixDigits": calledPartyPrefixDigits,
+                "calledPartyTransformationMask": calledPartyTransformationMask,
+                "digitDiscardInstructionName": digitDiscardInstructionName,
+                **args,
+            }
+        )
 
     def delete_called_party_xform(self, **args):
         """
         Delete a called party transformation pattern
-        :param uuid: The pattern uuid
+        :param uuid: The pattern uuid (or pattern + partition)
         :param pattern: The pattern of the transformation to delete
-        :param partition: The name of the partition
+        :param partition: The name of the partition (AXL name: routePartitionName)
         :return: result dictionary
         """
-        try:
-            return self.client.removeCalledPartyTransformationPattern(**args)
-        except Fault as e:
-            return e
+        args = self._pattern_lookup("removeCalledPartyTransformationPattern", args)
+        return self.client.removeCalledPartyTransformationPattern(**args)
 
     def update_called_party_xform(self, **args):
         """
         Update a called party transformation
-        :param uuid: required unless pattern and routePartitionName is given
-        :param pattern: pattern - required
-        :param routePartitionName: partition required
-        :param description: Route pattern description
-        :param calledPartyTransformationmask:
-        :param dialPlanName:
-        :param digitDiscardInstructionName:
-        :param routeFilterName:
-        :param calledPartyPrefixDigits:
-        :param calledPartyNumberingPlan:
-        :param calledPartyNumberType:
-        :param mlppPreemptionDisabled: does anyone use this?
-        :return: result dictionary
+        :param uuid: transformation uuid (or pattern + partition)
+        :param pattern: transformation pattern (or uuid)
+        :param partition: partition of the pattern (AXL name: routePartitionName)
+        :param newPattern: new pattern
+        :param new_partition: new partition (AXL name: newRoutePartitionName)
+        :param description: transformation pattern description
+        :param calledPartyTransformationMask: transformation mask
+        :param digitDiscardInstructionName: digit discard instruction
+        :param calledPartyPrefixDigits: prefix digits
+        :param calledPartyNumberingPlan: numbering plan
+        :param calledPartyNumberType: number type
+        :param mlppPreemptionDisabled: boolean, default false
         :return: result dictionary
         """
-        try:
-            return self.client.updateCalledPartyTransformationPattern(**args)
-        except Fault as e:
-            return e
+        args = self._pattern_lookup("updateCalledPartyTransformationPattern", args)
+        return self.client.updateCalledPartyTransformationPattern(**args)
 
     def get_calling_party_xforms(self):
         """
         Get calling party xforms
-        :param mini: return a list of tuples of calling party transformation pattern details
-        :return: A list of dictionary's
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            return self.client.listCallingPartyTransformationPattern(
-                {"pattern": "%"},
-                returnedTags={"pattern": "", "description": "", "uuid": ""},
-            )["return"]["callingPartyTransformationPattern"]
-        except Fault as e:
-            return e
+        return self.client.listCallingPartyTransformationPattern(
+            {"pattern": "%"},
+            returnedTags={"pattern": "", "description": "", "uuid": ""},
+        )["return"]["callingPartyTransformationPattern"]
 
     def get_calling_party_xform(self, **args):
         """
         Get calling party xform details
-        :param name:
-        :param partition:
-        :param uuid:
+        :param pattern: transformation pattern (or uuid; name also works)
+        :param partition: partition of the pattern (AXL name: routePartitionName)
+        :param uuid: transformation uuid (or pattern + partition)
         :return: result dictionary
         """
-        try:
-            return self.client.getCallingPartyTransformationPattern(**args)["return"][
-                "callingPartyTransformationPattern"
-            ]
-        except Fault as e:
-            return e
+        args = self._pattern_lookup("getCallingPartyTransformationPattern", args)
+        return self.client.getCallingPartyTransformationPattern(**args)["return"][
+            "callingPartyTransformationPattern"
+        ]
 
     def add_calling_party_xform(
         self,
-        pattern="",
+        pattern,
         description="",
         partition="",
         callingPartyPrefixDigits="",
         callingPartyTransformationMask="",
         digitDiscardInstructionName="",
+        **args,
     ):
         """
         Add a calling party transformation pattern
         :param pattern: pattern - required
-        :param routePartitionName: partition required
-        :param description: Route pattern description
-        :param callingPartyTransformationmask:
-        :param dialPlanName:
-        :param digitDiscardInstructionName:
-        :param routeFilterName:
-        :param callingPartyPrefixDigits:
-        :param callingPartyNumberingPlan:
-        :param callingPartyNumberType:
-        :param mlppPreemptionDisabled: does anyone use this?
+        :param partition: partition, empty for the <None> partition
+        :param description: transformation pattern description
+        :param callingPartyPrefixDigits: prefix digits
+        :param callingPartyTransformationMask: transformation mask
+        :param digitDiscardInstructionName: digit discard instruction
+        :param dialPlanName: optional
+        :param routeFilterName: optional
+        :param callingPartyNumberingPlan: optional
+        :param callingPartyNumberType: optional
+        :param mlppPreemptionDisabled: boolean, default false - optional
         :return: result dictionary
         """
-        try:
-            return self.client.addCallingPartyTransformationPattern(
-                {
-                    "pattern": pattern,
-                    "description": description,
-                    "routePartitionName": partition,
-                    "callingPartyPrefixDigits": callingPartyPrefixDigits,
-                    "callingPartyTransformationMask": callingPartyTransformationMask,
-                    "digitDiscardInstructionName": digitDiscardInstructionName,
-                }
-            )
-        except Fault as e:
-            return e
+        return self.client.addCallingPartyTransformationPattern(
+            {
+                "pattern": pattern,
+                "description": description,
+                "routePartitionName": partition or None,
+                "callingPartyPrefixDigits": callingPartyPrefixDigits,
+                "callingPartyTransformationMask": callingPartyTransformationMask,
+                "digitDiscardInstructionName": digitDiscardInstructionName,
+                **args,
+            }
+        )
 
     def delete_calling_party_xform(self, **args):
         """
         Delete a calling party transformation pattern
-        :param uuid: The pattern uuid
+        :param uuid: The pattern uuid (or pattern + partition)
         :param pattern: The pattern of the transformation to delete
-        :param partition: The name of the partition
+        :param partition: The name of the partition (AXL name: routePartitionName)
         :return: result dictionary
         """
-        try:
-            return self.client.removeCallingPartyTransformationPattern(**args)
-        except Fault as e:
-            return e
+        args = self._pattern_lookup("removeCallingPartyTransformationPattern", args)
+        return self.client.removeCallingPartyTransformationPattern(**args)
 
     def update_calling_party_xform(self, **args):
         """
         Update a calling party transformation
-        :param uuid: required unless pattern and routePartitionName is given
-        :param pattern: pattern - required
-        :param routePartitionName: partition required
-        :param description: Route pattern description
-        :param callingPartyTransformationMask:
-        :param dialPlanName:
-        :param digitDiscardInstructionName:
-        :param routeFilterName:
-        :param calledPartyPrefixDigits:
-        :param calledPartyNumberingPlan:
-        :param calledPartyNumberType:
-        :param mlppPreemptionDisabled: does anyone use this?
-        :return: result dictionary
+        :param uuid: transformation uuid (or pattern + partition)
+        :param pattern: transformation pattern (or uuid)
+        :param partition: partition of the pattern (AXL name: routePartitionName)
+        :param newPattern: new pattern
+        :param new_partition: new partition (AXL name: newRoutePartitionName)
+        :param description: transformation pattern description
+        :param callingPartyTransformationMask: transformation mask
+        :param digitDiscardInstructionName: digit discard instruction
+        :param callingPartyPrefixDigits: prefix digits
+        :param callingPartyNumberingPlan: numbering plan
+        :param callingPartyNumberType: number type
+        :param useCallingPartyPhoneMask: Off, On or Default
+        :param callingLinePresentationBit: Default, Allowed or Restricted
+        :param mlppPreemptionDisabled: boolean, default false
         :return: result dictionary
         """
-        try:
-            return self.client.updateCallingPartyTransformationPattern(**args)
-        except Fault as e:
-            return e
+        args = self._pattern_lookup("updateCallingPartyTransformationPattern", args)
+        return self.client.updateCallingPartyTransformationPattern(**args)
 
     def get_sip_trunks(
         self, tagfilter={"name": "", "sipProfileName": "", "callingSearchSpaceName": ""}
     ):
-        try:
-            return self.client.listSipTrunk({"name": "%"}, returnedTags=tagfilter)[
-                "return"
-            ]["sipTrunk"]
-        except Fault as e:
-            return e
+        """
+        Get SIP trunks
+        :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'sipProfileName': ''}
+        :return: list of SIP trunk dictionaries
+        """
+        return self.client.listSipTrunk({"name": "%"}, returnedTags=tagfilter)[
+            "return"
+        ]["sipTrunk"]
 
     def get_sip_trunk(self, **args):
         """
         Get sip trunk
-        :param name:
-        :param uuid:
+        :param name: trunk name (or uuid)
+        :param uuid: trunk uuid (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.getSipTrunk(**args)["return"]["sipTrunk"]
-        except Fault as e:
-            return e
+        return self.client.getSipTrunk(**args)["return"]["sipTrunk"]
 
     def update_sip_trunk(self, **args):
         """
-        Update a SIP Trunk
-        :param name:
-        :param uuid:
-        :param newName:
-        :param description:
-        :param callingSearchSpaceName:
-        :param devicePoolName:
-        :param locationName:
-        :param sipProfileName:
-        :param mtpRequired:
-
-        :return:
+        Update a SIP Trunk (sipTrunkType can't be changed after creation)
+        :param name: trunk name (or uuid)
+        :param uuid: trunk uuid (or name)
+        :param newName: new trunk name
+        :param description: description
+        :param css: calling search space (AXL name: callingSearchSpaceName)
+        :param device_pool: device pool (AXL name: devicePoolName)
+        :param location: location (AXL name: locationName)
+        :param sip_profile: SIP profile (AXL name: sipProfileName)
+        :param mtpRequired: boolean
+        :param destinations: {'destination': [{'addressIpv4', 'port', 'sortOrder'}]}, max 16
+        :return: result dictionary
         """
-        try:
-            return self.client.updateSipTrunk(**args)
-        except Fault as e:
-            return e
+        return self.client.updateSipTrunk(**args)
 
     def delete_sip_trunk(self, **args):
-        try:
-            return self.client.removeSipTrunk(**args)
-        except Fault as e:
-            return e
+        """
+        Delete a SIP trunk
+        :param name: trunk name (or uuid)
+        :param uuid: trunk uuid (or name)
+        :return: result dictionary
+        """
+        return self.client.removeSipTrunk(**args)
 
-    def get_sip_security_profile(self, name):
-        try:
-            return self.client.getSipTrunkSecurityProfile(name=name)["return"]
-        except Fault as e:
-            return e
+    def get_sip_security_profile(self, name="", uuid=""):
+        """
+        Get a SIP trunk security profile
+        :param name: profile name (or uuid)
+        :param uuid: profile uuid (or name)
+        :return: SIP trunk security profile dictionary
+        """
+        return self.client.getSipTrunkSecurityProfile(
+            **self._identify(name=name, uuid=uuid)
+        )["return"]["sipTrunkSecurityProfile"]
 
-    def get_sip_profile(self, name):
-        try:
-            return self.client.getSipProfile(name=name)["return"]
-        except Fault as e:
-            return e
+    def get_sip_profile(self, name="", uuid=""):
+        """
+        Get a SIP profile
+        :param name: profile name (or uuid)
+        :param uuid: profile uuid (or name)
+        :return: SIP profile dictionary
+        """
+        return self.client.getSipProfile(**self._identify(name=name, uuid=uuid))[
+            "return"
+        ]["sipProfile"]
 
     def add_sip_trunk(self, **args):
         """
-        Add a SIP Trunk
-        :param name:
-        :param description:
-        :param product:
-        :param protocol:
-        :param protocolSide:
-        :param callingSearchSpaceName:
-        :param devicePoolName:
-        :param securityProfileName:
-        :param sipProfileName:
-        :param destinations: param destination:
-        :param runOnEveryNode:
-
-        :return:
+        Add a SIP Trunk. Friendly names and AXL element names are both accepted;
+        required elements not given use the schema defaults.
+        :param name: trunk name - required
+        :param description: description
+        :param product: default 'SIP Trunk'
+        :param dev_class: default 'Trunk' (AXL name: class)
+        :param protocol: default 'SIP'
+        :param protocol_side: default 'Network' (AXL name: protocolSide)
+        :param css: calling search space (AXL name: callingSearchSpaceName)
+        :param device_pool: device pool - required (AXL name: devicePoolName)
+        :param location: location, default Hub_None (AXL name: locationName)
+        :param security_profile: default 'Non Secure SIP Trunk Profile' (AXL name: securityProfileName)
+        :param sip_profile: default 'Standard SIP Profile' (AXL name: sipProfileName)
+        :param presenceGroupName: default 'Standard Presence group'
+        :param destinations: {'destination': [{'addressIpv4', 'port', 'sortOrder'}]}, sortOrder required, max 16
+        :param runOnEveryNode: boolean
+        :return: result dictionary
         """
-        try:
-            return self.client.addSipTrunk(**args)
-        except Fault as e:
-            return e
+        trunk = self._build_object(
+            "addSipTrunk",
+            "sipTrunk",
+            args,
+            defaults={
+                "product": "SIP Trunk",
+                "class": "Trunk",
+                "protocol": "SIP",
+                "protocolSide": "Network",
+                "locationName": "Hub_None",
+                "securityProfileName": "Non Secure SIP Trunk Profile",
+                "sipProfileName": "Standard SIP Profile",
+                "presenceGroupName": "Standard Presence group",
+            },
+        )
+        return self.client.addSipTrunk(trunk)
 
     def list_process_nodes(self):
-        try:
-            return self.client.listProcessNode(
-                {"name": "%", "processNodeRole": "CUCM Voice/Video"},
-                returnedTags={"name": ""},
-            )["return"]["processNode"]
-        except Fault as e:
-            return e
+        """
+        List the Unified CM call processing nodes
+        :return: list of process node dictionaries with name
+        """
+        return self.client.listProcessNode(
+            {"name": "%", "processNodeRole": "CUCM Voice/Video"},
+            returnedTags={"name": ""},
+        )["return"]["processNode"]
+
+    @staticmethod
+    def _cm_group_members(members):
+        """
+        Convert a list of Unified CM names into the AXL members structure, leaving AXL dicts alone
+        :param members: list of names in priority order, or {'member': [...]}
+        :return: {'member': [{'callManagerName', 'priority'}]}
+        """
+        if isinstance(members, dict):
+            return members
+        return {
+            "member": [
+                {"callManagerName": name, "priority": priority}
+                for priority, name in enumerate(members, start=1)
+            ]
+        }
 
     def add_call_manager_group(self, name, members):
         """
         Add call manager group
         :param name: name of cmg
-        :param members[]: array of members
+        :param members: list of Unified CM names in priority order (at least one),
+                        or {'member': [{'callManagerName', 'priority'}]}
         :return: result dictionary
         """
+        return self.client.addCallManagerGroup(
+            {"name": name, "members": self._cm_group_members(members)}
+        )
 
-        try:
-            return self.client.addCallManagerGroup({"name": name, "members": members})
-        except Fault as e:
-            return e
-
-    def get_call_manager_group(self, name):
+    def get_call_manager_group(self, name="", uuid=""):
         """
         Get call manager group
-        :param name: name of cmg
-        :return: result dictionary
+        :param name: name of cmg (or uuid)
+        :param uuid: uuid of cmg (or name)
+        :return: call manager group dictionary
         """
-        try:
-            return self.client.getCallManagerGroup(name=name)
-        except Fault as e:
-            return e
+        return self.client.getCallManagerGroup(**self._identify(name=name, uuid=uuid))[
+            "return"
+        ]["callManagerGroup"]
 
     def get_call_manager_groups(self):
         """
         Get call manager groups
-        :param name: name of cmg
-        :return: result dictionary
+        :return: list of call manager group dictionaries with name
         """
-        try:
-            return self.client.listCallManagerGroup(
-                {"name": "%"}, returnedTags={"name": ""}
-            )["return"]["callManagerGroup"]
-        except Fault as e:
-            return e
+        return self.client.listCallManagerGroup(
+            {"name": "%"}, returnedTags={"name": ""}
+        )["return"]["callManagerGroup"]
 
     def update_call_manager_group(self, **args):
         """
         Update call manager group
-        :param name: name of cmg
+        :param name: name of cmg (or uuid)
+        :param uuid: uuid of cmg (or name)
+        :param newName: new name
+        :param tftpDefault: boolean
+        :param members: replaces all members: list of Unified CM names in priority order,
+                        or {'member': [{'callManagerName', 'priority'}]}
+        :param addMembers: members to add, {'member': [...]} (instead of members)
+        :param removeMembers: members to remove, {'member': [...]} (instead of members)
         :return: result dictionary
         """
-        try:
-            return self.client.listCallManagerGroup({**args}, returnedTags={"name": ""})
-        except Fault as e:
-            return e
+        if "members" in args:
+            args["members"] = self._cm_group_members(args["members"])
+        return self.client.updateCallManagerGroup(**args)
 
-    def delete_call_manager_group(self, name):
+    def delete_call_manager_group(self, name="", uuid=""):
         """
         Delete call manager group
-        :param name: name of cmg
+        :param name: name of cmg (or uuid)
+        :param uuid: uuid of cmg (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeCallManagerGroup({"name": name})
-        except Fault as e:
-            return e
+        return self.client.removeCallManagerGroup(**self._identify(name=name, uuid=uuid))
 
     # Hunt Pilot Methods
     def get_hunt_pilots(
@@ -3090,77 +2902,69 @@ class axl(object):
     ):
         """
         Get hunt pilots
-        :param mini: return a list of tuples of hunt pilot details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            response = self.client.listHuntPilot(
-                {"pattern": "%"},
-                returnedTags=tagfilter,
-            )["return"]
-            if response:
-                return response["huntPilot"]
-            else:
-                return response
-        except Fault as e:
-            return e
+        response = self.client.listHuntPilot(
+            {"pattern": "%"},
+            returnedTags=tagfilter,
+        )["return"]
+        if response:
+            return response["huntPilot"]
+        else:
+            return response
 
     def get_hunt_pilot(self, **args):
         """
         Get hunt pilot details
-        :param name:
-        :param partition:
+        :param pattern: hunt pilot pattern (or uuid; name also works)
+        :param partition: partition of the pattern (AXL name: routePartitionName)
+        :param uuid: hunt pilot uuid (or pattern)
         :return: result dictionary
         """
-        try:
-            return self.client.getHuntPilot(**args)["return"]["huntPilot"]
-        except Fault as e:
-            return e
+        return self.client.getHuntPilot(**args)["return"]["huntPilot"]
 
     def add_hunt_pilot(self, **args):
         """
-        Add a Hunt Pilot minimal params needed
+        Add a Hunt Pilot
         :param pattern: pattern - required
-        :param routePartitionName: partition required
+        :param hunt_list: hunt list name - required (AXL name: huntListName)
+        :param partition: partition - optional (AXL name: routePartitionName)
         :param description: Hunt Pilot pattern description
-        :param useCallingPartyPhoneMask: "Off" or "On"
-        :param blockEnable: boolean (true or false)
-        :param huntListName:
+        :param useCallingPartyPhoneMask: "Off", "On" or "Default" (default)
+        :param blockEnable: boolean, default false
         :return: result dictionary
         """
-        try:
-            return self.client.addHuntPilot({**args})
-        except Fault as e:
-            return e
+        pilot = self._build_object(
+            "addHuntPilot", "huntPilot", args, defaults={"blockEnable": False}
+        )
+        return self.client.addHuntPilot(pilot)
 
     def update_hunt_pilot(self, **args):
         """
         Update a Hunt Pilot
-        :param pattern: pattern - required
-        :param routePartitionName: partition required
+        :param uuid: hunt pilot uuid (or pattern)
+        :param pattern: hunt pilot pattern (or uuid)
+        :param partition: partition of the pattern - optional (AXL name: routePartitionName)
+        :param newPattern: new pattern
+        :param new_partition: new partition (AXL name: newRoutePartitionName)
         :param description: Hunt Pilot pattern description
-        :param useCallingPartyPhoneMask: "Off" or "On"
-        :param blockEnable: boolean (true or false)
-        :param huntListName:
-        :return:
+        :param useCallingPartyPhoneMask: "Off", "On" or "Default"
+        :param blockEnable: boolean
+        :param hunt_list: hunt list name (AXL name: huntListName)
+        :return: result dictionary
         """
-        try:
-            return self.client.updateHuntPilot(**args)
-        except Fault as e:
-            return e
+        return self.client.updateHuntPilot(**args)
 
     def delete_hunt_pilot(self, **args):
         """
         Delete a Hunt Pilot
-        :param uuid: The pattern uuid
-        :param pattern: The pattern of the transformation to delete
-        :param partition: The name of the partition
+        :param uuid: The hunt pilot uuid (or pattern)
+        :param pattern: The pattern of the hunt pilot to delete
+        :param partition: The name of the partition (AXL name: routePartitionName)
         :return: result dictionary
         """
-        try:
-            return self.client.removeHuntPilot(**args)
-        except Fault as e:
-            return e
+        return self.client.removeHuntPilot(**args)
 
     # Hunt List Methods
     def get_hunt_lists(
@@ -3175,73 +2979,66 @@ class axl(object):
     ):
         """
         Get hunt lists
-        :param mini: return a list of tuples of hunt pilot details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            response = self.client.listHuntList(
-                {"name": "%"},
-                returnedTags=tagfilter,
-            )["return"]
-            if response:
-                return response["huntList"]
-            else:
-                return response
-        except Fault as e:
-            return e
+        response = self.client.listHuntList(
+            {"name": "%"},
+            returnedTags=tagfilter,
+        )["return"]
+        if response:
+            return response["huntList"]
+        else:
+            return response
 
     def get_hunt_list(self, **args):
         """
         Get hunt list details
-        :param name:
-        :param partition:
+        :param name: hunt list name (or uuid)
+        :param uuid: hunt list uuid (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.getHuntList(**args)["return"]["huntList"]
-        except Fault as e:
-            return e
+        return self.client.getHuntList(**args)["return"]["huntList"]
 
     def add_hunt_list(self, **args):
         """
-        Add a Hunt list minimal params needed
+        Add a Hunt list
         :param name: - required
-        :param callManagerGroup: - required
+        :param callManagerGroup: Unified CM group - required (AXL name: callManagerGroupName)
         :param description: str
         :param routeListEnabled: bool
         :param voiceMailUsage: bool
+        :param members: {'member': [{'lineGroupName', 'selectionOrder'}]}
         :return: result dictionary
         """
-        try:
-            return self.client.addHuntList({**args})
-        except Fault as e:
-            return e
+        hunt_list = self._build_object("addHuntList", "huntList", args)
+        return self.client.addHuntList(hunt_list)
 
     def update_hunt_list(self, **args):
         """
         Update a Hunt List
-        :param name: - required
-        :param callManagerGroup: - required
+        :param name: hunt list name (or uuid)
+        :param uuid: hunt list uuid (or name)
+        :param newName: new name
+        :param callManagerGroup: Unified CM group (AXL name: callManagerGroupName)
         :param description: str
         :param routeListEnabled: bool
         :param voiceMailUsage: bool
-        :return:
+        :param members: replaces all members: {'member': [{'lineGroupName', 'selectionOrder'}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
+        :return: result dictionary
         """
-        try:
-            return self.client.updateHuntList(**args)
-        except Fault as e:
-            return e
+        return self.client.updateHuntList(**args)
 
     def delete_hunt_list(self, **args):
         """
         Delete a Hunt List
-        :param name: - required
+        :param name: hunt list name (or uuid)
+        :param uuid: hunt list uuid (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeHuntList(**args)
-        except Fault as e:
-            return e
+        return self.client.removeHuntList(**args)
 
     # Line Group Methods
     def get_line_groups(
@@ -3258,77 +3055,69 @@ class axl(object):
     ):
         """
         Get Line Groups
-        :param mini: return a list of tuples of hunt pilot details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
+        :return: list of dictionaries, empty when nothing matches
         """
-        try:
-            response = self.client.listLineGroup(
-                {"name": "%"},
-                returnedTags=tagfilter,
-            )["return"]
-            if response:
-                return response["lineGroup"]
-            else:
-                return response
-        except Fault as e:
-            return e
+        response = self.client.listLineGroup(
+            {"name": "%"},
+            returnedTags=tagfilter,
+        )["return"]
+        if response:
+            return response["lineGroup"]
+        else:
+            return response
 
     def get_line_group(self, **args):
         """
         Get line group details
-        :param name:
+        :param name: line group name (or uuid)
+        :param uuid: line group uuid (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.getLineGroup(**args)["return"]["lineGroup"]
-        except Fault as e:
-            return e
+        return self.client.getLineGroup(**args)["return"]["lineGroup"]
 
     def add_line_group(self, **args):
         """
-        Add a Line Group minimal params needed
+        Add a Line Group. Settings not given use the schema defaults shown.
         :param name: - required
-        :param distributionAlgorithm: "Longest Idle Time", "Broadcast" etc...
-        :param rnaReversionTimeOut:
-        :param huntAlgorithmNoAnswer: "Try next member; then, try next group in Hunt List",
-        :param huntAlgorithmBusy: "Try next member; then, try next group in Hunt List",
-        :param huntAlgorithmNotAvailable: "Try next member; then, try next group in Hunt List",
-        :param members: dict for each member directory number
+        :param distributionAlgorithm: Top Down, Circular, Longest Idle Time (default) or Broadcast
+        :param rnaReversionTimeOut: ring no answer reversion timeout in seconds, default 10
+        :param huntAlgorithmNoAnswer: default "Try next member; then, try next group in Hunt List"
+        :param huntAlgorithmBusy: default "Try next member; then, try next group in Hunt List"
+        :param huntAlgorithmNotAvailable: default "Try next member; then, try next group in Hunt List"
+        :param members: {'member': [{'lineSelectionOrder', 'directoryNumber': {'pattern', 'routePartitionName'}}]}
         :return: result dictionary
         """
-        try:
-            return self.client.addLineGroup({**args})
-        except Fault as e:
-            return e
+        line_group = self._build_object("addLineGroup", "lineGroup", args)
+        return self.client.addLineGroup(line_group)
 
     def update_line_group(self, **args):
         """
         Update a Line Group
-        :param name: - required
-        :param distributionAlgorithm: "Longest Idle Time", "Broadcast" etc...
-        :param rnaReversionTimeOut:
-        :param huntAlgorithmNoAnswer: "Try next member; then, try next group in Hunt List",
-        :param huntAlgorithmBusy: "Try next member; then, try next group in Hunt List",
-        :param huntAlgorithmNotAvailable: "Try next member; then, try next group in Hunt List",
-        :param members: dict for each member directory number
+        :param name: line group name (or uuid)
+        :param uuid: line group uuid (or name)
+        :param newName: new name
+        :param distributionAlgorithm: Top Down, Circular, Longest Idle Time or Broadcast
+        :param rnaReversionTimeOut: ring no answer reversion timeout in seconds
+        :param huntAlgorithmNoAnswer: e.g. "Try next member; then, try next group in Hunt List"
+        :param huntAlgorithmBusy: e.g. "Try next member; then, try next group in Hunt List"
+        :param huntAlgorithmNotAvailable: e.g. "Try next member; then, try next group in Hunt List"
+        :param autoLogOffHunt: boolean
+        :param members: replaces all members: {'member': [{'lineSelectionOrder', 'directoryNumber': {'pattern', 'routePartitionName'}}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
-        :return:
         """
-        try:
-            return self.client.updateLineGroup(**args)
-        except Fault as e:
-            return e
+        return self.client.updateLineGroup(**args)
 
     def delete_line_group(self, **args):
         """
         Delete a Line Group
-        :param name: - required
+        :param name: line group name (or uuid)
+        :param uuid: line group uuid (or name)
         :return: result dictionary
         """
-        try:
-            return self.client.removeLineGroup(**args)
-        except Fault as e:
-            return e
+        return self.client.removeLineGroup(**args)
 
     # Call Pickup Group Methods
     def get_call_pickup_groups(
@@ -3346,79 +3135,75 @@ class axl(object):
     ):
         """
         Get Call Pickup Groups
-        :param pattern: return a list of tuples of hunt pilot details
-        :return: A list of dictionary's
+        :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'pattern': ''}
+        :return: list of call pickup group dictionaries
         """
-        try:
-            response = self.client.listCallPickupGroup(
-                {"pattern": "%"},
-                returnedTags=tagfilter,
-            )["return"]
-            if response:
-                return response["callPickupGroup"]
-            else:
-                return response
-        except Fault as e:
-            return e
+        response = self.client.listCallPickupGroup(
+            {"pattern": "%"},
+            returnedTags=tagfilter,
+        )["return"]
+        if response:
+            return response["callPickupGroup"]
+        else:
+            return response
 
     def get_call_pickup_group(self, **args):
         """
-        Get call pickup group details
-        :param pattern:
-        :param name:
-        :param
+        Get call pickup group details. Identify by uuid, name, or pattern + partition.
+        :param name: call pickup group name
+        :param pattern: call pickup group number
+        :param partition: partition of the pattern (AXL name: routePartitionName)
+        :param uuid: call pickup group uuid
         :return: result dictionary
         """
-        try:
-            return self.client.getCallPickupGroup(**args)["return"]["callPickupGroup"]
-        except Fault as e:
-            return e
+        return self.client.getCallPickupGroup(**args)["return"]["callPickupGroup"]
 
     def add_call_pickup_group(self, **args):
         """
-        Add a Call Pickup Group minimal params needed
+        Add a Call Pickup Group
         :param name: - required
         :param pattern: - required
         :param description:
-        :param usage:
-        :param routePartitionName:
+        :param partition: partition of the pattern (AXL name: routePartitionName)
         :param pickupNotification:
         :param pickupNotificationTimer:
         :param callInfoForPickupNotification:
-        :param members:
+        :param members: {'member': [{'priority': 1, 'pickupGroupName': name}]}; priority starts at 1
+                        and the group can't list itself
         :return: result dictionary
         """
-        try:
-            return self.client.addCallPickupGroup({**args})
-        except Fault as e:
-            return e
+        args.pop("usage", None)
+        return self.client.addCallPickupGroup({**args})
 
     def update_call_pickup_group(self, **args):
         """
-        Update a Call Pickup Group
-        :param name:
-        :param pattern:
+        Update a Call Pickup Group. Identify by uuid, name, or pattern + partition.
+        :param name: call pickup group name
+        :param uuid: call pickup group uuid
+        :param pattern: call pickup group number
+        :param partition: partition of the pattern (AXL name: routePartitionName)
+        :param newName: new name
+        :param newPattern: new number
+        :param new_partition: new partition (AXL name: newRoutePartitionName)
         :param description:
-        :param usage:
-        :param routePartitionName:
         :param pickupNotification:
         :param pickupNotificationTimer:
         :param callInfoForPickupNotification:
-        :param members:
+        :param members: replaces all members: {'member': [{'priority', 'pickupGroupName'}]}
+        :param addMembers: members to add, same shape as members (instead of members)
+        :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
         """
-        try:
-            return self.client.updateCallPickupGroup(**args)
-        except Fault as e:
-            return e
+        args.pop("usage", None)
+        return self.client.updateCallPickupGroup(**args)
 
     def delete_call_pickup_group(self, **args):
         """
-        Delete a Call Pickup Group
-        :param name: - required
+        Delete a Call Pickup Group. Identify by uuid, name, or pattern + partition.
+        :param name: call pickup group name
+        :param uuid: call pickup group uuid
+        :param pattern: call pickup group number
+        :param partition: partition of the pattern (AXL name: routePartitionName)
         :return: result dictionary
         """
-        try:
-            return self.client.removeCallPickupGroup(**args)
-        except Fault as e:
-            return e
+        return self.client.removeCallPickupGroup(**args)
