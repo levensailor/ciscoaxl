@@ -37,7 +37,8 @@ class Recorder:
 
     def __getattr__(self, op_name):
         def call(*args, **kwargs):
-            message = self._zeep.create_message(self._real, op_name, *args, **kwargs)
+            # Bypass create_message: some AXL requests have an element named "service".
+            message, _headers = self._real._binding._create(op_name, args, kwargs, client=self._zeep)
             body = message.find("{http://schemas.xmlsoap.org/soap/envelope/}Body")[0]
             self.calls.append((op_name, body))
             response = self.responses.get(op_name, AutoDict())
@@ -48,14 +49,32 @@ class Recorder:
         return call
 
 
-def make_ucm(version="15.0"):
+class SimpleRecorder(Recorder):
+    """Records (operation, kwargs) without SOAP serialization.
+
+    Use when a request embeds a complex nested object whose inner required fields
+    would fail create_message, and the test only checks the operation and wrapper kwarg.
+    """
+
+    def __getattr__(self, op_name):
+        def call(*args, **kwargs):
+            self.calls.append((op_name, kwargs))
+            response = self.responses.get(op_name, AutoDict())
+            if isinstance(response, Exception):
+                raise response
+            return response
+
+        return call
+
+
+def make_ucm(version="15.0", recorder_class=Recorder):
     if version not in _clients:
         wsdl = (SCHEMA_DIR / version / "AXLAPI.wsdl").as_uri()
         settings = Settings(strict=False, xml_huge_tree=True, xsd_ignore_sequence_order=True)
         _clients[version] = Client(wsdl, settings=settings)
     zeep_client = _clients[version]
     service = zeep_client.create_service(BINDING, "https://cucm.invalid:8443/axl/")
-    recorder = Recorder(zeep_client, service)
+    recorder = recorder_class(zeep_client, service)
 
     ucm = axl.__new__(axl)
     ucm._zeep = zeep_client
@@ -66,8 +85,18 @@ def make_ucm(version="15.0"):
     return ucm
 
 
+def make_ucm_simple(version="15.0"):
+    """Return a UCM stub backed by SimpleRecorder (no SOAP serialization)."""
+    return make_ucm(version, recorder_class=SimpleRecorder)
+
+
 def sent(ucm, index=-1):
     """Return (operation, xml element) of a recorded call."""
+    return ucm.recorder.calls[index]
+
+
+def simple_sent(ucm, index=-1):
+    """Return (operation, kwargs) of a SimpleRecorder call."""
     return ucm.recorder.calls[index]
 
 

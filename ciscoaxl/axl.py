@@ -25,50 +25,40 @@ from zeep.plugins import HistoryPlugin
 from zeep.exceptions import Fault
 
 from ciscoaxl.aliases import AliasingService, apply_aliases, fill_required, translate
-from ciscoaxl.p0_templates import P0Templates
-from ciscoaxl.p0_users import P0Users
-from ciscoaxl.p0_presence import P0Presence
-from ciscoaxl.p0_security import P0Security
-from ciscoaxl.p1_lifecycle import P1Lifecycle
-from ciscoaxl.p1_dialplan import P1Dialplan
-from ciscoaxl.p1_gateways import P1Gateways
-from ciscoaxl.p1_media import P1Media
-from ciscoaxl.p1_system import P1System
-from ciscoaxl.p2_media import P2Media
-from ciscoaxl.p2_ils import P2Ils
-from ciscoaxl.p2_presence_sec import P2PresenceSec
-from ciscoaxl.p2_system import P2System
-from ciscoaxl.p3_ime import P3Ime
-from ciscoaxl.p3_ccd_saf import P3CcdSaf
-from ciscoaxl.p3_network import P3Network
-from ciscoaxl.p3_legacy_gw import P3LegacyGw
-from ciscoaxl.p3_niche_a import P3NicheA
-from ciscoaxl.p3_niche_b import P3NicheB
+from ciscoaxl.templates import TemplatesMixin
+from ciscoaxl.users import UsersMixin
+from ciscoaxl.presence import PresenceMixin
+from ciscoaxl.security import SecurityMixin
+from ciscoaxl.lifecycle import LifecycleMixin
+from ciscoaxl.dialplan import DialPlanMixin
+from ciscoaxl.gateways import GatewaysMixin
+from ciscoaxl.media import MediaMixin
+from ciscoaxl.system import SystemMixin
+from ciscoaxl.ils import IlsMixin
+from ciscoaxl.ime import ImeMixin
+from ciscoaxl.ccd_saf import CcdSafMixin
+from ciscoaxl.network import NetworkMixin
+from ciscoaxl.niche import NicheMixin
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 @apply_aliases
 class axl(
-    P0Templates,
-    P0Users,
-    P0Presence,
-    P0Security,
-    P1Lifecycle,
-    P1Dialplan,
-    P1Gateways,
-    P1Media,
-    P1System,
-    P2Media,
-    P2Ils,
-    P2PresenceSec,
-    P2System,
-    P3Ime,
-    P3CcdSaf,
-    P3Network,
-    P3LegacyGw,
-    P3NicheA,
-    P3NicheB,
+    TemplatesMixin,
+    UsersMixin,
+    PresenceMixin,
+    SecurityMixin,
+    LifecycleMixin,
+    DialPlanMixin,
+    GatewaysMixin,
+    MediaMixin,
+    SystemMixin,
+    IlsMixin,
+    ImeMixin,
+    CcdSafMixin,
+    NetworkMixin,
+    NicheMixin,
 ):
     """
     The AXL class sets up the connection to the call manager with methods for configuring UCM.
