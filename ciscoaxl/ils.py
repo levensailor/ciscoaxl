@@ -42,6 +42,9 @@ class IlsMixin:
         :param pstnFailStrip: digits to strip on PSTN fail (integer)
         :param pstnFailPrepend: digits to prepend on PSTN fail
         :return: result dictionary (uuid)
+        
+
+        Schema: `advertisedPatterns` -> `XAdvertisedPatterns`: `pattern` + `pstnFailStrip`; optional `description`, `patternType`, `hostedRoutePSTNRule`, `pstnFailPrepend`.
         """
         obj = self._build_object(
             "addAdvertisedPatterns",
@@ -56,6 +59,9 @@ class IlsMixin:
         :param pattern: pattern string (or uuid)
         :param uuid: pattern uuid (or pattern)
         :return: advertisedPatterns dictionary
+        
+
+        Schema: `GetAdvertisedPatternsReq`: optional `returnedTags`; one of `pattern`, or `uuid`.
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -67,6 +73,9 @@ class IlsMixin:
         List advertised patterns.
         :param tagfilter: AXL returned tags to include, e.g. {'pattern': ''}
         :return: list of advertisedPatterns dictionaries, empty when nothing matches
+        
+
+        Schema: `ListAdvertisedPatternsReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listAdvertisedPatterns(
             {"pattern": "%"}, returnedTags=tagfilter
@@ -82,6 +91,9 @@ class IlsMixin:
         :param uuid: pattern uuid (or pattern)
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateAdvertisedPatternsReq`: optional `description`, `newPattern`, `patternType`, `hostedRoutePSTNRule`, `pstnFailStrip`, `pstnFailPrepend`; one of `uuid`, or `pattern`.
         """
         return self.client.updateAdvertisedPatterns(**args)
 
@@ -91,6 +103,9 @@ class IlsMixin:
         :param pattern: pattern string (or uuid)
         :param uuid: pattern uuid (or pattern)
         :return: result dictionary
+        
+
+        Schema: `RemoveAdvertisedPatternsReq`: one of `pattern`, or `uuid`.
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -116,6 +131,9 @@ class IlsMixin:
         :param clusterId: cluster ID (optional; omit to get local cluster config)
         :param tagfilter: dict of NewIlsConfig fields to return; defaults to all known fields
         :return: ilsConfig dictionary
+        
+
+        Schema: `GetIlsConfigReq`: `returnedTags`; optional `clusterId`.
         """
         if tagfilter is None:
             tagfilter = self._ILS_CONFIG_TAGS
@@ -131,6 +149,9 @@ class IlsMixin:
         :param registrationServer: ILS registration server address
         :param activateIls: boolean, activate ILS (dummy tag per WSDL)
         :return: result dictionary
+        
+
+        Schema: `UpdateIlsConfigReq`: `role` + `registrationServer` + `activateIls` + `synchronizeClustersEvery` + `activatedServers` + `deactivatedServers` + `useTls` + `enableUsePassword` + `usePassword`.
         """
         return self.client.updateIlsConfig(**args)
 
@@ -147,6 +168,9 @@ class IlsMixin:
         :param lastLoadedFileName: last loaded file name
         :param fileLoadDateTime: file load timestamp
         :return: result dictionary (uuid)
+        
+
+        Schema: `importedDirectoryUriCatalogs` -> `XImportedDirectoryUriCatalogs`: `name` + `routeString`; optional `description`, `lastLoadedFileName`, `fileLoadDateTime`.
         """
         obj = self._build_object(
             "addImportedDirectoryUriCatalogs",
@@ -163,6 +187,9 @@ class IlsMixin:
         :param name: catalog name (or uuid)
         :param uuid: catalog uuid (or name)
         :return: importedDirectoryUriCatalogs dictionary
+        
+
+        Schema: `GetImportedDirectoryUriCatalogsReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImportedDirectoryUriCatalogs(
             **self._identify(name=name, uuid=uuid)
@@ -175,6 +202,9 @@ class IlsMixin:
         List imported directory URI catalogs.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of importedDirectoryUriCatalogs dictionaries, empty when nothing matches
+        
+
+        Schema: `ListImportedDirectoryUriCatalogsReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listImportedDirectoryUriCatalogs(
             {"name": "%"}, returnedTags=tagfilter
@@ -192,6 +222,9 @@ class IlsMixin:
         :param description: new description
         :param routeString: new route string
         :return: result dictionary
+        
+
+        Schema: `UpdateImportedDirectoryUriCatalogsReq`: optional `newName`, `description`, `routeString`.
         """
         return self.client.updateImportedDirectoryUriCatalogs(**args)
 
@@ -201,6 +234,9 @@ class IlsMixin:
         :param name: catalog name (or uuid)
         :param uuid: catalog uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImportedDirectoryUriCatalogs(
             **self._identify(name=name, uuid=uuid)
@@ -223,6 +259,9 @@ class IlsMixin:
         :param lbm: LBM service member config (dict)
         :param uds: UDS service member config (dict)
         :return: result dictionary (uuid)
+        
+
+        Schema: `remoteCluster` -> `XRemoteCluster`: `clusterId` + `fullyQualifiedName`; optional `description`, `emcc`, `pstnAccess`, `rsvpAgent`, `tftp`, `lbm` and 1 more.
         """
         obj = self._build_object(
             "addRemoteCluster",
@@ -237,6 +276,9 @@ class IlsMixin:
         :param clusterId: cluster ID (or uuid)
         :param uuid: cluster uuid (or clusterId)
         :return: remoteCluster dictionary
+        
+
+        Schema: `GetRemoteClusterReq`: optional `returnedTags`; one of `clusterId`, or `uuid`.
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -251,6 +293,9 @@ class IlsMixin:
         List remote clusters.
         :param tagfilter: AXL returned tags to include, e.g. {'clusterId': ''}
         :return: list of remoteCluster dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRemoteClusterReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listRemoteCluster(
             {"clusterId": "%"}, returnedTags=tagfilter
@@ -271,6 +316,9 @@ class IlsMixin:
         :param lbm: LBM service member config (dict)
         :param uds: UDS service member config (dict)
         :return: result dictionary
+        
+
+        Schema: `UpdateRemoteClusterReq`: optional `emcc`, `pstnAccess`, `rsvpAgent`, `tftp`, `lbm`, `uds`; one of `uuid`, or `clusterId`.
         """
         return self.client.updateRemoteCluster(**args)
 
@@ -280,6 +328,9 @@ class IlsMixin:
         :param clusterId: cluster ID (or uuid)
         :param uuid: cluster uuid (or clusterId)
         :return: result dictionary
+        
+
+        Schema: `RemoveRemoteClusterReq`: one of `clusterId`, or `uuid`.
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -299,6 +350,9 @@ class IlsMixin:
         :param server: server address (hostname or IP) — required
         :param clusterId: remote cluster ID — required
         :return: result value string
+        
+
+        Schema: `DoUpdateRemoteClusterReq`: `server` + `clusterId`.
         """
         return self.client.doUpdateRemoteCluster(server=server, clusterId=clusterId)
 
@@ -325,6 +379,9 @@ class IlsMixin:
         Force re-register with Cisco Smart Software Manager (cluster already registered).
         :param token: smart license registration token — required
         :return: result string ('Success' or 'Failure')
+        
+
+        Schema: `DoSmartLicenseReRegisterReq`: `token`.
         """
         return self.client.doSmartLicenseReRegister(token=token)
 
@@ -334,6 +391,9 @@ class IlsMixin:
         :param token: smart license registration token — required
         :param force: boolean, force registration even if already registered — required
         :return: result string ('Success' or 'Failure')
+        
+
+        Schema: `DoSmartLicenseRegisterReq`: `token` + `force`.
         """
         return self.client.doSmartLicenseRegister(token=token, force=force)
 

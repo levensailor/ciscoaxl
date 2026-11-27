@@ -83,6 +83,9 @@ class GatewaysMixin:
         :param callManagerGroupName: associated CM group — required
         :param description: description
         :return: result dictionary (uuid)
+        
+
+        Schema: `gateway` -> `XGateway`: `domainName` + `product` + `protocol` + `callManagerGroupName`; optional `description`, `units`, `vendorConfig`.
         """
         gw = self._build_object("addGateway", "gateway", args)
         return self.client.addGateway(gateway=gw)
@@ -94,6 +97,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name / SCCP MAC (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: gateway dictionary
+        
+
+        Schema: `GetGatewayReq`: optional `returnedTags`; one of `domainName`, or `uuid`.
         """
         return self.client.getGateway(
             **self._identify_gateway(domainName=domainName, uuid=uuid)
@@ -105,6 +111,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include, e.g. {'domainName': ''}
         :return: list of gateway dictionaries, empty when nothing matches
+        
+
+        Schema: `ListGatewayReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listGateway(
             {"domainName": "%"}, returnedTags=tagfilter
@@ -122,6 +131,9 @@ class GatewaysMixin:
         :param newDomainName: new domain name
         :param description: description
         :return: result dictionary
+        
+
+        Schema: `UpdateGatewayReq`: optional `newDomainName`, `description`, `product`, `protocol`, `callManagerGroupName`, `vendorConfig`; one of `uuid`, or `domainName`.
         """
         return self.client.updateGateway(**args)
 
@@ -132,6 +144,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name / SCCP MAC (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `RemoveGatewayReq`: one of `domainName`, or `uuid`.
         """
         return self.client.removeGateway(
             **self._identify_gateway(domainName=domainName, uuid=uuid)
@@ -144,6 +159,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name / SCCP MAC (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `ApplyGatewayReq`: one of `domainName`, or `uuid`.
         """
         return self.client.applyGateway(
             **self._identify_gateway(domainName=domainName, uuid=uuid)
@@ -156,6 +174,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name / SCCP MAC (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `ResetGatewayReq`: one of `domainName`, or `uuid`.
         """
         return self.client.resetGateway(
             **self._identify_gateway(domainName=domainName, uuid=uuid)
@@ -168,6 +189,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name / SCCP MAC (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `RestartGatewayReq`: one of `domainName`, or `uuid`.
         """
         return self.client.restartGateway(
             **self._identify_gateway(domainName=domainName, uuid=uuid)
@@ -187,6 +211,9 @@ class GatewaysMixin:
         :param subunit: subunit index
         :param index: port index
         :return: result dictionary (uuid)
+        
+
+        Schema: `gatewayEndpointAnalogAccess` -> `XGatewayEndpointAnalogAccess`: `unit` + `subunit` + `endpoint`; one of `domainName`, or `gatewayUuid`.
         """
         ep = self._build_object(
             "addGatewayEndpointAnalogAccess",
@@ -204,6 +231,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: endpoint dictionary
+        
+
+        Schema: `GetGatewayEndpointAnalogAccessReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGatewayEndpointAnalogAccess(
             **self._identify(name=name, uuid=uuid)
@@ -217,6 +247,9 @@ class GatewaysMixin:
         :param uuid: endpoint uuid (or name)
         :param endpoint: nested endpoint update dict
         :return: result dictionary
+        
+
+        Schema: `UpdateGatewayEndpointAnalogAccessReq`: optional `endpoint`.
         """
         return self.client.updateGatewayEndpointAnalogAccess(**args)
 
@@ -227,6 +260,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGatewayEndpointAnalogAccess(
             **self._identify(name=name, uuid=uuid)
@@ -246,6 +282,9 @@ class GatewaysMixin:
         :param subunit: subunit index
         :param index: port index
         :return: result dictionary (uuid)
+        
+
+        Schema: `gatewayEndpointDigitalAccessPri` -> `XGatewayEndpointDigitalAccessPri`: `unit` + `subunit` + `endpoint`; one of `domainName`, or `gatewayUuid`.
         """
         ep = self._build_object(
             "addGatewayEndpointDigitalAccessPri",
@@ -263,6 +302,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: endpoint dictionary
+        
+
+        Schema: `GetGatewayEndpointDigitalAccessPriReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGatewayEndpointDigitalAccessPri(
             **self._identify(name=name, uuid=uuid)
@@ -276,6 +318,9 @@ class GatewaysMixin:
         :param uuid: endpoint uuid (or name)
         :param endpoint: nested endpoint update dict
         :return: result dictionary
+        
+
+        Schema: `UpdateGatewayEndpointDigitalAccessPriReq`: optional `endpoint`.
         """
         return self.client.updateGatewayEndpointDigitalAccessPri(**args)
 
@@ -286,6 +331,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGatewayEndpointDigitalAccessPri(
             **self._identify(name=name, uuid=uuid)
@@ -305,6 +353,9 @@ class GatewaysMixin:
         :param subunit: subunit index
         :param index: port index
         :return: result dictionary (uuid)
+        
+
+        Schema: `gatewayEndpointDigitalAccessT1` -> `XGatewayEndpointDigitalAccessT1`: `unit` + `subunit` + `endpoint`; one of `domainName`, or `gatewayUuid`.
         """
         ep = self._build_object(
             "addGatewayEndpointDigitalAccessT1",
@@ -322,6 +373,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: endpoint dictionary
+        
+
+        Schema: `GetGatewayEndpointDigitalAccessT1Req`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGatewayEndpointDigitalAccessT1(
             **self._identify(name=name, uuid=uuid)
@@ -335,6 +389,9 @@ class GatewaysMixin:
         :param uuid: endpoint uuid (or name)
         :param endpoint: nested endpoint update dict
         :return: result dictionary
+        
+
+        Schema: `UpdateGatewayEndpointDigitalAccessT1Req`: optional `endpoint`.
         """
         return self.client.updateGatewayEndpointDigitalAccessT1(**args)
 
@@ -345,6 +402,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGatewayEndpointDigitalAccessT1(
             **self._identify(name=name, uuid=uuid)
@@ -364,6 +424,9 @@ class GatewaysMixin:
         :param subunit: subunit index
         :param index: port index
         :return: result dictionary (uuid)
+        
+
+        Schema: `gatewaySccpEndpoints` -> `XGatewaySccpEndpoints`: `unit` + `subunit` + `endpoint`; one of `domainName`, or `gatewayUuid`.
         """
         ep = self._build_object(
             "addGatewaySccpEndpoints",
@@ -379,6 +442,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: gatewaySccpEndpoints dictionary
+        
+
+        Schema: `GetGatewaySccpEndpointsReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGatewaySccpEndpoints(
             **self._identify(name=name, uuid=uuid)
@@ -392,6 +458,9 @@ class GatewaysMixin:
         :param uuid: endpoint uuid (or name)
         :param endpoint: nested endpoint update dict
         :return: result dictionary
+        
+
+        Schema: `UpdateGatewaySccpEndpointsReq`: optional `endpoint`.
         """
         return self.client.updateGatewaySccpEndpoints(**args)
 
@@ -402,6 +471,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGatewaySccpEndpoints(
             **self._identify(name=name, uuid=uuid)
@@ -421,6 +493,9 @@ class GatewaysMixin:
         :param subunits: dict with list of subunit dicts, e.g.
                          {'subunit': [{'index': 0, 'product': '...'}]}
         :return: result dictionary
+        
+
+        Schema: `gatewaySubunits` -> `XGatewaySubunits`: `unit` + `subunits`; one of `domainName`, or `gatewayUuid`.
         """
         gs = self._build_object("addGatewaySubunits", "gatewaySubunits", args)
         return self.client.addGatewaySubunits(gatewaySubunits=gs)
@@ -437,6 +512,9 @@ class GatewaysMixin:
         :param subunits: dict with list of subunit index dicts, e.g.
                          {'subunit': [{'index': 0}]}
         :return: result dictionary
+        
+
+        Schema: `RemoveGatewaySubunitsReq`: `unit` + `subunits`; one of `gatewayUuid`, or `domainName`.
         """
         return self.client.removeGatewaySubunits(**args)
 
@@ -453,6 +531,9 @@ class GatewaysMixin:
         :param units: dict with list of unit dicts, e.g.
                       {'unit': [{'index': 0, 'product': '...'}]}
         :return: result dictionary
+        
+
+        Schema: `unitsToGateway` -> `XUnitsToGateway`: `units`; one of `domainName`, or `gatewayUuid`.
         """
         utg = self._build_object("addUnitsToGateway", "unitsToGateway", args)
         return self.client.addUnitsToGateway(unitsToGateway=utg)
@@ -468,6 +549,9 @@ class GatewaysMixin:
         :param units: dict with list of unit index dicts, e.g.
                       {'unit': [{'index': 0}]}
         :return: result dictionary
+        
+
+        Schema: `RemoveUnitsToGatewayReq`: `units`; one of `gatewayUuid`, or `domainName`.
         """
         return self.client.removeUnitsToGateway(**args)
 
@@ -487,6 +571,9 @@ class GatewaysMixin:
         :param maxMemoryThreshold: memory limit, default '50'
         :param maxLuaInstructionsThreshold: instruction limit, default '1000'
         :return: result dictionary (uuid)
+        
+
+        Schema: `sIPNormalizationScript` -> `XSIPNormalizationScript`: `name` + `content` + `scriptExecutionErrorRecoveryAction` + `systemResourceErrorRecoveryAction` + `maxMemoryThreshold` + `maxLuaInstructionsThreshold` + `isStandard`; optional `description`.
         """
         script = self._build_object(
             "addSIPNormalizationScript",
@@ -504,6 +591,9 @@ class GatewaysMixin:
         :param name: script name (or uuid)
         :param uuid: script uuid (or name)
         :return: sIPNormalizationScript dictionary
+        
+
+        Schema: `GetSIPNormalizationScriptReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSIPNormalizationScript(
             **self._identify(name=name, uuid=uuid)
@@ -517,6 +607,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of sIPNormalizationScript dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSIPNormalizationScriptReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listSIPNormalizationScript(
             {"name": "%"}, returnedTags=tagfilter
@@ -535,6 +628,9 @@ class GatewaysMixin:
         :param content: new Lua content
         :param description: description
         :return: result dictionary
+        
+
+        Schema: `UpdateSIPNormalizationScriptReq`: optional `newName`, `description`, `content`, `scriptExecutionErrorRecoveryAction`, `systemResourceErrorRecoveryAction`, `maxMemoryThreshold` and 1 more.
         """
         return self.client.updateSIPNormalizationScript(**args)
 
@@ -545,6 +641,9 @@ class GatewaysMixin:
         :param name: script name (or uuid)
         :param uuid: script uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSIPNormalizationScript(
             **self._identify(name=name, uuid=uuid)
@@ -581,6 +680,9 @@ class GatewaysMixin:
         :param protocol: gateway protocol — required
         :param callManagerGroupName: associated CM group
         :return: result dictionary (uuid)
+        
+
+        Schema: `ciscoCatalyst600024PortFXSGateway` -> `XCiscoCatalyst600024PortFXSGateway`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `portSelectionOrder`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `networkLocale`, `mediaResourceListName`, `automatedAlternateRoutingCssName` and 12 more.
         """
         gw = self._build_object(
             "addCiscoCatalyst600024PortFXSGateway",
@@ -598,6 +700,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: ciscoCatalyst600024PortFXSGateway dictionary
+        
+
+        Schema: `GetCiscoCatalyst600024PortFXSGatewayReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCiscoCatalyst600024PortFXSGateway(
             **self._identify(name=name, uuid=uuid)
@@ -611,6 +716,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include
         :return: list of ciscoCatalyst600024PortFXSGateway dicts, empty on no results
+        
+
+        Schema: `ListCiscoCatalyst600024PortFXSGatewayReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCiscoCatalyst600024PortFXSGateway(
             {"name": "%"}, returnedTags=tagfilter
@@ -626,6 +734,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateCiscoCatalyst600024PortFXSGatewayReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `networkLocale` and 16 more.
         """
         return self.client.updateCiscoCatalyst600024PortFXSGateway(**args)
 
@@ -636,6 +747,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCiscoCatalyst600024PortFXSGateway(
             **self._identify(name=name, uuid=uuid)
@@ -648,6 +762,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCiscoCatalyst600024PortFXSGateway(
             **self._identify(name=name, uuid=uuid)
@@ -660,6 +777,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCiscoCatalyst600024PortFXSGateway(
             **self._identify(name=name, uuid=uuid)
@@ -672,6 +792,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartCiscoCatalyst600024PortFXSGateway(
             **self._identify(name=name, uuid=uuid)
@@ -690,6 +813,9 @@ class GatewaysMixin:
         :param product: gateway product string — required
         :param protocol: gateway protocol — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `ciscoCatalyst6000E1VoIPGateway` -> `XCiscoCatalyst6000E1VoIPGateway`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `redirectInboundNumberIe` + `calledPlan` + `calledPri` + `callingPartySelection` + `callingPlan` + `callingPri` + `chanIe` + `clockReference` + `dChannelEnable` + `channelSelectionOrder` + `displayIE` + `pcmType` + `csuParam` + `firstDelay` + `interfaceIdPresent` + `interfaceId` + `intraDelay` + `mcdnEnable` + `redirectOutboundNumberIe` + `numDigitsToStrip` + `passingPrecedenceLevelThrough` + `callingLinePresentationBit` + `connectedLineIdPresentation` + `priProtocol` + `securityAccessLevel` + `sendCallingNameInFacilityIe` + `sendExLeadingCharInDispIe` + `sendRestart` + `setupNonIsdnPi` + `sigDigits` + `span` + `statusPoll` + `smdiBasePort`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `networkLocation`, `networkLocale`, `mediaResourceListName` and 39 more.
         """
         gw = self._build_object(
             "addCiscoCatalyst6000E1VoIPGateway",
@@ -707,6 +833,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: ciscoCatalyst6000E1VoIPGateway dictionary
+        
+
+        Schema: `GetCiscoCatalyst6000E1VoIPGatewayReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCiscoCatalyst6000E1VoIPGateway(
             **self._identify(name=name, uuid=uuid)
@@ -720,6 +849,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include
         :return: list of ciscoCatalyst6000E1VoIPGateway dicts, empty on no results
+        
+
+        Schema: `ListCiscoCatalyst6000E1VoIPGatewayReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCiscoCatalyst6000E1VoIPGateway(
             {"name": "%"}, returnedTags=tagfilter
@@ -735,6 +867,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateCiscoCatalyst6000E1VoIPGatewayReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `networkLocation` and 75 more.
         """
         return self.client.updateCiscoCatalyst6000E1VoIPGateway(**args)
 
@@ -745,6 +880,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCiscoCatalyst6000E1VoIPGateway(
             **self._identify(name=name, uuid=uuid)
@@ -757,6 +895,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCiscoCatalyst6000E1VoIPGateway(
             **self._identify(name=name, uuid=uuid)
@@ -769,6 +910,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCiscoCatalyst6000E1VoIPGateway(
             **self._identify(name=name, uuid=uuid)
@@ -781,6 +925,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartCiscoCatalyst6000E1VoIPGateway(
             **self._identify(name=name, uuid=uuid)
@@ -799,6 +946,9 @@ class GatewaysMixin:
         :param product: gateway product string — required
         :param protocol: gateway protocol — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `ciscoCatalyst6000T1VoIPGatewayPri` -> `XCiscoCatalyst6000T1VoIPGatewayPri`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `redirectInboundNumberIe` + `calledPlan` + `calledPri` + `callingPartySelection` + `callingPlan` + `callingPri` + `chanIe` + `clockReference` + `dChannelEnable` + `channelSelectionOrder` + `displayIE` + `pcmType` + `csuParam` + `firstDelay` + `interfaceIdPresent` + `interfaceId` + `intraDelay` + `mcdnEnable` + `redirectOutboundNumberIe` + `numDigitsToStrip` + `passingPrecedenceLevelThrough` + `callingLinePresentationBit` + `connectedLineIdPresentation` + `priProtocol` + `securityAccessLevel` + `sendCallingNameInFacilityIe` + `sendExLeadingCharInDispIe` + `sendRestart` + `setupNonIsdnPi` + `sigDigits` + `span` + `statusPoll` + `smdiBasePort`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `networkLocation`, `networkLocale`, `mediaResourceListName` and 41 more.
         """
         gw = self._build_object(
             "addCiscoCatalyst6000T1VoIPGatewayPri",
@@ -816,6 +966,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: ciscoCatalyst6000T1VoIPGatewayPri dictionary
+        
+
+        Schema: `GetCiscoCatalyst6000T1VoIPGatewayPriReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCiscoCatalyst6000T1VoIPGatewayPri(
             **self._identify(name=name, uuid=uuid)
@@ -829,6 +982,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include
         :return: list of ciscoCatalyst6000T1VoIPGatewayPri dicts, empty on no results
+        
+
+        Schema: `ListCiscoCatalyst6000T1VoIPGatewayPriReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCiscoCatalyst6000T1VoIPGatewayPri(
             {"name": "%"}, returnedTags=tagfilter
@@ -844,6 +1000,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateCiscoCatalyst6000T1VoIPGatewayPriReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `networkLocation` and 77 more.
         """
         return self.client.updateCiscoCatalyst6000T1VoIPGatewayPri(**args)
 
@@ -854,6 +1013,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCiscoCatalyst6000T1VoIPGatewayPri(
             **self._identify(name=name, uuid=uuid)
@@ -866,6 +1028,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCiscoCatalyst6000T1VoIPGatewayPri(
             **self._identify(name=name, uuid=uuid)
@@ -878,6 +1043,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCiscoCatalyst6000T1VoIPGatewayPri(
             **self._identify(name=name, uuid=uuid)
@@ -890,6 +1058,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartCiscoCatalyst6000T1VoIPGatewayPri(
             **self._identify(name=name, uuid=uuid)
@@ -908,6 +1079,9 @@ class GatewaysMixin:
         :param product: gateway product string — required
         :param protocol: gateway protocol — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `ciscoCatalyst6000T1VoIPGatewayT1` -> `XCiscoCatalyst6000T1VoIPGatewayT1`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `sendGeoLocation` + `trunkSelectionOrder` + `clockReference` + `csuParam` + `digitSending` + `pcmType` + `fdlChannel` + `yellowAlarm` + `zeroSupression` + `smdiBasePort`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `networkLocation`, `mediaResourceListName`, `automatedAlternateRoutingCssName` and 19 more.
         """
         gw = self._build_object(
             "addCiscoCatalyst6000T1VoIPGatewayT1",
@@ -925,6 +1099,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: ciscoCatalyst6000T1VoIPGatewayT1 dictionary
+        
+
+        Schema: `GetCiscoCatalyst6000T1VoIPGatewayT1Req`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCiscoCatalyst6000T1VoIPGatewayT1(
             **self._identify(name=name, uuid=uuid)
@@ -938,6 +1115,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include
         :return: list of ciscoCatalyst6000T1VoIPGatewayT1 dicts, empty on no results
+        
+
+        Schema: `ListCiscoCatalyst6000T1VoIPGatewayT1Req`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCiscoCatalyst6000T1VoIPGatewayT1(
             {"name": "%"}, returnedTags=tagfilter
@@ -953,6 +1133,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateCiscoCatalyst6000T1VoIPGatewayT1Req`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `networkLocation` and 32 more.
         """
         return self.client.updateCiscoCatalyst6000T1VoIPGatewayT1(**args)
 
@@ -963,6 +1146,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCiscoCatalyst6000T1VoIPGatewayT1(
             **self._identify(name=name, uuid=uuid)
@@ -975,6 +1161,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCiscoCatalyst6000T1VoIPGatewayT1(
             **self._identify(name=name, uuid=uuid)
@@ -987,6 +1176,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCiscoCatalyst6000T1VoIPGatewayT1(
             **self._identify(name=name, uuid=uuid)
@@ -999,6 +1191,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartCiscoCatalyst6000T1VoIPGatewayT1(
             **self._identify(name=name, uuid=uuid)
@@ -1016,6 +1211,9 @@ class GatewaysMixin:
         :param description: description
         :param rrqTimeToLive: RRQ time-to-live in seconds
         :return: result dictionary (uuid)
+        
+
+        Schema: `gatekeeper` -> `XGatekeeper`: `name` + `rrqTimeToLive` + `retryTimeout`; optional `description`, `enableDevice`.
         """
         gk = self._build_object("addGatekeeper", "gatekeeper", args)
         return self.client.addGatekeeper(gatekeeper=gk)
@@ -1027,6 +1225,9 @@ class GatewaysMixin:
         :param name: gatekeeper name (or uuid)
         :param uuid: gatekeeper uuid (or name)
         :return: gatekeeper dictionary
+        
+
+        Schema: `GetGatekeeperReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGatekeeper(
             **self._identify(name=name, uuid=uuid)
@@ -1038,6 +1239,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include
         :return: list of gatekeeper dicts, empty on no results
+        
+
+        Schema: `ListGatekeeperReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listGatekeeper(
             {"name": "%"}, returnedTags=tagfilter
@@ -1053,6 +1257,9 @@ class GatewaysMixin:
         :param name: gatekeeper name (or uuid)
         :param uuid: gatekeeper uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateGatekeeperReq`: optional `newName`, `description`, `rrqTimeToLive`, `retryTimeout`, `enableDevice`.
         """
         return self.client.updateGatekeeper(**args)
 
@@ -1063,6 +1270,9 @@ class GatewaysMixin:
         :param name: gatekeeper name (or uuid)
         :param uuid: gatekeeper uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGatekeeper(**self._identify(name=name, uuid=uuid))
 
@@ -1073,6 +1283,9 @@ class GatewaysMixin:
         :param name: gatekeeper name (or uuid)
         :param uuid: gatekeeper uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyGatekeeper(**self._identify(name=name, uuid=uuid))
 
@@ -1083,6 +1296,9 @@ class GatewaysMixin:
         :param name: gatekeeper name (or uuid)
         :param uuid: gatekeeper uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetGatekeeper(**self._identify(name=name, uuid=uuid))
 
@@ -1093,6 +1309,9 @@ class GatewaysMixin:
         :param name: gatekeeper name (or uuid)
         :param uuid: gatekeeper uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartGatekeeper(**self._identify(name=name, uuid=uuid))
 
@@ -1110,6 +1329,9 @@ class GatewaysMixin:
         :param subunit: subunit index
         :param index: port index
         :return: result dictionary (uuid)
+        
+
+        Schema: `gatewayEndpointDigitalAccessBri` -> `XGatewayEndpointDigitalAccessBri`: `unit` + `subunit` + `endpoint`; one of `domainName`, or `gatewayUuid`.
         """
         ep = self._build_object(
             "addGatewayEndpointDigitalAccessBri",
@@ -1127,6 +1349,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: gatewayEndpointDigitalAccessBri dictionary
+        
+
+        Schema: `GetGatewayEndpointDigitalAccessBriReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGatewayEndpointDigitalAccessBri(
             **self._identify(name=name, uuid=uuid)
@@ -1139,6 +1364,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateGatewayEndpointDigitalAccessBriReq`: optional `endpoint`.
         """
         return self.client.updateGatewayEndpointDigitalAccessBri(**args)
 
@@ -1149,6 +1377,9 @@ class GatewaysMixin:
         :param name: endpoint name (or uuid)
         :param uuid: endpoint uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGatewayEndpointDigitalAccessBri(
             **self._identify(name=name, uuid=uuid)
@@ -1167,6 +1398,9 @@ class GatewaysMixin:
         :param product: device product — required
         :param devicePoolName: device pool — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `h323Phone` -> `XH323Phone`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `commonPhoneConfigName` + `locationName` + `useTrustedRelayPoint` + `signalingPort`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `mediaResourceListName`, `automatedAlternateRoutingCssName`, `aarNeighborhoodName` and 28 more.
         """
         phone = self._build_object("addH323Phone", "h323Phone", args)
         return self.client.addH323Phone(h323Phone=phone)
@@ -1178,6 +1412,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: h323Phone dictionary
+        
+
+        Schema: `GetH323PhoneReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getH323Phone(
             **self._identify(name=name, uuid=uuid)
@@ -1189,6 +1426,9 @@ class GatewaysMixin:
 
         :param tagfilter: AXL returned tags to include
         :return: list of h323Phone dicts, empty on no results
+        
+
+        Schema: `ListH323PhoneReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listH323Phone(
             {"name": "%"}, returnedTags=tagfilter
@@ -1204,6 +1444,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateH323PhoneReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `commonPhoneConfigName` and 34 more.
         """
         return self.client.updateH323Phone(**args)
 
@@ -1214,6 +1457,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeH323Phone(**self._identify(name=name, uuid=uuid))
 
@@ -1224,6 +1470,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyH323Phone(**self._identify(name=name, uuid=uuid))
 
@@ -1234,6 +1483,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetH323Phone(**self._identify(name=name, uuid=uuid))
 
@@ -1244,6 +1496,9 @@ class GatewaysMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartH323Phone(**self._identify(name=name, uuid=uuid))
 
@@ -1261,6 +1516,9 @@ class GatewaysMixin:
         :param protocol: gateway protocol — required
         :param callManagerGroupName: associated CM group
         :return: result dictionary (uuid)
+        
+
+        Schema: `vg224` -> `XVg224`: `domainName` + `product` + `protocol` + `callManagerGroupName`; optional `description`, `units`, `vendorConfig`, `versionStamp`.
         """
         gw = self._build_object("addVg224", "vg224", args)
         return self.client.addVg224(vg224=gw)
@@ -1272,6 +1530,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: vg224 dictionary
+        
+
+        Schema: `GetVg224Req`: optional `returnedTags`; one of `domainName`, or `uuid`.
         """
         return self.client.getVg224(
             **self._identify_domain(domainName=domainName, uuid=uuid)
@@ -1284,6 +1545,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `UpdateVg224Req`: optional `newDomainName`, `description`, `callManagerGroupName`, `vendorConfig`; one of `uuid`, or `domainName`.
         """
         return self.client.updateVg224(**args)
 
@@ -1294,6 +1558,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `RemoveVg224Req`: one of `domainName`, or `uuid`.
         """
         return self.client.removeVg224(
             **self._identify_domain(domainName=domainName, uuid=uuid)
@@ -1306,6 +1573,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `ResetVg224Req`: one of `domainName`, or `uuid`.
         """
         return self.client.resetVg224(
             **self._identify_domain(domainName=domainName, uuid=uuid)
@@ -1318,6 +1588,9 @@ class GatewaysMixin:
         :param domainName: gateway domain name (or uuid)
         :param uuid: gateway uuid (or domainName)
         :return: result dictionary
+        
+
+        Schema: `RestartVg224Req`: one of `domainName`, or `uuid`.
         """
         return self.client.restartVg224(
             **self._identify_domain(domainName=domainName, uuid=uuid)

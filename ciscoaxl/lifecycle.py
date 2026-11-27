@@ -25,6 +25,9 @@ class LifecycleMixin:
         :param name: CTI route point name (or use uuid)
         :param uuid: CTI route point uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCtiRoutePoint(**self._identify(name=name, uuid=uuid))
 
@@ -34,6 +37,9 @@ class LifecycleMixin:
         :param name: CTI route point name (or use uuid)
         :param uuid: CTI route point uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCtiRoutePoint(**self._identify(name=name, uuid=uuid))
 
@@ -43,6 +49,9 @@ class LifecycleMixin:
         :param name: CTI route point name (or use uuid)
         :param uuid: CTI route point uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartCtiRoutePoint(**self._identify(name=name, uuid=uuid))
 
@@ -76,6 +85,9 @@ class LifecycleMixin:
         :param partition: route partition name (optional with pattern)
         :param uuid: line uuid (or use pattern)
         :return: result dict
+        
+
+        Schema: `ApplyLineReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.applyLine(**self._identify_line(pattern=pattern, partition=partition, uuid=uuid))
 
@@ -86,6 +98,9 @@ class LifecycleMixin:
         :param partition: route partition name (optional with pattern)
         :param uuid: line uuid (or use pattern)
         :return: result dict
+        
+
+        Schema: `ResetLineReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.resetLine(**self._identify_line(pattern=pattern, partition=partition, uuid=uuid))
 
@@ -96,6 +111,9 @@ class LifecycleMixin:
         :param partition: route partition name (optional with pattern)
         :param uuid: line uuid (or use pattern)
         :return: result dict
+        
+
+        Schema: `RestartLineReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.restartLine(**self._identify_line(pattern=pattern, partition=partition, uuid=uuid))
 
@@ -109,6 +127,9 @@ class LifecycleMixin:
         :param name: hunt list name (or use uuid)
         :param uuid: hunt list uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyHuntList(**self._identify(name=name, uuid=uuid))
 
@@ -118,6 +139,9 @@ class LifecycleMixin:
         :param name: hunt list name (or use uuid)
         :param uuid: hunt list uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetHuntList(**self._identify(name=name, uuid=uuid))
 
@@ -131,6 +155,9 @@ class LifecycleMixin:
         :param name: route list name (or use uuid)
         :param uuid: route list uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyRouteList(**self._identify(name=name, uuid=uuid))
 
@@ -140,6 +167,9 @@ class LifecycleMixin:
         :param name: route list name (or use uuid)
         :param uuid: route list uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetRouteList(**self._identify(name=name, uuid=uuid))
 
@@ -153,6 +183,9 @@ class LifecycleMixin:
         :param name: partition name (or use uuid)
         :param uuid: partition uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyRoutePartition(**self._identify(name=name, uuid=uuid))
 
@@ -162,6 +195,9 @@ class LifecycleMixin:
         :param name: partition name (or use uuid)
         :param uuid: partition uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartRoutePartition(**self._identify(name=name, uuid=uuid))
 
@@ -175,6 +211,9 @@ class LifecycleMixin:
         :param name: gateway name/IP (or use uuid)
         :param uuid: gateway uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyH323Gateway(**self._identify(name=name, uuid=uuid))
 
@@ -184,6 +223,9 @@ class LifecycleMixin:
         :param name: gateway name/IP (or use uuid)
         :param uuid: gateway uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetH323Gateway(**self._identify(name=name, uuid=uuid))
 
@@ -193,6 +235,9 @@ class LifecycleMixin:
         :param name: gateway name/IP (or use uuid)
         :param uuid: gateway uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartH323Gateway(**self._identify(name=name, uuid=uuid))
 
@@ -206,6 +251,9 @@ class LifecycleMixin:
         :param name: trunk name (or use uuid)
         :param uuid: trunk uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartSipTrunk(**self._identify(name=name, uuid=uuid))
 
@@ -219,6 +267,9 @@ class LifecycleMixin:
         :param name: SRST name (or use uuid)
         :param uuid: SRST uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applySrst(**self._identify(name=name, uuid=uuid))
 
@@ -228,6 +279,9 @@ class LifecycleMixin:
         :param name: SRST name (or use uuid)
         :param uuid: SRST uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetSrst(**self._identify(name=name, uuid=uuid))
 
@@ -237,6 +291,9 @@ class LifecycleMixin:
         :param name: SRST name (or use uuid)
         :param uuid: SRST uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartSrst(**self._identify(name=name, uuid=uuid))
 
@@ -250,6 +307,9 @@ class LifecycleMixin:
         :param name: conference bridge name (or use uuid)
         :param uuid: conference bridge uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyConferenceBridge(**self._identify(name=name, uuid=uuid))
 
@@ -259,6 +319,9 @@ class LifecycleMixin:
         :param name: conference bridge name (or use uuid)
         :param uuid: conference bridge uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetConferenceBridge(**self._identify(name=name, uuid=uuid))
 
@@ -268,6 +331,9 @@ class LifecycleMixin:
         :param name: conference bridge name (or use uuid)
         :param uuid: conference bridge uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartConferenceBridge(**self._identify(name=name, uuid=uuid))
 
@@ -281,6 +347,9 @@ class LifecycleMixin:
         :param name: MTP name (or use uuid)
         :param uuid: MTP uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyMtp(**self._identify(name=name, uuid=uuid))
 
@@ -290,6 +359,9 @@ class LifecycleMixin:
         :param name: MTP name (or use uuid)
         :param uuid: MTP uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetMtp(**self._identify(name=name, uuid=uuid))
 
@@ -299,6 +371,9 @@ class LifecycleMixin:
         :param name: MTP name (or use uuid)
         :param uuid: MTP uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartMtp(**self._identify(name=name, uuid=uuid))
 
@@ -312,6 +387,9 @@ class LifecycleMixin:
         :param name: region name (or use uuid)
         :param uuid: region uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyRegion(**self._identify(name=name, uuid=uuid))
 
@@ -321,6 +399,9 @@ class LifecycleMixin:
         :param name: region name (or use uuid)
         :param uuid: region uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartRegion(**self._identify(name=name, uuid=uuid))
 
@@ -334,6 +415,9 @@ class LifecycleMixin:
         :param name: transcoder name (or use uuid)
         :param uuid: transcoder uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyTranscoder(**self._identify(name=name, uuid=uuid))
 
@@ -343,6 +427,9 @@ class LifecycleMixin:
         :param name: transcoder name (or use uuid)
         :param uuid: transcoder uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetTranscoder(**self._identify(name=name, uuid=uuid))
 
@@ -356,6 +443,9 @@ class LifecycleMixin:
         :param name: call manager group name (or use uuid)
         :param uuid: call manager group uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCallManagerGroup(**self._identify(name=name, uuid=uuid))
 
@@ -365,6 +455,9 @@ class LifecycleMixin:
         :param name: call manager group name (or use uuid)
         :param uuid: call manager group uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCallManagerGroup(**self._identify(name=name, uuid=uuid))
 
@@ -378,6 +471,9 @@ class LifecycleMixin:
         :param name: device pool name (or use uuid)
         :param uuid: device pool uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyDevicePool(**self._identify(name=name, uuid=uuid))
 
@@ -387,6 +483,9 @@ class LifecycleMixin:
         :param name: device pool name (or use uuid)
         :param uuid: device pool uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetDevicePool(**self._identify(name=name, uuid=uuid))
 
@@ -396,6 +495,9 @@ class LifecycleMixin:
         :param name: device pool name (or use uuid)
         :param uuid: device pool uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartDevicePool(**self._identify(name=name, uuid=uuid))
 
@@ -410,6 +512,9 @@ class LifecycleMixin:
         Add a Phone Activation Code
         :param args: AXL phoneActivationCode fields
         :return: result dict
+        
+
+        Schema: `phoneActivationCode` -> `XPhoneActivationCode`: `phoneName`; optional `activationCodeExpiry`.
         """
         return self.client.addPhoneActivationCode(
             self._build_object("addPhoneActivationCode", "phoneActivationCode", args)
@@ -424,6 +529,9 @@ class LifecycleMixin:
         :param user_id: user ID filter (supports % wildcard)
         :param tagfilter: returned tags dict, default {'phoneName': ''}
         :return: list of phoneActivationCode dicts, empty when nothing matches
+        
+
+        Schema: `ListPhoneActivationCodeReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         if tagfilter is None:
             tagfilter = {"phoneName": ""}
@@ -447,6 +555,9 @@ class LifecycleMixin:
         :param activation_code: the activation code string (or use uuid)
         :param uuid: activation code uuid (or use activation_code)
         :return: result dict
+        
+
+        Schema: `RemovePhoneActivationCodeReq`: one of `activationCode`, or `uuid`.
         """
         if bool(activation_code) == bool(uuid):
             raise ValueError("Provide exactly one of activation_code or uuid")
@@ -466,6 +577,9 @@ class LifecycleMixin:
         :param description: description filter (supports % wildcard)
         :param tagfilter: returned tags dict, default {'name': ''}
         :return: list of unassignedDevice dicts, empty when nothing matches
+        
+
+        Schema: `ListUnassignedDeviceReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         if tagfilter is None:
             tagfilter = {"name": ""}

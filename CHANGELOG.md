@@ -6,6 +6,10 @@
 
 ### Docs
 - docs: coverage table lists Remote Destinations, UC Services, and Voicemail Profiles
+- docs: every AXL method docstring now ends with a Schema line taken from the 15.0 XSD, including which identity fields are a choice (`uuid`, or `pattern` plus an optional partition) rather than a single required name
+
+### Removed
+- chore: remove `wsdl.py`, `helpers.py`, `config.py`, and `exceptions.py`. Nothing in the SDK imported them, and `axl.py` does its own argument checks. Direct imports of those modules no longer work.
 
 ## v0.171 - 11-26-2026
 ### Fixed

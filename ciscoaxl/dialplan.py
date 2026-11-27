@@ -28,6 +28,9 @@ class DialPlanMixin:
         Add an AAR group.
         :param name: AAR group name - required
         :return: result dictionary
+        
+
+        Schema: `aarGroup` -> `XAarGroup`: `name`.
         """
         return self.client.addAarGroup(
             self._build_object("addAarGroup", "aarGroup", args)
@@ -39,6 +42,9 @@ class DialPlanMixin:
         :param name: AAR group name
         :param uuid: AAR group uuid
         :return: aarGroup dictionary
+        
+
+        Schema: `GetAarGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getAarGroup(**args)["return"]["aarGroup"]
 
@@ -47,6 +53,9 @@ class DialPlanMixin:
         List all AAR groups.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of aarGroup dictionaries, empty when nothing matches
+        
+
+        Schema: `ListAarGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listAarGroup(
@@ -60,6 +69,9 @@ class DialPlanMixin:
         :param name: AAR group name (or uuid)
         :param uuid: AAR group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateAarGroupReq`: optional `newName`.
         """
         return self.client.updateAarGroup(**args)
 
@@ -69,6 +81,9 @@ class DialPlanMixin:
         :param name: AAR group name
         :param uuid: AAR group uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeAarGroup(**self._identify(name=name, uuid=uuid))
 
@@ -85,6 +100,9 @@ class DialPlanMixin:
         :param uuid: matrix entry uuid
         :param prefixDigit: new prefix digit value
         :return: result dictionary
+        
+
+        Schema: `UpdateAarGroupMatrixReq`: optional `prefixDigit`; one of `uuid`, or (`aarGroupFromName` + `aarGroupToName`).
         """
         return self.client.updateAarGroupMatrix(**args)
 
@@ -97,6 +115,9 @@ class DialPlanMixin:
         Add an application dial rule.
         :param name: rule name - required
         :return: result dictionary
+        
+
+        Schema: `applicationDialRules` -> `XApplicationDialRules`: `name` + `numberOfDigits` + `digitsToBeRemoved` + `priority`; optional `description`, `numberBeginWith`, `prefixPattern`.
         """
         return self.client.addApplicationDialRules(
             self._build_object("addApplicationDialRules", "applicationDialRules", args)
@@ -108,6 +129,9 @@ class DialPlanMixin:
         :param name: rule name
         :param uuid: rule uuid
         :return: applicationDialRules dictionary
+        
+
+        Schema: `GetApplicationDialRulesReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getApplicationDialRules(**args)["return"][
             "applicationDialRules"
@@ -118,6 +142,9 @@ class DialPlanMixin:
         List all application dial rules.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of applicationDialRules dictionaries, empty when nothing matches
+        
+
+        Schema: `ListApplicationDialRulesReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listApplicationDialRules(
@@ -131,6 +158,9 @@ class DialPlanMixin:
         :param name: rule name (or uuid)
         :param uuid: rule uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateApplicationDialRulesReq`: optional `newName`, `description`, `numberBeginWith`, `numberOfDigits`, `digitsToBeRemoved`, `prefixPattern` and 1 more.
         """
         return self.client.updateApplicationDialRules(**args)
 
@@ -140,6 +170,9 @@ class DialPlanMixin:
         :param name: rule name
         :param uuid: rule uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeApplicationDialRules(
             **self._identify(name=name, uuid=uuid)
@@ -157,6 +190,9 @@ class DialPlanMixin:
         :param pattern: park code pattern - required
         :param retrievalPrefix: retrieval prefix - required
         :return: result dictionary
+        
+
+        Schema: `directedCallPark` -> `XDirectedCallPark`: `pattern` + `retrievalPrefix`; optional `description`, `routePartitionName`, `reversionPattern`, `revertCssName`.
         """
         return self.client.addDirectedCallPark(
             self._build_object("addDirectedCallPark", "directedCallPark", args)
@@ -169,6 +205,9 @@ class DialPlanMixin:
         :param routePartitionName: partition name (optional with pattern)
         :param uuid: directed call park uuid
         :return: directedCallPark dictionary
+        
+
+        Schema: `GetDirectedCallParkReq`: optional `returnedTags`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.getDirectedCallPark(**args)["return"]["directedCallPark"]
 
@@ -178,6 +217,9 @@ class DialPlanMixin:
         List searchCriteria uses 'pattern' (not 'name').
         :param tagfilter: AXL returned tags to include, e.g. {'pattern': ''}
         :return: list of directedCallPark dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDirectedCallParkReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"pattern": ""}
         result = self.client.listDirectedCallPark(
@@ -192,6 +234,9 @@ class DialPlanMixin:
         :param routePartitionName: partition (optional with pattern)
         :param uuid: directed call park uuid (or pattern)
         :return: result dictionary
+        
+
+        Schema: `UpdateDirectedCallParkReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `retrievalPrefix`, `reversionPattern`, `revertCssName`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.updateDirectedCallPark(**args)
 
@@ -202,6 +247,9 @@ class DialPlanMixin:
         :param routePartitionName: partition name (optional with pattern)
         :param uuid: directed call park uuid
         :return: result dictionary
+        
+
+        Schema: `RemoveDirectedCallParkReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.removeDirectedCallPark(**args)
 
@@ -212,6 +260,9 @@ class DialPlanMixin:
         :param routePartitionName: partition name (optional with pattern)
         :param uuid: directed call park uuid
         :return: result dictionary
+        
+
+        Schema: `ApplyDirectedCallParkReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.applyDirectedCallPark(**args)
 
@@ -222,6 +273,9 @@ class DialPlanMixin:
         :param routePartitionName: partition name (optional with pattern)
         :param uuid: directed call park uuid
         :return: result dictionary
+        
+
+        Schema: `ResetDirectedCallParkReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.resetDirectedCallPark(**args)
 
@@ -234,6 +288,9 @@ class DialPlanMixin:
         Add a directory lookup dial rule.
         :param name: rule name - required
         :return: result dictionary
+        
+
+        Schema: `directoryLookupDialRules` -> `XDirectoryLookupDialRules`: `name` + `numberOfDigits` + `digitsToBeRemoved` + `priority`; optional `description`, `numberBeginWith`, `prefixPattern`.
         """
         return self.client.addDirectoryLookupDialRules(
             self._build_object(
@@ -247,6 +304,9 @@ class DialPlanMixin:
         :param name: rule name
         :param uuid: rule uuid
         :return: directoryLookupDialRules dictionary
+        
+
+        Schema: `GetDirectoryLookupDialRulesReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getDirectoryLookupDialRules(**args)["return"][
             "directoryLookupDialRules"
@@ -257,6 +317,9 @@ class DialPlanMixin:
         List all directory lookup dial rules.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of directoryLookupDialRules dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDirectoryLookupDialRulesReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listDirectoryLookupDialRules(
@@ -270,6 +333,9 @@ class DialPlanMixin:
         :param name: rule name (or uuid)
         :param uuid: rule uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateDirectoryLookupDialRulesReq`: optional `newName`, `description`, `numberBeginWith`, `numberOfDigits`, `digitsToBeRemoved`, `prefixPattern` and 1 more.
         """
         return self.client.updateDirectoryLookupDialRules(**args)
 
@@ -279,6 +345,9 @@ class DialPlanMixin:
         :param name: rule name
         :param uuid: rule uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeDirectoryLookupDialRules(
             **self._identify(name=name, uuid=uuid)
@@ -293,6 +362,9 @@ class DialPlanMixin:
         Add a local route group.
         :param name: local route group name - required
         :return: result dictionary
+        
+
+        Schema: `localRouteGroup` -> `XLocalRouteGroup`: optional `name`, `description`.
         """
         return self.client.addLocalRouteGroup(
             self._build_object("addLocalRouteGroup", "localRouteGroup", args)
@@ -304,6 +376,9 @@ class DialPlanMixin:
         :param name: local route group name
         :param uuid: local route group uuid
         :return: localRouteGroup dictionary
+        
+
+        Schema: `GetLocalRouteGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getLocalRouteGroup(**args)["return"]["localRouteGroup"]
 
@@ -312,6 +387,9 @@ class DialPlanMixin:
         List all local route groups.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of localRouteGroup dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLocalRouteGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listLocalRouteGroup(
@@ -328,6 +406,9 @@ class DialPlanMixin:
         :param newName: new name
         :param newDescription: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateLocalRouteGroupReq`: optional `localRouteGroup`.
         """
         # Schema wraps identity + new values inside a localRouteGroup sub-element
         if "localRouteGroup" not in args:
@@ -340,6 +421,9 @@ class DialPlanMixin:
         :param name: local route group name
         :param uuid: local route group uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeLocalRouteGroup(
             **self._identify(name=name, uuid=uuid)
@@ -354,6 +438,9 @@ class DialPlanMixin:
         Add a route filter.
         :param name: route filter name - required
         :return: result dictionary
+        
+
+        Schema: `routeFilter` -> `XRouteFilter`: `name` + `dialPlanName` + `members`.
         """
         return self.client.addRouteFilter(
             self._build_object("addRouteFilter", "routeFilter", args)
@@ -365,6 +452,9 @@ class DialPlanMixin:
         :param name: route filter name
         :param uuid: route filter uuid
         :return: routeFilter dictionary
+        
+
+        Schema: `GetRouteFilterReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getRouteFilter(**args)["return"]["routeFilter"]
 
@@ -373,6 +463,9 @@ class DialPlanMixin:
         List all route filters.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of routeFilter dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRouteFilterReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listRouteFilter(
@@ -386,6 +479,9 @@ class DialPlanMixin:
         :param name: route filter name (or uuid)
         :param uuid: route filter uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateRouteFilterReq`: optional `newName`, `dialPlanName`, optional choice of (optional `removeMembers`, `addMembers`), or `members`.
         """
         return self.client.updateRouteFilter(**args)
 
@@ -395,6 +491,9 @@ class DialPlanMixin:
         :param name: route filter name
         :param uuid: route filter uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeRouteFilter(**self._identify(name=name, uuid=uuid))
 
@@ -407,6 +506,9 @@ class DialPlanMixin:
         Add a SIP dial rule.
         :param name: SIP dial rule name - required
         :return: result dictionary
+        
+
+        Schema: `sipDialRules` -> `XSipDialRules`: `dialPattern` + `name`; optional `description`, `patterns`, `plars`.
         """
         return self.client.addSipDialRules(
             self._build_object("addSipDialRules", "sipDialRules", args)
@@ -418,6 +520,9 @@ class DialPlanMixin:
         :param name: SIP dial rule name
         :param uuid: SIP dial rule uuid
         :return: sipDialRules dictionary
+        
+
+        Schema: `GetSipDialRulesReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSipDialRules(**args)["return"]["sipDialRules"]
 
@@ -426,6 +531,9 @@ class DialPlanMixin:
         List all SIP dial rules.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of sipDialRules dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSipDialRulesReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listSipDialRules(
@@ -439,6 +547,9 @@ class DialPlanMixin:
         :param name: SIP dial rule name (or uuid)
         :param uuid: SIP dial rule uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateSipDialRulesReq`: optional `newName`, `description`, optional choice of (optional `removePatterns`, `addPatterns`), or `patterns`, optional choice of (optional `removePlars`, `addPlars`), or `plars`.
         """
         return self.client.updateSipDialRules(**args)
 
@@ -448,6 +559,9 @@ class DialPlanMixin:
         :param name: SIP dial rule name
         :param uuid: SIP dial rule uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSipDialRules(**self._identify(name=name, uuid=uuid))
 
@@ -464,6 +578,9 @@ class DialPlanMixin:
         :param usage: pattern usage - required
         :param routePartitionName: partition name - required
         :return: result dictionary
+        
+
+        Schema: `sipRoutePattern` -> `XSipRoutePattern`: `pattern` + `usage` + `routePartitionName` + `useCallingPartyPhoneMask` + `sipTrunkName`; optional `description`, `blockEnable`, `callingPartyTransformationMask`, `callingPartyPrefixDigits`, `callingLinePresentationBit`, `callingNamePresentationBit` and 6 more.
         """
         return self.client.addSipRoutePattern(
             self._build_object("addSipRoutePattern", "sipRoutePattern", args)
@@ -476,6 +593,9 @@ class DialPlanMixin:
         :param routePartitionName: partition name (required with pattern)
         :param uuid: SIP route pattern uuid
         :return: sipRoutePattern dictionary
+        
+
+        Schema: `GetSipRoutePatternReq`: optional `returnedTags`; one of `uuid`, or (`pattern` + `routePartitionName`).
         """
         return self.client.getSipRoutePattern(**args)["return"]["sipRoutePattern"]
 
@@ -485,6 +605,9 @@ class DialPlanMixin:
         List searchCriteria uses 'pattern' (not 'name').
         :param tagfilter: AXL returned tags to include, e.g. {'pattern': ''}
         :return: list of sipRoutePattern dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSipRoutePatternReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"pattern": ""}
         result = self.client.listSipRoutePattern(
@@ -499,6 +622,9 @@ class DialPlanMixin:
         :param routePartitionName: partition name (required with pattern)
         :param uuid: SIP route pattern uuid (or pattern+partition)
         :return: result dictionary
+        
+
+        Schema: `UpdateSipRoutePatternReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `blockEnable`, `callingPartyTransformationMask`, `useCallingPartyPhoneMask` and 10 more; one of `uuid`, or (`pattern` + `routePartitionName`).
         """
         return self.client.updateSipRoutePattern(**args)
 
@@ -509,5 +635,8 @@ class DialPlanMixin:
         :param routePartitionName: partition name (required with pattern)
         :param uuid: SIP route pattern uuid
         :return: result dictionary
+        
+
+        Schema: `RemoveSipRoutePatternReq`: one of `uuid`, or (`pattern` + `routePartitionName`).
         """
         return self.client.removeSipRoutePattern(**args)

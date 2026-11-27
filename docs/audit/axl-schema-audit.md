@@ -170,12 +170,12 @@ These return the full envelope instead of the object: `get_location`, `get_route
 
 - **No docs page or README example:** `get_call_manager_groups`, `list_route_plan_specific`, `sql_query`.
 - **README example only:** `run_sql_query`, `list_route_plan`.
-- **No docs at all:** the helper modules `wsdl.py` (`print_element_layout`, `print_required_element_layout`, `print_return_tags_layout`, `validate_arguments`, `get_tree`, `get_return_tags`) and `helpers.check_tagfilter`. `axl.py` doesn't use them, despite the CHANGELOG's PR#30 entry.
+- **Removed:** `wsdl.py`, `helpers.py`, `config.py`, and `exceptions.py` were unused (including `check_tagfilter` and the layout printers) and have been deleted.
 
 ## Recommended order of work
 
 1. **Fix the confirmed breakages:** H1–H7, H11–H15, and H23 (the empty-result guard).
-2. **Adopt one convention.** Pick one, ideally schema camelCase names via `**args` with a wrapper dict for `add*`. Then regenerate the docstrings from the schema. `wsdl.py`'s `print_required_element_layout` already does most of the work.
+2. **Adopt one convention.** Pick one, ideally schema camelCase names via `**args` with a wrapper dict for `add*`. Then regenerate the docstrings from the schema, keeping `xsd:choice` groups as choices.
 3. **Define the return and error contract:** raise faults, unwrap `["return"][obj]`, and return `[]` for empty lists. Then update the README.
 4. **Gate version-specific fields** with the bundled schema (for example, check the zeep type for the element instead of comparing version strings).
 5. **Repair the docs build** (`docs/requirements.txt`, mkdocs config) and replace the copied pages.
@@ -187,9 +187,9 @@ Then add new endpoints following that convention. Re-run the static schema diff 
 | Step | Status | Notes |
 |---|---|---|
 | 1 High breakages | **Done** (v0.165) | H1–H27 fixed; H22 docstring completed in v0.166 |
-| 2 Convention | **Done enough for new work** | Aliases + `_build_object` for new/`add*` wrappers; hand-rolled adds kept; full docstring regen deferred |
+| 2 Convention | **Done** | Aliases + `_build_object` for new/`add*` wrappers; each method docstring ends with a Schema line generated from the 15.0 XSD (choices kept as choices) |
 | 3 Return/error contract | **Done** (v0.166) | Faults raise (including `run_sql_query`); getters unwrap; empty lists return `[]` |
 | 4 Version gating | **Done** | `_schema_fields` used in `add_location` / `add_phone`; offline tests cover 12.0 vs 15.0 |
 | 5 Docs build | **Done** (v0.166) | Material + mkdocstrings; stub pages replaced; Sphinx orphans removed |
 
-**Deferred:** regenerating every existing docstring from the schema; wiring or deleting unused `wsdl.py` / `helpers.py` / `config.py` / `exceptions.py`.
+The unused `wsdl.py`, `helpers.py`, `config.py`, and `exceptions.py` modules were removed. Nothing in the SDK imported them.

@@ -37,6 +37,9 @@ class ImeMixin:
         :param applicationUser: associated application user
         :param reconnectInterval: reconnect interval in seconds (60–600, default 120)
         :return: result dict (uuid)
+        
+
+        Schema: `imeServer` -> `XImeServer`: `name` + `ipAddress` + `applicationUser`; optional `description`, `port`, `deviceSecurityMode`, `reconnectInterval`.
         """
         obj = self._build_object("addImeServer", "imeServer", args)
         return self.client.addImeServer(imeServer=obj)
@@ -48,6 +51,9 @@ class ImeMixin:
         :param name: server name (or uuid)
         :param uuid: server uuid (or name)
         :return: imeServer dict
+        
+
+        Schema: `GetImeServerReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeServer(
             **self._identify(name=name, uuid=uuid)
@@ -59,6 +65,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeServer dicts, empty when nothing matches
+        
+
+        Schema: `ListImeServerReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeServer(
@@ -73,6 +82,9 @@ class ImeMixin:
         :param name: server name (or uuid)
         :param uuid: server uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeServerReq`: optional `newName`, `description`, `ipAddress`, `port`, `deviceSecurityMode`, `applicationUser` and 1 more.
         """
         return self.client.updateImeServer(**args)
 
@@ -83,6 +95,9 @@ class ImeMixin:
         :param name: server name (or uuid)
         :param uuid: server uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeServer(**self._identify(name=name, uuid=uuid))
 
@@ -98,6 +113,9 @@ class ImeMixin:
         :param description: description
         :param groupTrustSetting: boolean, trust this group's routes
         :return: result dict (uuid)
+        
+
+        Schema: `imeRouteFilterGroup` -> `XImeRouteFilterGroup`: `name`; optional `description`, `groupTrustSetting`.
         """
         obj = self._build_object("addImeRouteFilterGroup", "imeRouteFilterGroup", args)
         return self.client.addImeRouteFilterGroup(imeRouteFilterGroup=obj)
@@ -109,6 +127,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: imeRouteFilterGroup dict
+        
+
+        Schema: `GetImeRouteFilterGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeRouteFilterGroup(
             **self._identify(name=name, uuid=uuid)
@@ -120,6 +141,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeRouteFilterGroup dicts, empty when nothing matches
+        
+
+        Schema: `ListImeRouteFilterGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeRouteFilterGroup(
@@ -134,6 +158,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeRouteFilterGroupReq`: optional `newName`, `description`, `groupTrustSetting`.
         """
         return self.client.updateImeRouteFilterGroup(**args)
 
@@ -144,6 +171,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeRouteFilterGroup(
             **self._identify(name=name, uuid=uuid)
@@ -162,6 +192,9 @@ class ImeMixin:
         :param elementType: e.g. 'Domain'
         :param imeRouteFilterGroupName: parent filter group name — required
         :return: result dict (uuid)
+        
+
+        Schema: `imeRouteFilterElement` -> `XImeRouteFilterElement`: `name` + `imeRouteFilterGroupName`; optional `description`, `elementType`.
         """
         obj = self._build_object(
             "addImeRouteFilterElement", "imeRouteFilterElement", args
@@ -175,6 +208,9 @@ class ImeMixin:
         :param name: element name (or uuid)
         :param uuid: element uuid (or name)
         :return: imeRouteFilterElement dict
+        
+
+        Schema: `GetImeRouteFilterElementReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeRouteFilterElement(
             **self._identify(name=name, uuid=uuid)
@@ -186,6 +222,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeRouteFilterElement dicts, empty when nothing matches
+        
+
+        Schema: `ListImeRouteFilterElementReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeRouteFilterElement(
@@ -200,6 +239,9 @@ class ImeMixin:
         :param name: element name (or uuid)
         :param uuid: element uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeRouteFilterElementReq`: optional `newName`, `description`, `elementType`, `imeRouteFilterGroupName`.
         """
         return self.client.updateImeRouteFilterElement(**args)
 
@@ -210,6 +252,9 @@ class ImeMixin:
         :param name: element name (or uuid)
         :param uuid: element uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeRouteFilterElement(
             **self._identify(name=name, uuid=uuid)
@@ -234,6 +279,9 @@ class ImeMixin:
         :param exclusionNumberGroupName: exclusion number group
         :param firewallName: firewall name
         :return: result dict (uuid)
+        
+
+        Schema: `imeClient` -> `XImeClient`: `name` + `domain` + `sipTrunkName` + `primaryImeServerName`; optional `description`, `isActivated`, `secondaryImeServerName`, `learnedRouteFilterGroupName`, `exclusionNumberGroupName`, `firewallName` and 2 more.
         """
         obj = self._build_object("addImeClient", "imeClient", args)
         return self.client.addImeClient(imeClient=obj)
@@ -245,6 +293,9 @@ class ImeMixin:
         :param name: client name (or uuid)
         :param uuid: client uuid (or name)
         :return: imeClient dict
+        
+
+        Schema: `GetImeClientReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeClient(
             **self._identify(name=name, uuid=uuid)
@@ -256,6 +307,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeClient dicts, empty when nothing matches
+        
+
+        Schema: `ListImeClientReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeClient(
@@ -270,6 +324,9 @@ class ImeMixin:
         :param name: client name (or uuid)
         :param uuid: client uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeClientReq`: optional `newName`, `description`, `domain`, `isActivated`, `sipTrunkName`, `primaryImeServerName` and 6 more.
         """
         return self.client.updateImeClient(**args)
 
@@ -280,6 +337,9 @@ class ImeMixin:
         :param name: client name (or uuid)
         :param uuid: client uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeClient(**self._identify(name=name, uuid=uuid))
 
@@ -296,6 +356,9 @@ class ImeMixin:
         :param description: description
         :param imeEnrolledPatternGroupName: parent pattern group
         :return: result dict (uuid)
+        
+
+        Schema: `imeEnrolledPattern` -> `XImeEnrolledPattern`: `pattern` + `imeEnrolledPatternGroupName`; optional `description`.
         """
         obj = self._build_object("addImeEnrolledPattern", "imeEnrolledPattern", args)
         return self.client.addImeEnrolledPattern(imeEnrolledPattern=obj)
@@ -307,6 +370,9 @@ class ImeMixin:
         :param pattern: E.164 pattern (or uuid)
         :param uuid: pattern uuid (or pattern)
         :return: imeEnrolledPattern dict
+        
+
+        Schema: `GetImeEnrolledPatternReq`: optional `returnedTags`; one of `pattern`, or `uuid`.
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -324,6 +390,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'pattern': ''}
         :return: list of imeEnrolledPattern dicts, empty when nothing matches
+        
+
+        Schema: `ListImeEnrolledPatternReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"pattern": ""}
         result = self.client.listImeEnrolledPattern(
@@ -338,6 +407,9 @@ class ImeMixin:
         :param pattern: E.164 pattern (or uuid)
         :param uuid: pattern uuid (or pattern)
         :return: result dict
+        
+
+        Schema: `UpdateImeEnrolledPatternReq`: optional `newPattern`, `description`, `imeEnrolledPatternGroupName`; one of `uuid`, or `pattern`.
         """
         return self.client.updateImeEnrolledPattern(**args)
 
@@ -348,6 +420,9 @@ class ImeMixin:
         :param pattern: E.164 pattern (or uuid)
         :param uuid: pattern uuid (or pattern)
         :return: result dict
+        
+
+        Schema: `RemoveImeEnrolledPatternReq`: one of `pattern`, or `uuid`.
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -370,6 +445,9 @@ class ImeMixin:
         :param fallbackProfileName: fallback profile
         :param isPatternAllAlias: boolean, treat all patterns as aliases
         :return: result dict (uuid)
+        
+
+        Schema: `imeEnrolledPatternGroup` -> `XImeEnrolledPatternGroup`: `name`; optional `description`, `fallbackProfileName`, `isPatternAllAlias`.
         """
         obj = self._build_object(
             "addImeEnrolledPatternGroup", "imeEnrolledPatternGroup", args
@@ -383,6 +461,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: imeEnrolledPatternGroup dict
+        
+
+        Schema: `GetImeEnrolledPatternGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeEnrolledPatternGroup(
             **self._identify(name=name, uuid=uuid)
@@ -394,6 +475,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeEnrolledPatternGroup dicts, empty when nothing matches
+        
+
+        Schema: `ListImeEnrolledPatternGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeEnrolledPatternGroup(
@@ -408,6 +492,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeEnrolledPatternGroupReq`: optional `newName`, `description`, `fallbackProfileName`, `isPatternAllAlias`.
         """
         return self.client.updateImeEnrolledPatternGroup(**args)
 
@@ -418,6 +505,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeEnrolledPatternGroup(
             **self._identify(name=name, uuid=uuid)
@@ -436,6 +526,9 @@ class ImeMixin:
         :param description: description
         :param imeExclusionNumberGroupName: parent exclusion number group — required
         :return: result dict (uuid)
+        
+
+        Schema: `imeExclusionNumber` -> `XImeExclusionNumber`: `pattern` + `imeExclusionNumberGroupName`; optional `description`.
         """
         obj = self._build_object("addImeExclusionNumber", "imeExclusionNumber", args)
         return self.client.addImeExclusionNumber(imeExclusionNumber=obj)
@@ -447,6 +540,9 @@ class ImeMixin:
         :param pattern: E.164 exclusion pattern (or uuid)
         :param uuid: exclusion number uuid (or pattern)
         :return: imeExclusionNumber dict
+        
+
+        Schema: `GetImeExclusionNumberReq`: optional `returnedTags`; one of `pattern`, or `uuid`.
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -464,6 +560,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'pattern': ''}
         :return: list of imeExclusionNumber dicts, empty when nothing matches
+        
+
+        Schema: `ListImeExclusionNumberReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"pattern": ""}
         result = self.client.listImeExclusionNumber(
@@ -478,6 +577,9 @@ class ImeMixin:
         :param pattern: E.164 exclusion pattern (or uuid)
         :param uuid: exclusion number uuid (or pattern)
         :return: result dict
+        
+
+        Schema: `UpdateImeExclusionNumberReq`: optional `newPattern`, `description`, `imeExclusionNumberGroupName`; one of `uuid`, or `pattern`.
         """
         return self.client.updateImeExclusionNumber(**args)
 
@@ -488,6 +590,9 @@ class ImeMixin:
         :param pattern: E.164 exclusion pattern (or uuid)
         :param uuid: exclusion number uuid (or pattern)
         :return: result dict
+        
+
+        Schema: `RemoveImeExclusionNumberReq`: one of `pattern`, or `uuid`.
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -508,6 +613,9 @@ class ImeMixin:
         :param name: group name — required
         :param description: description
         :return: result dict (uuid)
+        
+
+        Schema: `imeExclusionNumberGroup` -> `XImeExclusionNumberGroup`: `name`; optional `description`.
         """
         obj = self._build_object(
             "addImeExclusionNumberGroup", "imeExclusionNumberGroup", args
@@ -521,6 +629,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: imeExclusionNumberGroup dict
+        
+
+        Schema: `GetImeExclusionNumberGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeExclusionNumberGroup(
             **self._identify(name=name, uuid=uuid)
@@ -532,6 +643,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeExclusionNumberGroup dicts, empty when nothing matches
+        
+
+        Schema: `ListImeExclusionNumberGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeExclusionNumberGroup(
@@ -546,6 +660,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeExclusionNumberGroupReq`: optional `newName`, `description`.
         """
         return self.client.updateImeExclusionNumberGroup(**args)
 
@@ -556,6 +673,9 @@ class ImeMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeExclusionNumberGroup(
             **self._identify(name=name, uuid=uuid)
@@ -574,6 +694,9 @@ class ImeMixin:
         :param ipAddress: firewall IP or hostname — required
         :param port: port (1024–65535)
         :return: result dict (uuid)
+        
+
+        Schema: `imeFirewall` -> `XImeFirewall`: `name` + `ipAddress`; optional `description`, `port`.
         """
         obj = self._build_object("addImeFirewall", "imeFirewall", args)
         return self.client.addImeFirewall(imeFirewall=obj)
@@ -585,6 +708,9 @@ class ImeMixin:
         :param name: firewall name (or uuid)
         :param uuid: firewall uuid (or name)
         :return: imeFirewall dict
+        
+
+        Schema: `GetImeFirewallReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeFirewall(
             **self._identify(name=name, uuid=uuid)
@@ -596,6 +722,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeFirewall dicts, empty when nothing matches
+        
+
+        Schema: `ListImeFirewallReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeFirewall(
@@ -610,6 +739,9 @@ class ImeMixin:
         :param name: firewall name (or uuid)
         :param uuid: firewall uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeFirewallReq`: optional `newName`, `description`, `ipAddress`, `port`.
         """
         return self.client.updateImeFirewall(**args)
 
@@ -620,6 +752,9 @@ class ImeMixin:
         :param name: firewall name (or uuid)
         :param uuid: firewall uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeFirewall(**self._identify(name=name, uuid=uuid))
 
@@ -637,6 +772,9 @@ class ImeMixin:
         :param callingPartyStripDigits: prefix digits to strip
         :param callingPartyMask: mask to apply
         :return: result dict (uuid)
+        
+
+        Schema: `imeE164Transformation` -> `XImeE164Transformation`: `name`; optional `description`, `cgpnTransformationCssName`, `isCgpnPreTransformation`, `cdpnTransformationCssName`, `isCdpnPreTransformation`, `incomingCgpnTransformationProfileName` and 1 more.
         """
         obj = self._build_object(
             "addImeE164Transformation", "imeE164Transformation", args
@@ -650,6 +788,9 @@ class ImeMixin:
         :param name: transformation name (or uuid)
         :param uuid: transformation uuid (or name)
         :return: imeE164Transformation dict
+        
+
+        Schema: `GetImeE164TransformationReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getImeE164Transformation(
             **self._identify(name=name, uuid=uuid)
@@ -661,6 +802,9 @@ class ImeMixin:
 
         :param tagfilter: AXL returned tags, e.g. {'name': ''}
         :return: list of imeE164Transformation dicts, empty when nothing matches
+        
+
+        Schema: `ListImeE164TransformationReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listImeE164Transformation(
@@ -675,6 +819,9 @@ class ImeMixin:
         :param name: transformation name (or uuid)
         :param uuid: transformation uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateImeE164TransformationReq`: optional `newName`, `description`, `cgpnTransformationCssName`, `isCgpnPreTransformation`, `cdpnTransformationCssName`, `isCdpnPreTransformation` and 2 more.
         """
         return self.client.updateImeE164Transformation(**args)
 
@@ -685,6 +832,9 @@ class ImeMixin:
         :param name: transformation name (or uuid)
         :param uuid: transformation uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeImeE164Transformation(
             **self._identify(name=name, uuid=uuid)
@@ -718,6 +868,9 @@ class ImeMixin:
         :param qualityTimer: integer
         :param useImeForOutboundCalls: boolean
         :return: result dict
+        
+
+        Schema: `UpdateImeFeatureConfigReq`: optional `preventImeCallsFromAnalogGateways`, `enableIntraDomain`, `allowMwiNotification`, `trunkConnectionTimer`, `firewallConnectionTimer`, `firewallTranscationTimer` and 5 more.
         """
         return self.client.updateImeFeatureConfig(**args)
 
@@ -733,6 +886,9 @@ class ImeMixin:
         :param e164Did: E.164 DID (or uuid)
         :param uuid: learned route uuid (or e164Did)
         :return: imeLearnedRoutes dict
+        
+
+        Schema: `GetImeLearnedRoutesReq`: optional `returnedTags`; one of `uuid`, or `e164Did`.
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -752,6 +908,9 @@ class ImeMixin:
         :param uuid: learned route uuid (or e164Did)
         :param adminEnabled: boolean, enable/disable this route
         :return: result dict
+        
+
+        Schema: `UpdateImeLearnedRoutesReq`: optional `adminEnabled`; one of `uuid`, or `e164Did`.
         """
         return self.client.updateImeLearnedRoutes(**args)
 
@@ -762,6 +921,9 @@ class ImeMixin:
         :param e164Did: E.164 DID (or uuid)
         :param uuid: learned route uuid (or e164Did)
         :return: result dict
+        
+
+        Schema: `RemoveImeLearnedRoutesReq`: one of `uuid`, or `e164Did`.
         """
         if uuid:
             identifier = {"uuid": uuid}

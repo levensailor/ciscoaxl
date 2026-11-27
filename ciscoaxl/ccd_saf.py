@@ -34,6 +34,9 @@ class CcdSafMixin:
         :param safSipTrunk: SAF SIP trunk name (FK)
         :param safH323Trunk: SAF H.323 trunk name (FK)
         :return: result dictionary (uuid)
+        
+
+        Schema: `ccdAdvertisingService` -> `XCcdAdvertisingService`: `name` + `hostDnGroup`; optional `description`, `isActivated`, `safSipTrunk`, `safH323Trunk`.
         """
         obj = self._build_object(
             "addCcdAdvertisingService",
@@ -48,6 +51,9 @@ class CcdSafMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: ccdAdvertisingService dictionary
+        
+
+        Schema: `GetCcdAdvertisingServiceReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCcdAdvertisingService(
             **self._identify(name=name, uuid=uuid)
@@ -60,6 +66,9 @@ class CcdSafMixin:
         List CCD advertising services.
         :param tagfilter: AXL returned tags to include
         :return: list of ccdAdvertisingService dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCcdAdvertisingServiceReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCcdAdvertisingService(
             {"name": "%"}, returnedTags=tagfilter
@@ -80,6 +89,9 @@ class CcdSafMixin:
         :param safSipTrunk: SAF SIP trunk name (FK)
         :param safH323Trunk: SAF H.323 trunk name (FK)
         :return: result dictionary
+        
+
+        Schema: `UpdateCcdAdvertisingServiceReq`: optional `newName`, `description`, `isActivated`, `hostDnGroup`, `safSipTrunk`, `safH323Trunk`.
         """
         return self.client.updateCcdAdvertisingService(**args)
 
@@ -89,6 +101,9 @@ class CcdSafMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCcdAdvertisingService(
             **self._identify(name=name, uuid=uuid)
@@ -105,6 +120,9 @@ class CcdSafMixin:
         :param tagfilter: dict specifying fields to return; defaults to
                           {'ccdParamName': '', 'ccdParamValue': ''}
         :return: ccdFeatureConfig dictionary
+        
+
+        Schema: `GetCcdFeatureConfigReq`: `paramName` + `returnedTags`.
         """
         if tagfilter is None:
             tagfilter = {"ccdParamName": "", "ccdParamValue": ""}
@@ -118,6 +136,9 @@ class CcdSafMixin:
         :param ccdParam: single dict or list of dicts with keys
                          ``ccdParamName`` and ``ccdParamValue`` — required
         :return: result message string
+        
+
+        Schema: `ccdParam` -> `RCcdParam`: optional `ccdParamName`, `ccdParamValue`.
         """
         if isinstance(ccdParam, dict):
             ccdParam = [ccdParam]
@@ -137,6 +158,9 @@ class CcdSafMixin:
         :param pstnFailoverPrependDigits: digits to prepend on PSTN failover
         :param usePstnFailover: boolean, use PSTN failover
         :return: result dictionary (uuid)
+        
+
+        Schema: `ccdHostedDN` -> `XCcdHostedDN`: `hostedPattern` + `CcdHostedDnGroup`; optional `description`, `pstnFailoverStripDigits`, `pstnFailoverPrependDigits`, `usePstnFailover`.
         """
         obj = self._build_object(
             "addCcdHostedDN",
@@ -151,6 +175,9 @@ class CcdSafMixin:
         :param hostedPattern: pattern string (or uuid)
         :param uuid: hosted DN uuid (or hostedPattern)
         :return: ccdHostedDN dictionary
+        
+
+        Schema: `GetCcdHostedDNReq`: optional `returnedTags`; one of `hostedPattern`, or `uuid`.
         """
         if bool(hostedPattern) == bool(uuid):
             raise ValueError("Provide exactly one of hostedPattern or uuid")
@@ -164,6 +191,9 @@ class CcdSafMixin:
         List CCD hosted DNs.
         :param tagfilter: AXL returned tags to include
         :return: list of ccdHostedDN dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCcdHostedDNReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCcdHostedDN(
             {"hostedPattern": "%"}, returnedTags=tagfilter
@@ -184,6 +214,9 @@ class CcdSafMixin:
         :param pstnFailoverPrependDigits: digits to prepend
         :param usePstnFailover: boolean
         :return: result dictionary
+        
+
+        Schema: `UpdateCcdHostedDNReq`: optional `newHostedPattern`, `description`, `CcdHostedDnGroup`, `pstnFailoverStripDigits`, `pstnFailoverPrependDigits`, `usePstnFailover`; one of `uuid`, or `hostedPattern`.
         """
         return self.client.updateCcdHostedDN(**args)
 
@@ -193,6 +226,9 @@ class CcdSafMixin:
         :param hostedPattern: pattern string (or uuid)
         :param uuid: hosted DN uuid (or hostedPattern)
         :return: result dictionary
+        
+
+        Schema: `RemoveCcdHostedDNReq`: one of `hostedPattern`, or `uuid`.
         """
         if bool(hostedPattern) == bool(uuid):
             raise ValueError("Provide exactly one of hostedPattern or uuid")
@@ -212,6 +248,9 @@ class CcdSafMixin:
         :param pstnFailoverPrependDigits: digits to prepend on PSTN failover
         :param usePstnFailover: boolean, use PSTN failover
         :return: result dictionary (uuid)
+        
+
+        Schema: `ccdHostedDNGroup` -> `XCcdHostedDNGroup`: `name`; optional `description`, `pstnFailoverStripDigits`, `pstnFailoverPrependDigits`, `usePstnFailover`.
         """
         obj = self._build_object(
             "addCcdHostedDNGroup",
@@ -226,6 +265,9 @@ class CcdSafMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: ccdHostedDNGroup dictionary
+        
+
+        Schema: `GetCcdHostedDNGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCcdHostedDNGroup(
             **self._identify(name=name, uuid=uuid)
@@ -238,6 +280,9 @@ class CcdSafMixin:
         List CCD hosted DN groups.
         :param tagfilter: AXL returned tags to include
         :return: list of ccdHostedDNGroup dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCcdHostedDNGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCcdHostedDNGroup(
             {"name": "%"}, returnedTags=tagfilter
@@ -257,6 +302,9 @@ class CcdSafMixin:
         :param pstnFailoverPrependDigits: digits to prepend
         :param usePstnFailover: boolean
         :return: result dictionary
+        
+
+        Schema: `UpdateCcdHostedDNGroupReq`: optional `newName`, `description`, `pstnFailoverStripDigits`, `pstnFailoverPrependDigits`, `usePstnFailover`.
         """
         return self.client.updateCcdHostedDNGroup(**args)
 
@@ -266,6 +314,9 @@ class CcdSafMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCcdHostedDNGroup(
             **self._identify(name=name, uuid=uuid)
@@ -286,6 +337,9 @@ class CcdSafMixin:
         :param pstnPrefix: PSTN prefix
         :param associatedTrunks: trunk membership dict
         :return: result dictionary (uuid)
+        
+
+        Schema: `ccdRequestingService` -> `XCcdRequestingService`: `name`; optional `description`, `isActivated`, `routePartitionName`, `learnedPatternPrefix`, `pstnPrefix`, `associatedTrunks`.
         """
         obj = self._build_object(
             "addCcdRequestingService",
@@ -300,6 +354,9 @@ class CcdSafMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: ccdRequestingService dictionary
+        
+
+        Schema: `GetCcdRequestingServiceReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCcdRequestingService(
             **self._identify(name=name, uuid=uuid)
@@ -317,6 +374,9 @@ class CcdSafMixin:
         :param learnedPatternPrefix: learned pattern prefix
         :param pstnPrefix: PSTN prefix
         :return: result dictionary
+        
+
+        Schema: `UpdateCcdRequestingServiceReq`: optional `newName`, `description`, `isActivated`, `routePartitionName`, `learnedPatternPrefix`, `pstnPrefix` and 1 more.
         """
         return self.client.updateCcdRequestingService(**args)
 
@@ -326,6 +386,9 @@ class CcdSafMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCcdRequestingService(
             **self._identify(name=name, uuid=uuid)
@@ -343,6 +406,9 @@ class CcdSafMixin:
         :param callControlIdentity: call control identity
         :param ipAddress: IP address
         :return: result dictionary (uuid)
+        
+
+        Schema: `safCcdPurgeBlockLearnedRoutes` -> `XSafCcdPurgeBlockLearnedRoutes`: optional `learnedPattern`, `learnedPatternPrefix`, `callControlIdentity`, `ipAddress`.
         """
         obj = self._build_object(
             "addSafCcdPurgeBlockLearnedRoutes",
@@ -362,6 +428,9 @@ class CcdSafMixin:
         :param callControlIdentity: call control identity
         :param ipAddress: IP address
         :return: safCcdPurgeBlockLearnedRoutes dictionary
+        
+
+        Schema: `GetSafCcdPurgeBlockLearnedRoutesReq`: optional `returnedTags`; one of `uuid`, or (optional `learnedPattern`, `learnedPatternPrefix`, `callControlIdentity`, `ipAddress`).
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -378,6 +447,9 @@ class CcdSafMixin:
         List SAF CCD purge/block learned routes entries.
         :param tagfilter: AXL returned tags to include
         :return: list of safCcdPurgeBlockLearnedRoutes dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSafCcdPurgeBlockLearnedRoutesReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listSafCcdPurgeBlockLearnedRoutes(
             {"learnedPattern": "%"}, returnedTags=tagfilter
@@ -395,6 +467,9 @@ class CcdSafMixin:
         :param callControlIdentity: call control identity
         :param ipAddress: IP address
         :return: result dictionary
+        
+
+        Schema: `UpdateSafCcdPurgeBlockLearnedRoutesReq`: optional `newLearnedPattern`, `newLearnedPatternPrefix`, `newCallControlIdentity`, `newIpAddress`; one of `uuid`, or (optional `learnedPattern`, `learnedPatternPrefix`, `callControlIdentity`, `ipAddress`).
         """
         return self.client.updateSafCcdPurgeBlockLearnedRoutes(**args)
 
@@ -407,6 +482,9 @@ class CcdSafMixin:
         :param callControlIdentity: call control identity
         :param ipAddress: IP address
         :return: result dictionary
+        
+
+        Schema: `RemoveSafCcdPurgeBlockLearnedRoutesReq`: one of `uuid`, or (optional `learnedPattern`, `learnedPatternPrefix`, `callControlIdentity`, `ipAddress`).
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -432,6 +510,9 @@ class CcdSafMixin:
         :param safNotificationsWindowSize: notifications window size (default 7)
         :param associatedCucms: CUCM membership dict
         :return: result dictionary (uuid)
+        
+
+        Schema: `safForwarder` -> `XSafForwarder`: `name` + `clientLabel` + `safSecurityProfile` + `ipAddress`; optional `description`, `port`, `enableTcpKeepAlive`, `safReconnectInterval`, `safNotificationsWindowSize`, `associatedCucms`.
         """
         obj = self._build_object(
             "addSafForwarder",
@@ -446,6 +527,9 @@ class CcdSafMixin:
         :param name: forwarder name (or uuid)
         :param uuid: forwarder uuid (or name)
         :return: safForwarder dictionary
+        
+
+        Schema: `GetSafForwarderReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSafForwarder(
             **self._identify(name=name, uuid=uuid)
@@ -458,6 +542,9 @@ class CcdSafMixin:
         List SAF forwarders.
         :param tagfilter: AXL returned tags to include
         :return: list of safForwarder dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSafForwarderReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listSafForwarder(
             {"name": "%"}, returnedTags=tagfilter
@@ -481,6 +568,9 @@ class CcdSafMixin:
         :param safReconnectInterval: reconnect interval
         :param safNotificationsWindowSize: notifications window size
         :return: result dictionary
+        
+
+        Schema: `UpdateSafForwarderReq`: optional `newName`, `description`, `clientLabel`, `safSecurityProfile`, `ipAddress`, `port` and 4 more.
         """
         return self.client.updateSafForwarder(**args)
 
@@ -490,6 +580,9 @@ class CcdSafMixin:
         :param name: forwarder name (or uuid)
         :param uuid: forwarder uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSafForwarder(
             **self._identify(name=name, uuid=uuid)
@@ -507,6 +600,9 @@ class CcdSafMixin:
         :param userid: SAF user ID — required
         :param password: SAF password — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `safSecurityProfile` -> `XSafSecurityProfile`: `name` + `userid` + `password`; optional `description`.
         """
         obj = self._build_object(
             "addSafSecurityProfile",
@@ -521,6 +617,9 @@ class CcdSafMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: safSecurityProfile dictionary
+        
+
+        Schema: `GetSafSecurityProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSafSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -533,6 +632,9 @@ class CcdSafMixin:
         List SAF security profiles.
         :param tagfilter: AXL returned tags to include
         :return: list of safSecurityProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSafSecurityProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listSafSecurityProfile(
             {"name": "%"}, returnedTags=tagfilter
@@ -551,6 +653,9 @@ class CcdSafMixin:
         :param userid: SAF user ID
         :param password: SAF password
         :return: result dictionary
+        
+
+        Schema: `UpdateSafSecurityProfileReq`: optional `newName`, `description`, `userid`, `password`.
         """
         return self.client.updateSafSecurityProfile(**args)
 
@@ -560,6 +665,9 @@ class CcdSafMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSafSecurityProfile(
             **self._identify(name=name, uuid=uuid)

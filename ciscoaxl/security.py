@@ -46,6 +46,9 @@ class SecurityMixin:
         :param keySize: e.g. '1024', '2048'
         :param transportType: e.g. 'TCP+UDP', 'TLS'
         :return: result dictionary (uuid)
+        
+
+        Schema: `phoneSecurityProfile` -> `XPhoneSecurityProfile`: `phoneType` + `protocol` + `name`; optional `description`, `deviceSecurityMode`, `authenticationMode`, `keySize`, `keyOrder`, `ecKeySize` and 7 more.
         """
         profile = self._build_object(
             "addPhoneSecurityProfile",
@@ -60,6 +63,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: phone security profile dictionary
+        
+
+        Schema: `GetPhoneSecurityProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getPhoneSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -72,6 +78,9 @@ class SecurityMixin:
         List phone security profiles.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of phone security profile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListPhoneSecurityProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listPhoneSecurityProfile(
             {"name": "%"}, returnedTags=tagfilter
@@ -85,6 +94,9 @@ class SecurityMixin:
         :param newName: new profile name
         :param description: description
         :return: result dictionary
+        
+
+        Schema: `UpdatePhoneSecurityProfileReq`: optional `newName`, `description`, `deviceSecurityMode`, `authenticationMode`, `keySize`, `keyOrder` and 8 more.
         """
         return self.client.updatePhoneSecurityProfile(**args)
 
@@ -94,6 +106,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removePhoneSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -105,6 +120,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyPhoneSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -116,6 +134,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetPhoneSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -131,6 +152,9 @@ class SecurityMixin:
         :param name: profile name — required
         :param description: description
         :return: result dictionary (uuid)
+        
+
+        Schema: `sipProfile` -> `XSipProfile`: `name` + `sipBandwidthModifier` + `userAgentServerHeaderInfo` + `dialStringInterpretation` + `callingLineIdentification` + `sipSessionRefreshMethod` + `earlyOfferSuppVoiceCall` + `cucmVersionInSipHeader` + `confidentialAccessLevelHeaders`; optional `description`, `defaultTelephonyEventPayloadType`, `redirectByApplication`, `ringing180`, `timerInvite`, `timerRegisterDelta` and 76 more.
         """
         profile = self._build_object(
             "addSipProfile",
@@ -144,6 +168,9 @@ class SecurityMixin:
         List SIP profiles.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of SIP profile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSipProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listSipProfile(
             {"name": "%"}, returnedTags=tagfilter
@@ -156,6 +183,9 @@ class SecurityMixin:
         :param uuid: profile uuid (or name)
         :param newName: new profile name
         :return: result dictionary
+        
+
+        Schema: `UpdateSipProfileReq`: optional `newName`, `description`, `defaultTelephonyEventPayloadType`, `redirectByApplication`, `ringing180`, `timerInvite` and 85 more.
         """
         return self.client.updateSipProfile(**args)
 
@@ -165,6 +195,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSipProfile(**self._identify(name=name, uuid=uuid))
 
@@ -174,6 +207,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applySipProfile(**self._identify(name=name, uuid=uuid))
 
@@ -183,6 +219,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartSipProfile(**self._identify(name=name, uuid=uuid))
 
@@ -200,6 +239,9 @@ class SecurityMixin:
         :param incomingTransport: e.g. 'TCP+UDP', 'TLS'
         :param outgoingTransport: e.g. 'TCP', 'TLS'
         :return: result dictionary (uuid)
+        
+
+        Schema: `sipTrunkSecurityProfile` -> `XSipTrunkSecurityProfile`: `name` + `sipV150OutboundSdpOfferFiltering`; optional `description`, `securityMode`, `incomingTransport`, `outgoingTransport`, `digestAuthentication`, `noncePolicyTime` and 9 more.
         """
         profile = self._build_object(
             "addSipTrunkSecurityProfile",
@@ -217,6 +259,9 @@ class SecurityMixin:
         List SIP trunk security profiles.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of SIP trunk security profile dictionaries
+        
+
+        Schema: `ListSipTrunkSecurityProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listSipTrunkSecurityProfile(
             {"name": "%"}, returnedTags=tagfilter
@@ -229,6 +274,9 @@ class SecurityMixin:
         :param uuid: profile uuid (or name)
         :param newName: new profile name
         :return: result dictionary
+        
+
+        Schema: `UpdateSipTrunkSecurityProfileReq`: optional `newName`, `description`, `securityMode`, `incomingTransport`, `outgoingTransport`, `digestAuthentication` and 11 more.
         """
         return self.client.updateSipTrunkSecurityProfile(**args)
 
@@ -238,6 +286,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSipTrunkSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -249,6 +300,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applySipTrunkSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -260,6 +314,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetSipTrunkSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -278,6 +335,9 @@ class SecurityMixin:
         :param dateformat: date display format, default 'M/D/YA'
         :param timeFormat: time format, default '12-hour'
         :return: result dictionary (uuid)
+        
+
+        Schema: `dateTimeGroup` -> `XDateTimeGroup`: `name` + `timeZone` + `separator` + `dateformat` + `timeFormat`; optional `phoneNtpReferences`.
         """
         dtg = self._build_object(
             "addDateTimeGroup",
@@ -297,6 +357,9 @@ class SecurityMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: date/time group dictionary
+        
+
+        Schema: `GetDateTimeGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getDateTimeGroup(
             **self._identify(name=name, uuid=uuid)
@@ -307,6 +370,9 @@ class SecurityMixin:
         List date/time groups.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of date/time group dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDateTimeGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listDateTimeGroup(
             {"name": "%"}, returnedTags=tagfilter
@@ -320,6 +386,9 @@ class SecurityMixin:
         :param newName: new group name
         :param timeZone: CUCM time-zone string
         :return: result dictionary
+        
+
+        Schema: `UpdateDateTimeGroupReq`: optional `newName`, `timeZone`, `separator`, `dateformat`, `timeFormat`, optional choice of (optional `removePhoneNtpReferences`, `addPhoneNtpReferences`), or `phoneNtpReferences`.
         """
         return self.client.updateDateTimeGroup(**args)
 
@@ -329,6 +398,9 @@ class SecurityMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeDateTimeGroup(
             **self._identify(name=name, uuid=uuid)
@@ -340,6 +412,9 @@ class SecurityMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyDateTimeGroup(
             **self._identify(name=name, uuid=uuid)
@@ -351,6 +426,9 @@ class SecurityMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetDateTimeGroup(
             **self._identify(name=name, uuid=uuid)
@@ -370,6 +448,9 @@ class SecurityMixin:
         :param ldapServer: LDAP host {'hostName': ..., 'port': ...}
         :param userSearchBase: user search base DN
         :return: result dictionary (uuid)
+        
+
+        Schema: `ldapDirectory` -> `XLdapDirectory`: `name` + `ldapDn` + `ldapPassword` + `userSearchBase` + `intervalValue` + `nextExecTime` + `servers`; optional `repeatable`, `scheduleUnit`, `middleName`, `phoneNumber`, `mailId`, `ldapFilter` and 9 more.
         """
         ldap = self._build_object(
             "addLdapDirectory",
@@ -384,6 +465,9 @@ class SecurityMixin:
         :param name: directory name (or uuid)
         :param uuid: directory uuid (or name)
         :return: LDAP directory dictionary
+        
+
+        Schema: `GetLdapDirectoryReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getLdapDirectory(
             **self._identify(name=name, uuid=uuid)
@@ -398,6 +482,9 @@ class SecurityMixin:
         :param ldapPassword: bind password
         :param userSearchBase: user search base DN
         :return: result dictionary
+        
+
+        Schema: `UpdateLdapDirectoryReq`: optional `newName`, `ldapDn`, `ldapPassword`, `userSearchBase`, `repeatable`, `intervalValue` and 12 more.
         """
         return self.client.updateLdapDirectory(**args)
 
@@ -407,6 +494,9 @@ class SecurityMixin:
         :param name: directory name (or uuid)
         :param uuid: directory uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeLdapDirectory(
             **self._identify(name=name, uuid=uuid)
@@ -422,6 +512,9 @@ class SecurityMixin:
         :param name: directory name (or uuid)
         :param uuid: directory uuid (or name)
         :return: sync status value string
+        
+
+        Schema: `GetLdapSyncStatusReq`: one of `name`, or `uuid`.
         """
         return self.client.getLdapSyncStatus(
             **self._identify(name=name, uuid=uuid)
@@ -437,6 +530,9 @@ class SecurityMixin:
         :param process_node_name: specific publisher/subscriber hostname; leave blank for
                                   the connected node.
         :return: result dictionary with 'componentVersion' → {'version': ...}
+        
+
+        Schema: `GetCCMVersionReq`: optional `processNodeName`.
         """
         kwargs = {}
         if process_node_name:
@@ -454,6 +550,9 @@ class SecurityMixin:
         :param uuid: device uuid (or device name)
         :param tagfilter: optional dict of returned tags
         :return: registrationDynamic dictionary
+        
+
+        Schema: `GetRegistrationDynamicReq`: optional `returnedTags`; one of `device`, or `uuid`.
         """
         if bool(device) == bool(uuid):
             raise ValueError("Provide exactly one of device or uuid")
@@ -471,6 +570,9 @@ class SecurityMixin:
         :param search_device: device name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include, e.g. {'device': ''}
         :return: list of registrationDynamic dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRegistrationDynamicReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listRegistrationDynamic(
             {"device": search_device}, returnedTags=tagfilter
@@ -487,6 +589,9 @@ class SecurityMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyPhone(**self._identify(name=name, uuid=uuid))
 
@@ -496,6 +601,9 @@ class SecurityMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetPhone(**self._identify(name=name, uuid=uuid))
 
@@ -505,6 +613,9 @@ class SecurityMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartPhone(**self._identify(name=name, uuid=uuid))
 
@@ -514,6 +625,9 @@ class SecurityMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.lockPhone(**self._identify(name=name, uuid=uuid))
 
@@ -523,6 +637,9 @@ class SecurityMixin:
         :param name: device name (or uuid)
         :param uuid: device uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.wipePhone(**self._identify(name=name, uuid=uuid))
 
@@ -544,6 +661,9 @@ class SecurityMixin:
         List all Application User CAPF Profiles.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListApplicationUserCapfProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listApplicationUserCapfProfile(
             {"applicationUser": "%"},
@@ -559,6 +679,9 @@ class SecurityMixin:
         :param instanceId: CAPF instance ID (or uuid)
         :param uuid: profile uuid (or instanceId)
         :return: result dict
+        
+
+        Schema: `GetApplicationUserCapfProfileReq`: optional `returnedTags`; one of `instanceId`, or `uuid`.
         """
         return self.client.getApplicationUserCapfProfile(**args)["return"][
             "applicationUserCapfProfile"
@@ -570,6 +693,9 @@ class SecurityMixin:
         :param applicationUser: application user name — required
         :param instanceId: CAPF instance ID — required
         :return: result dict
+        
+
+        Schema: `applicationUserCapfProfile` -> `XApplicationUserCapfProfile`: `applicationUser` + `instanceId` + `certificateOperation` + `authenticationMode` + `keySize`; optional `authenticationString`, `keyOrder`, `ecKeySize`, `operationCompletion`.
         """
         obj = self._build_object(
             "addApplicationUserCapfProfile", "applicationUserCapfProfile", args
@@ -582,6 +708,9 @@ class SecurityMixin:
         :param instanceId: CAPF instance ID (or uuid)
         :param uuid: profile uuid (or instanceId)
         :return: result dict
+        
+
+        Schema: `UpdateApplicationUserCapfProfileReq`: optional `certificateOperation`, `authenticationMode`, `authenticationString`, `keySize`, `keyOrder`, `ecKeySize` and 1 more; one of `uuid`, or `instanceId`.
         """
         return self.client.updateApplicationUserCapfProfile(**args)
 
@@ -591,6 +720,9 @@ class SecurityMixin:
         :param instanceId: CAPF instance ID (or uuid)
         :param uuid: profile uuid (or instanceId)
         :return: result dict
+        
+
+        Schema: `RemoveApplicationUserCapfProfileReq`: one of `instanceId`, or `uuid`.
         """
         return self.client.removeApplicationUserCapfProfile(**args)
 
@@ -612,6 +744,9 @@ class SecurityMixin:
         List all End User CAPF Profiles.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListEndUserCapfProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listEndUserCapfProfile(
             {"endUserId": "%"},
@@ -627,6 +762,9 @@ class SecurityMixin:
         :param instanceId: CAPF instance ID (or uuid)
         :param uuid: profile uuid (or instanceId)
         :return: result dict
+        
+
+        Schema: `GetEndUserCapfProfileReq`: optional `returnedTags`; one of `instanceId`, or `uuid`.
         """
         return self.client.getEndUserCapfProfile(**args)["return"][
             "endUserCapfProfile"
@@ -638,6 +776,9 @@ class SecurityMixin:
         :param endUserId: end-user ID — required
         :param instanceId: CAPF instance ID — required
         :return: result dict
+        
+
+        Schema: `endUserCapfProfile` -> `XEndUserCapfProfile`: `endUserId` + `instanceId` + `certificationOperation` + `authenticationMode` + `keySize`; optional `authenticationString`, `keyOrder`, `ecKeySize`, `operationCompletion`.
         """
         obj = self._build_object("addEndUserCapfProfile", "endUserCapfProfile", args)
         return self.client.addEndUserCapfProfile(obj)
@@ -648,6 +789,9 @@ class SecurityMixin:
         :param instanceId: CAPF instance ID (or uuid)
         :param uuid: profile uuid (or instanceId)
         :return: result dict
+        
+
+        Schema: `UpdateEndUserCapfProfileReq`: optional `certificationOperation`, `authenticationMode`, `authenticationString`, `keySize`, `keyOrder`, `ecKeySize` and 1 more; one of `uuid`, or `instanceId`.
         """
         return self.client.updateEndUserCapfProfile(**args)
 
@@ -657,6 +801,9 @@ class SecurityMixin:
         :param instanceId: CAPF instance ID (or uuid)
         :param uuid: profile uuid (or instanceId)
         :return: result dict
+        
+
+        Schema: `RemoveEndUserCapfProfileReq`: one of `instanceId`, or `uuid`.
         """
         return self.client.removeEndUserCapfProfile(**args)
 
@@ -670,6 +817,9 @@ class SecurityMixin:
         :param name: config name (or uuid)
         :param uuid: config uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetSecureConfigReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSecureConfig(**args)["return"]["secureConfig"]
 
@@ -679,6 +829,9 @@ class SecurityMixin:
         :param name: config name (or uuid)
         :param uuid: config uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateSecureConfigReq`: optional `value`.
         """
         return self.client.updateSecureConfig(**args)
 
@@ -694,6 +847,9 @@ class SecurityMixin:
         List all SIP Realms.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListSipRealmReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listSipRealm(
             {"realm": "%"},
@@ -709,6 +865,9 @@ class SecurityMixin:
         :param realm: realm name (or uuid)
         :param uuid: realm uuid (or realm)
         :return: result dict
+        
+
+        Schema: `GetSipRealmReq`: optional `returnedTags`; one of `realm`, or `uuid`.
         """
         return self.client.getSipRealm(**args)["return"]["sipRealm"]
 
@@ -719,6 +878,9 @@ class SecurityMixin:
         :param userid: user ID — required
         :param digestCredentials: credentials — required
         :return: result dict
+        
+
+        Schema: `sipRealm` -> `XSipRealm`: `realm` + `userid` + `digestCredentials`.
         """
         obj = self._build_object("addSipRealm", "sipRealm", args)
         return self.client.addSipRealm(obj)
@@ -729,6 +891,9 @@ class SecurityMixin:
         :param realm: realm name (or uuid)
         :param uuid: realm uuid (or realm)
         :return: result dict
+        
+
+        Schema: `UpdateSipRealmReq`: optional `newRealm`, `userid`, `digestCredentials`; one of `uuid`, or `realm`.
         """
         return self.client.updateSipRealm(**args)
 
@@ -741,6 +906,9 @@ class SecurityMixin:
 
         Note: ``userid`` is NOT part of the AXL removeSipRealm key; pass only
         ``realm`` or ``uuid``.
+        
+
+        Schema: `RemoveSipRealmReq`: one of `realm`, or `uuid`.
         """
         return self.client.removeSipRealm(**args)
 
@@ -762,6 +930,9 @@ class SecurityMixin:
         List all TVS Certificates.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListTvsCertificateReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listTvsCertificate(
             {"subjectName": "%"},
@@ -778,6 +949,9 @@ class SecurityMixin:
         :param issuerName: issuer name (alternative to uuid)
         :param serialNumber: serial number (alternative to uuid)
         :return: result dict
+        
+
+        Schema: `GetTvsCertificateReq`: optional `returnedTags`; one of `uuid`, or (`issuerName` + `serialNumber`).
         """
         return self.client.getTvsCertificate(**args)["return"]["tvsCertificate"]
 
@@ -786,6 +960,9 @@ class SecurityMixin:
         Update a TVS Certificate.
         :param uuid: certificate uuid — required for update
         :return: result dict
+        
+
+        Schema: `UpdateTvsCertificateReq`: optional `timeToLive`; one of `uuid`, or (`issuerName` + `serialNumber`).
         """
         return self.client.updateTvsCertificate(**args)
 
@@ -801,6 +978,9 @@ class SecurityMixin:
         List all VPN Gateways.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListVpnGatewayReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listVpnGateway(
             {"name": "%"},
@@ -816,6 +996,9 @@ class SecurityMixin:
         :param name: gateway name (or uuid)
         :param uuid: gateway uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetVpnGatewayReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getVpnGateway(**args)["return"]["vpnGateway"]
 
@@ -825,6 +1008,9 @@ class SecurityMixin:
         :param name: gateway name — required
         :param url: gateway URL — required
         :return: result dict
+        
+
+        Schema: `vpnGateway` -> `XVpnGateway`: `name` + `url` + `certificates`; optional `description`.
         """
         obj = self._build_object("addVpnGateway", "vpnGateway", args)
         return self.client.addVpnGateway(obj)
@@ -835,6 +1021,9 @@ class SecurityMixin:
         :param name: gateway name (or uuid)
         :param uuid: gateway uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateVpnGatewayReq`: optional `newName`, `description`, `url`, `certificates`.
         """
         return self.client.updateVpnGateway(**args)
 
@@ -844,6 +1033,9 @@ class SecurityMixin:
         :param name: gateway name (or uuid)
         :param uuid: gateway uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeVpnGateway(**args)
 
@@ -859,6 +1051,9 @@ class SecurityMixin:
         List all VPN Groups.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListVpnGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listVpnGroup(
             {"name": "%"},
@@ -874,6 +1069,9 @@ class SecurityMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetVpnGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getVpnGroup(**args)["return"]["vpnGroup"]
 
@@ -882,6 +1080,9 @@ class SecurityMixin:
         Add a VPN Group.
         :param name: group name — required
         :return: result dict
+        
+
+        Schema: `vpnGroup` -> `XVpnGroup`: `name`; optional `description`, `vpnGateways`.
         """
         obj = self._build_object("addVpnGroup", "vpnGroup", args)
         return self.client.addVpnGroup(obj)
@@ -892,6 +1093,9 @@ class SecurityMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateVpnGroupReq`: optional `newName`, `description`, `vpnGateways`.
         """
         return self.client.updateVpnGroup(**args)
 
@@ -901,6 +1105,9 @@ class SecurityMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeVpnGroup(**args)
 
@@ -922,6 +1129,9 @@ class SecurityMixin:
         List all VPN Profiles.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListVpnProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listVpnProfile(
             {"name": "%"},
@@ -937,6 +1147,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetVpnProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getVpnProfile(**args)["return"]["vpnProfile"]
 
@@ -945,6 +1158,9 @@ class SecurityMixin:
         Add a VPN Profile.
         :param name: profile name — required
         :return: result dict
+        
+
+        Schema: `vpnProfile` -> `XVpnProfile`: `name`; optional `description`, `autoNetworkDetection`, `mtu`, `failToConnect`, `clientAuthentication`, `pwdPersistant` and 1 more.
         """
         obj = self._build_object("addVpnProfile", "vpnProfile", args)
         return self.client.addVpnProfile(obj)
@@ -955,6 +1171,9 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateVpnProfileReq`: optional `newName`, `description`, `autoNetworkDetection`, `mtu`, `failToConnect`, `clientAuthentication` and 2 more.
         """
         return self.client.updateVpnProfile(**args)
 
@@ -964,5 +1183,8 @@ class SecurityMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeVpnProfile(**args)

@@ -30,6 +30,9 @@ class PresenceMixin:
         List all Service Profiles.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListServiceProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listServiceProfile(
             {"name": "%"},
@@ -45,6 +48,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetServiceProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getServiceProfile(**args)["return"]["serviceProfile"]
 
@@ -53,6 +59,9 @@ class PresenceMixin:
         Add a Service Profile.
         :param name: profile name — required
         :return: result dict
+        
+
+        Schema: `serviceProfile` -> `XServiceProfile`: `name`; optional `description`, `isDefault`, `serviceProfileInfos`.
         """
         obj = self._build_object("addServiceProfile", "serviceProfile", args)
         return self.client.addServiceProfile(obj)
@@ -63,6 +72,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateServiceProfileReq`: optional `newName`, `description`, `isDefault`, `serviceProfileInfos`.
         """
         return self.client.updateServiceProfile(**args)
 
@@ -72,6 +84,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeServiceProfile(**args)
 
@@ -87,6 +102,9 @@ class PresenceMixin:
         List all UC Services.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListUcServiceReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listUcService(
             {"name": "%"},
@@ -102,6 +120,9 @@ class PresenceMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetUcServiceReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getUcService(**args)["return"]["ucService"]
 
@@ -111,6 +132,9 @@ class PresenceMixin:
         :param name: service name — required
         :param serviceType: service type — required
         :return: result dict
+        
+
+        Schema: `ucService` -> `XUcService`: `serviceType` + `productType` + `name` + `hostnameorip`; optional `description`, `port`, `protocol`, `ucServiceXml`.
         """
         obj = self._build_object("addUcService", "ucService", args)
         return self.client.addUcService(obj)
@@ -121,6 +145,9 @@ class PresenceMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateUcServiceReq`: optional `newName`, `description`, `hostnameorip`, `port`, `protocol`, `ucServiceXml`.
         """
         return self.client.updateUcService(**args)
 
@@ -130,6 +157,9 @@ class PresenceMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeUcService(**args)
 
@@ -139,6 +169,9 @@ class PresenceMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyUcService(**self._identify(name=name, uuid=uuid))
 
@@ -148,6 +181,9 @@ class PresenceMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetUcService(**self._identify(name=name, uuid=uuid))
 
@@ -157,6 +193,9 @@ class PresenceMixin:
         :param name: service name (or uuid)
         :param uuid: service uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartUcService(**self._identify(name=name, uuid=uuid))
 
@@ -173,6 +212,9 @@ class PresenceMixin:
         List all Voice Mail Pilots.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListVoiceMailPilotReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listVoiceMailPilot(
             {"dirn": "%"},
@@ -189,6 +231,9 @@ class PresenceMixin:
         :param cssName: calling search space name — optional
         :param uuid: pilot uuid (or dirn)
         :return: result dict
+        
+
+        Schema: `GetVoiceMailPilotReq`: optional `returnedTags`; one of `uuid`, or (`dirn`; optional `cssName`).
         """
         return self.client.getVoiceMailPilot(**args)["return"]["voiceMailPilot"]
 
@@ -198,6 +243,9 @@ class PresenceMixin:
         :param dirn: directory number — required
         :param isDefault: set as default pilot, default False
         :return: result dict
+        
+
+        Schema: `voiceMailPilot` -> `XVoiceMailPilot`: `dirn` + `isDefault`; optional `description`, `cssName`.
         """
         obj = self._build_object(
             "addVoiceMailPilot", "voiceMailPilot", args, defaults={"isDefault": False}
@@ -210,6 +258,9 @@ class PresenceMixin:
         :param dirn: directory number (or uuid)
         :param uuid: pilot uuid (or dirn)
         :return: result dict
+        
+
+        Schema: `UpdateVoiceMailPilotReq`: optional `newDirn`, `description`, `newCssName`, `isDefault`; one of `uuid`, or (`dirn`; optional `cssName`).
         """
         return self.client.updateVoiceMailPilot(**args)
 
@@ -220,6 +271,9 @@ class PresenceMixin:
         :param cssName: calling search space name — optional
         :param uuid: pilot uuid (or dirn)
         :return: result dict
+        
+
+        Schema: `RemoveVoiceMailPilotReq`: one of `uuid`, or (`dirn`; optional `cssName`).
         """
         return self.client.removeVoiceMailPilot(**args)
 
@@ -235,6 +289,9 @@ class PresenceMixin:
         List all Voice Mail Profiles.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListVoiceMailProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listVoiceMailProfile(
             {"name": "%"},
@@ -250,6 +307,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetVoiceMailProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getVoiceMailProfile(**args)["return"]["voiceMailProfile"]
 
@@ -258,6 +318,9 @@ class PresenceMixin:
         Add a Voice Mail Profile.
         :param name: profile name — required
         :return: result dict
+        
+
+        Schema: `voiceMailProfile` -> `XVoiceMailProfile`: `name` + `voiceMailPilot`; optional `description`, `isDefault`, `voiceMailboxMask`.
         """
         obj = self._build_object("addVoiceMailProfile", "voiceMailProfile", args)
         return self.client.addVoiceMailProfile(obj)
@@ -268,6 +331,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateVoiceMailProfileReq`: optional `newName`, `description`, `isDefault`, `voiceMailboxMask`, `voiceMailPilot`.
         """
         return self.client.updateVoiceMailProfile(**args)
 
@@ -277,6 +343,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeVoiceMailProfile(**args)
 
@@ -286,6 +355,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyVoiceMailProfile(**self._identify(name=name, uuid=uuid))
 
@@ -295,6 +367,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetVoiceMailProfile(**self._identify(name=name, uuid=uuid))
 
@@ -304,6 +379,9 @@ class PresenceMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartVoiceMailProfile(**self._identify(name=name, uuid=uuid))
 
@@ -319,6 +397,9 @@ class PresenceMixin:
         List all Time Periods.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListTimePeriodReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listTimePeriod(
             {"name": "%"},
@@ -334,6 +415,9 @@ class PresenceMixin:
         :param name: time period name (or uuid)
         :param uuid: time period uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetTimePeriodReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getTimePeriod(**args)["return"]["timePeriod"]
 
@@ -342,6 +426,9 @@ class PresenceMixin:
         Add a Time Period.
         :param name: time period name — required
         :return: result dict
+        
+
+        Schema: `timePeriod` -> `XTimePeriod`: `name`; optional `startTime`, `endTime`, `startDay`, `endDay`, `monthOfYear`, `dayOfMonth` and 5 more.
         """
         obj = self._build_object("addTimePeriod", "timePeriod", args)
         return self.client.addTimePeriod(obj)
@@ -352,6 +439,9 @@ class PresenceMixin:
         :param name: time period name (or uuid)
         :param uuid: time period uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateTimePeriodReq`: optional `newName`, `startTime`, `endTime`, `startDay`, `endDay`, `monthOfYear` and 4 more.
         """
         return self.client.updateTimePeriod(**args)
 
@@ -361,6 +451,9 @@ class PresenceMixin:
         :param name: time period name (or uuid)
         :param uuid: time period uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeTimePeriod(**args)
 
@@ -376,6 +469,9 @@ class PresenceMixin:
         List all Time Schedules.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListTimeScheduleReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listTimeSchedule(
             {"name": "%"},
@@ -391,6 +487,9 @@ class PresenceMixin:
         :param name: time schedule name (or uuid)
         :param uuid: time schedule uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetTimeScheduleReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getTimeSchedule(**args)["return"]["timeSchedule"]
 
@@ -399,6 +498,9 @@ class PresenceMixin:
         Add a Time Schedule.
         :param name: time schedule name — required
         :return: result dict
+        
+
+        Schema: `timeSchedule` -> `XTimeSchedule`: `name` + `members`; optional `description`, `isPublished`, `timeScheduleCategory`, `todOwnerIdName`.
         """
         obj = self._build_object("addTimeSchedule", "timeSchedule", args)
         return self.client.addTimeSchedule(obj)
@@ -409,6 +511,9 @@ class PresenceMixin:
         :param name: time schedule name (or uuid)
         :param uuid: time schedule uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateTimeScheduleReq`: optional `newName`, optional choice of (optional `removeMembers`, `addMembers`), or `members`, `description`, `timeScheduleCategory`.
         """
         return self.client.updateTimeSchedule(**args)
 
@@ -418,6 +523,9 @@ class PresenceMixin:
         :param name: time schedule name (or uuid)
         :param uuid: time schedule uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeTimeSchedule(**args)
 
@@ -439,6 +547,9 @@ class PresenceMixin:
         List all Call Park entries.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListCallParkReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listCallPark(
             {"pattern": "%"},
@@ -455,6 +566,9 @@ class PresenceMixin:
         :param routePartitionName: partition — optional (AXL name: routePartitionName)
         :param uuid: call park uuid (or pattern)
         :return: result dict
+        
+
+        Schema: `GetCallParkReq`: optional `returnedTags`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.getCallPark(**args)["return"]["callPark"]
 
@@ -465,6 +579,9 @@ class PresenceMixin:
         :param callManagerName: Unified CM name — required
         :param routePartitionName: partition — optional
         :return: result dict
+        
+
+        Schema: `callPark` -> `XCallPark`: `pattern` + `callManagerName`; optional `description`, `routePartitionName`.
         """
         obj = self._build_object("addCallPark", "callPark", args)
         return self.client.addCallPark(obj)
@@ -476,6 +593,9 @@ class PresenceMixin:
         :param routePartitionName: partition — optional
         :param uuid: call park uuid (or pattern)
         :return: result dict
+        
+
+        Schema: `UpdateCallParkReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `callManagerName`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.updateCallPark(**args)
 
@@ -486,6 +606,9 @@ class PresenceMixin:
         :param routePartitionName: partition — optional
         :param uuid: call park uuid (or pattern)
         :return: result dict
+        
+
+        Schema: `RemoveCallParkReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.removeCallPark(**args)
 
@@ -501,6 +624,9 @@ class PresenceMixin:
         List all assigned Presence servers.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListAssignedPresenceServersReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listAssignedPresenceServers(
             {"name": "%"},
@@ -522,6 +648,9 @@ class PresenceMixin:
         List all unassigned Presence servers.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListUnassignedPresenceServersReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listUnassignedPresenceServers(
             {"name": "%"},
@@ -543,6 +672,9 @@ class PresenceMixin:
         List all assigned Presence users.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListAssignedPresenceUsersReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listAssignedPresenceUsers(
             {"userid": "%"},
@@ -564,6 +696,9 @@ class PresenceMixin:
         List all unassigned Presence users.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListUnassignedPresenceUsersReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listUnassignedPresenceUsers(
             {"userid": "%"},
@@ -583,6 +718,9 @@ class PresenceMixin:
         :param userid: end-user ID to assign
         :param server: Presence server name to assign the user to
         :return: result dict
+        
+
+        Schema: `AssignPresenceUserReq`: `userid` + `server`.
         """
         return self.client.assignPresenceUser(userid=userid, server=server)
 
@@ -591,6 +729,9 @@ class PresenceMixin:
         Unassign a user from their Presence server.
         :param userid: end-user ID to unassign
         :return: result dict
+        
+
+        Schema: `UnassignPresenceUserReq`: `userid`.
         """
         return self.client.unassignPresenceUser(userid=userid)
 
@@ -612,6 +753,9 @@ class PresenceMixin:
         List all Presence Redundancy Groups.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListPresenceRedundancyGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listPresenceRedundancyGroup(
             {"name": "%"},
@@ -627,6 +771,9 @@ class PresenceMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetPresenceRedundancyGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getPresenceRedundancyGroup(**args)["return"][
             "presenceRedundancyGroup"
@@ -637,6 +784,9 @@ class PresenceMixin:
         Add a Presence Redundancy Group.
         :param name: group name — required
         :return: result dict
+        
+
+        Schema: `presenceRedundancyGroup` -> `XPresenceRedundancyGroup`: `name` + `server1`; optional `description`, `server2`, `haEnabled`.
         """
         obj = self._build_object(
             "addPresenceRedundancyGroup", "presenceRedundancyGroup", args
@@ -649,6 +799,9 @@ class PresenceMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdatePresenceRedundancyGroupReq`: optional `newName`, `description`, `server1`, `server2`, `haEnabled`.
         """
         return self.client.updatePresenceRedundancyGroup(**args)
 
@@ -658,6 +811,9 @@ class PresenceMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removePresenceRedundancyGroup(**args)
 
@@ -677,6 +833,9 @@ class PresenceMixin:
         List all Expressway-C configurations.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListExpresswayCConfigurationReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listExpresswayCConfiguration(
             {"HostNameOrIP": "%"},
@@ -692,6 +851,9 @@ class PresenceMixin:
         :param HostNameOrIP: host name or IP (or uuid)
         :param uuid: config uuid (or HostNameOrIP)
         :return: result dict
+        
+
+        Schema: `GetExpresswayCConfigurationReq`: optional `returnedTags`; one of `HostNameOrIP`, or `uuid`.
         """
         return self.client.getExpresswayCConfiguration(**args)["return"][
             "expresswayCConfiguration"
@@ -702,6 +864,9 @@ class PresenceMixin:
         Add an Expressway-C configuration.
         :param HostNameOrIP: host name or IP — required
         :return: result dict
+        
+
+        Schema: `expresswayCConfiguration` -> `XExpresswayCConfiguration`: `HostNameOrIP`; optional `description`, `X509SubjectNameorSubjectAlternateName`.
         """
         obj = self._build_object(
             "addExpresswayCConfiguration", "expresswayCConfiguration", args
@@ -714,6 +879,9 @@ class PresenceMixin:
         :param HostNameOrIP: host name or IP (or uuid)
         :param uuid: config uuid (or HostNameOrIP)
         :return: result dict
+        
+
+        Schema: `UpdateExpresswayCConfigurationReq`: optional `newHostNameOrIP`, `description`, `X509SubjectNameorSubjectAlternateName`; one of `uuid`, or `HostNameOrIP`.
         """
         return self.client.updateExpresswayCConfiguration(**args)
 
@@ -723,6 +891,9 @@ class PresenceMixin:
         :param HostNameOrIP: host name or IP (or uuid)
         :param uuid: config uuid (or HostNameOrIP)
         :return: result dict
+        
+
+        Schema: `RemoveExpresswayCConfigurationReq`: one of `HostNameOrIP`, or `uuid`.
         """
         return self.client.removeExpresswayCConfiguration(**args)
 
@@ -738,6 +909,9 @@ class PresenceMixin:
         List all MRA Service Domains.
         :param tagfilter: AXL returned tags to include
         :return: list of dicts, empty when nothing matches
+        
+
+        Schema: `ListMraServiceDomainReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listMraServiceDomain(
             {"name": "%"},
@@ -753,6 +927,9 @@ class PresenceMixin:
         :param name: domain name (or uuid)
         :param uuid: domain uuid (or name)
         :return: result dict
+        
+
+        Schema: `GetMraServiceDomainReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getMraServiceDomain(**args)["return"]["mraServiceDomain"]
 
@@ -761,6 +938,9 @@ class PresenceMixin:
         Add an MRA Service Domain.
         :param name: domain name — required
         :return: result dict
+        
+
+        Schema: `mraServiceDomain` -> `XMraServiceDomain`: `name` + `serviceDomains`; optional `isDefault`.
         """
         obj = self._build_object("addMraServiceDomain", "mraServiceDomain", args)
         return self.client.addMraServiceDomain(obj)
@@ -771,6 +951,9 @@ class PresenceMixin:
         :param name: domain name (or uuid)
         :param uuid: domain uuid (or name)
         :return: result dict
+        
+
+        Schema: `UpdateMraServiceDomainReq`: optional `newName`, `isDefault`, `serviceDomains`.
         """
         return self.client.updateMraServiceDomain(**args)
 
@@ -780,5 +963,8 @@ class PresenceMixin:
         :param name: domain name (or uuid)
         :param uuid: domain uuid (or name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeMraServiceDomain(**args)

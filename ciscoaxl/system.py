@@ -88,6 +88,9 @@ class SystemMixin:
         :param description: description
         :param userHoldMohAudioSourceId: MOH source id
         :return: result dictionary (uuid)
+        
+
+        Schema: `defaultDeviceProfile` -> `XDefaultDeviceProfile`: `name` + `product` + `class` + `protocol` + `protocolSide` + `phoneButtonTemplate` + `softkeyTemplate` + `privacy` + `mlppIndication` + `preemption`; optional `description`, `userHoldMohAudioSourceId`, `userLocale`, `singleButtonBarge`, `joinAcrossLines`, `ignorePi` and 7 more.
         """
         profile = self._build_object(
             "addDefaultDeviceProfile",
@@ -102,6 +105,9 @@ class SystemMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: defaultDeviceProfile dictionary
+        
+
+        Schema: `GetDefaultDeviceProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getDefaultDeviceProfile(
             **self._identify(name=name, uuid=uuid)
@@ -112,6 +118,9 @@ class SystemMixin:
         List default device profiles.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of defaultDeviceProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDefaultDeviceProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listDefaultDeviceProfile(
             {"name": "%"}, returnedTags=tagfilter
@@ -127,6 +136,9 @@ class SystemMixin:
         :param uuid: profile uuid (or name)
         :param newName: new profile name
         :return: result dictionary
+        
+
+        Schema: `UpdateDefaultDeviceProfileReq`: optional `description`, `userHoldMohAudioSourceId`, `userLocale`, `phoneButtonTemplate`, `softkeyTemplate`, `privacy` and 12 more.
         """
         return self.client.updateDefaultDeviceProfile(**args)
 
@@ -136,6 +148,9 @@ class SystemMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeDefaultDeviceProfile(
             **self._identify(name=name, uuid=uuid)
@@ -152,6 +167,9 @@ class SystemMixin:
         :param Protocol: device protocol e.g. 'SCCP', 'SIP' (required unless uuid provided)
         :param uuid: device defaults uuid (alternative to Model+Protocol)
         :return: deviceDefaults dictionary
+        
+
+        Schema: `GetDeviceDefaultsReq`: optional `returnedTags`; one of `uuid`, or (`Model` + `Protocol`).
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -166,6 +184,9 @@ class SystemMixin:
         List device defaults.
         :param tagfilter: AXL returned tags to include, e.g. {'Model': '', 'Protocol': ''}
         :return: list of deviceDefaults dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDeviceDefaultsReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listDeviceDefaults(
             {"Model": "%"}, returnedTags=tagfilter
@@ -181,6 +202,9 @@ class SystemMixin:
         :param Protocol: device protocol (or uuid)
         :param uuid: device defaults uuid (alternative to Model+Protocol)
         :return: result dictionary
+        
+
+        Schema: `UpdateDeviceDefaultsReq`: optional `LoadInformation`, `InactiveLoadInformation`, `DevicePoolName`, `PhoneButtonTemplate`, `VersionStamp`, `PreferActCodeOverAutoReg`; one of `uuid`, or (`Model` + `Protocol`).
         """
         return self.client.updateDeviceDefaults(**args)
 
@@ -199,6 +223,9 @@ class SystemMixin:
         """
         Update the enterprise phone configuration.
         :return: result dictionary
+        
+
+        Schema: `UpdateEnterprisePhoneConfigReq`: optional `vendorConfig`.
         """
         return self.client.updateEnterprisePhoneConfig(**args)
 
@@ -212,6 +239,9 @@ class SystemMixin:
         :param name: policy name — required
         :param description: description
         :return: result dictionary (uuid)
+        
+
+        Schema: `featureControlPolicy` -> `XFeatureControlPolicy`: `name`; optional `description`, `features`.
         """
         policy = self._build_object(
             "addFeatureControlPolicy",
@@ -226,6 +256,9 @@ class SystemMixin:
         :param name: policy name (or uuid)
         :param uuid: policy uuid (or name)
         :return: featureControlPolicy dictionary
+        
+
+        Schema: `GetFeatureControlPolicyReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getFeatureControlPolicy(
             **self._identify(name=name, uuid=uuid)
@@ -236,6 +269,9 @@ class SystemMixin:
         List feature control policies.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of featureControlPolicy dictionaries, empty when nothing matches
+        
+
+        Schema: `ListFeatureControlPolicyReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listFeatureControlPolicy(
             {"name": "%"}, returnedTags=tagfilter
@@ -251,6 +287,9 @@ class SystemMixin:
         :param uuid: policy uuid (or name)
         :param newName: new policy name
         :return: result dictionary
+        
+
+        Schema: `UpdateFeatureControlPolicyReq`: optional `newName`, `description`, `features`.
         """
         return self.client.updateFeatureControlPolicy(**args)
 
@@ -260,6 +299,9 @@ class SystemMixin:
         :param name: policy name (or uuid)
         :param uuid: policy uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeFeatureControlPolicy(
             **self._identify(name=name, uuid=uuid)
@@ -275,6 +317,9 @@ class SystemMixin:
         :param name: template name — required
         :param description: description
         :return: result dictionary (uuid)
+        
+
+        Schema: `featureGroupTemplate` -> `XFeatureGroupTemplate`: `name` + `maxDeskPickupWait` + `remoteDestinationLimit` + `BLFPresenceGp`; optional `description`, `homeCluster`, `imAndUcPresenceEnable`, `serviceProfile`, `enableUserToHostConferenceNow`, `allowCTIControl` and 7 more.
         """
         template = self._build_object(
             "addFeatureGroupTemplate",
@@ -289,6 +334,9 @@ class SystemMixin:
         :param name: template name (or uuid)
         :param uuid: template uuid (or name)
         :return: featureGroupTemplate dictionary
+        
+
+        Schema: `GetFeatureGroupTemplateReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getFeatureGroupTemplate(
             **self._identify(name=name, uuid=uuid)
@@ -299,6 +347,9 @@ class SystemMixin:
         List feature group templates.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of featureGroupTemplate dictionaries, empty when nothing matches
+        
+
+        Schema: `ListFeatureGroupTemplateReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listFeatureGroupTemplate(
             {"name": "%"}, returnedTags=tagfilter
@@ -314,6 +365,9 @@ class SystemMixin:
         :param uuid: template uuid (or name)
         :param newName: new template name
         :return: result dictionary
+        
+
+        Schema: `UpdateFeatureGroupTemplateReq`: optional `newName`, `description`, `homeCluster`, `imAndUcPresenceEnable`, `serviceProfile`, `enableUserToHostConferenceNow` and 11 more.
         """
         return self.client.updateFeatureGroupTemplate(**args)
 
@@ -323,6 +377,9 @@ class SystemMixin:
         :param name: template name (or uuid)
         :param uuid: template uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeFeatureGroupTemplate(
             **self._identify(name=name, uuid=uuid)
@@ -343,6 +400,9 @@ class SystemMixin:
         :param serviceVendor: vendor name
         :param serviceVersion: version
         :return: result dictionary (uuid)
+        
+
+        Schema: `ipPhoneServices` -> `XIpPhoneServices`: `serviceName` + `asciiServiceName` + `serviceUrl` + `serviceCategory` + `serviceType`; optional `serviceDescription`, `secureServiceUrl`, `serviceVendor`, `serviceVersion`, `enabled`, `enterpriseSubscription` and 1 more.
         """
         service = self._build_object(
             "addIpPhoneServices",
@@ -357,6 +417,9 @@ class SystemMixin:
         :param serviceName: service name (or uuid)
         :param uuid: service uuid (or serviceName)
         :return: ipPhoneServices dictionary
+        
+
+        Schema: `GetIpPhoneServicesReq`: optional `returnedTags`; one of `serviceName`, or `uuid`.
         """
         if bool(serviceName) == bool(uuid):
             raise ValueError("Provide exactly one of serviceName or uuid")
@@ -368,6 +431,9 @@ class SystemMixin:
         List IP phone services.
         :param tagfilter: AXL returned tags to include, e.g. {'serviceName': ''}
         :return: list of ipPhoneServices dictionaries, empty when nothing matches
+        
+
+        Schema: `ListIpPhoneServicesReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listIpPhoneServices(
             {"serviceName": "%"}, returnedTags=tagfilter
@@ -383,6 +449,9 @@ class SystemMixin:
         :param uuid: service uuid (or serviceName)
         :param newServiceName: new service name
         :return: result dictionary
+        
+
+        Schema: `UpdateIpPhoneServicesReq`: optional `newServiceName`, `asciiServiceName`, `serviceDescription`, `serviceUrl`, `secureServiceUrl`, `serviceCategory` and 5 more; one of `uuid`, or `serviceName`.
         """
         return self.client.updateIpPhoneServices(**args)
 
@@ -392,6 +461,9 @@ class SystemMixin:
         :param serviceName: service name (or uuid)
         :param uuid: service uuid (or serviceName)
         :return: result dictionary
+        
+
+        Schema: `RemoveIpPhoneServicesReq`: one of `serviceName`, or `uuid`.
         """
         if bool(serviceName) == bool(uuid):
             raise ValueError("Provide exactly one of serviceName or uuid")
@@ -408,6 +480,9 @@ class SystemMixin:
         :param name: soft key set name (or uuid)
         :param uuid: soft key set uuid (or name)
         :return: softKeySet dictionary
+        
+
+        Schema: `GetSoftKeySetReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSoftKeySet(
             **self._identify(name=name, uuid=uuid)
@@ -419,6 +494,9 @@ class SystemMixin:
         :param name: soft key set name (or uuid)
         :param uuid: soft key set uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateSoftKeySetReq`: optional optional choice of (optional `removeCallStates`, `addCallStates`), or `callStates`.
         """
         return self.client.updateSoftKeySet(**args)
 
@@ -442,6 +520,9 @@ class SystemMixin:
         :param port: LDAP port number
         :param servers: LDAP server list
         :return: result dictionary
+        
+
+        Schema: `UpdateLdapAuthenticationReq`: optional `authenticateEndUsers`, `distinguishedName`, `ldapPassword`, `userSearchBase`, `servers`.
         """
         return self.client.updateLdapAuthentication(**args)
 
@@ -455,6 +536,9 @@ class SystemMixin:
         :param name: filter name — required
         :param filter: LDAP filter string
         :return: result dictionary (uuid)
+        
+
+        Schema: `ldapFilter` -> `XLdapFilter`: `name` + `filter`.
         """
         ldap_filter = self._build_object(
             "addLdapFilter",
@@ -469,6 +553,9 @@ class SystemMixin:
         :param name: filter name (or uuid)
         :param uuid: filter uuid (or name)
         :return: ldapFilter dictionary
+        
+
+        Schema: `GetLdapFilterReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getLdapFilter(
             **self._identify(name=name, uuid=uuid)
@@ -479,6 +566,9 @@ class SystemMixin:
         List LDAP filters.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of ldapFilter dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLdapFilterReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listLdapFilter(
             {"name": "%"}, returnedTags=tagfilter
@@ -495,6 +585,9 @@ class SystemMixin:
         :param newName: new filter name
         :param filter: new LDAP filter string
         :return: result dictionary
+        
+
+        Schema: `UpdateLdapFilterReq`: optional `newName`, `filter`.
         """
         return self.client.updateLdapFilter(**args)
 
@@ -504,6 +597,9 @@ class SystemMixin:
         :param name: filter name (or uuid)
         :param uuid: filter uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeLdapFilter(
             **self._identify(name=name, uuid=uuid)
@@ -518,6 +614,9 @@ class SystemMixin:
         Get an LDAP search configuration.
         :param uuid: search config uuid — required (LdapSearch has no name field)
         :return: ldapSearch dictionary
+        
+
+        Schema: `GetLdapSearchReq`: optional `returnedTags`; one of `uuid`.
         """
         if not uuid:
             raise ValueError("Provide uuid (LdapSearch has no name identifier)")
@@ -528,6 +627,9 @@ class SystemMixin:
         List LDAP search configurations.
         :param tagfilter: AXL returned tags to include, e.g. {'distinguishedName': ''}
         :return: list of ldapSearch dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLdapSearchReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listLdapSearch(
             {"distinguishedName": "%"}, returnedTags=tagfilter
@@ -541,6 +643,9 @@ class SystemMixin:
         Update an LDAP search configuration.
         :param uuid: search config uuid — required
         :return: result dictionary
+        
+
+        Schema: `UpdateLdapSearchReq`: optional `enableDirectorySearch`, `distinguishedName`, `password`, `userSearchBase1`, `userSearchBase2`, `userSearchBase3` and 6 more; one of `uuid`.
         """
         return self.client.updateLdapSearch(**args)
 
@@ -555,6 +660,9 @@ class SystemMixin:
         :param customUserField: CUCM user field
         :param ldapUserField: LDAP attribute name
         :return: result dictionary (uuid)
+        
+
+        Schema: `ldapSyncCustomField` -> `XLdapSyncCustomField`: `ldapConfigurationName` + `customUserField` + `ldapUserField`.
         """
         field = self._build_object(
             "addLdapSyncCustomField",
@@ -570,6 +678,9 @@ class SystemMixin:
         :param customUserField: CUCM user field (required unless uuid provided)
         :param uuid: custom field uuid (alternative to ldapConfigurationName+customUserField)
         :return: ldapSyncCustomField dictionary
+        
+
+        Schema: `GetLdapSyncCustomFieldReq`: optional `returnedTags`; one of `uuid`, or (`ldapConfigurationName` + `customUserField`).
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -586,6 +697,9 @@ class SystemMixin:
         List LDAP sync custom field mappings.
         :param tagfilter: AXL returned tags to include
         :return: list of ldapSyncCustomField dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLdapSyncCustomFieldReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listLdapSyncCustomField(
             {"ldapConfigurationName": "%"}, returnedTags=tagfilter
@@ -601,6 +715,9 @@ class SystemMixin:
         :param customUserField: CUCM user field — required
         :param ldapUserField: new LDAP attribute to map
         :return: result dictionary
+        
+
+        Schema: `UpdateLdapSyncCustomFieldReq`: optional `ldapUserField`; one of `uuid`, or (`ldapConfigurationName` + `customUserField`).
         """
         return self.client.updateLdapSyncCustomField(**args)
 
@@ -611,6 +728,9 @@ class SystemMixin:
         :param customUserField: CUCM user field (required unless uuid provided)
         :param uuid: custom field uuid (alternative to ldapConfigurationName+customUserField)
         :return: result dictionary
+        
+
+        Schema: `RemoveLdapSyncCustomFieldReq`: one of `uuid`, or (`ldapConfigurationName` + `customUserField`).
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -640,6 +760,9 @@ class SystemMixin:
         :param ldapServer: LDAP server vendor
         :param userIdAttribute: LDAP attribute to use as CUCM user ID
         :return: result dictionary
+        
+
+        Schema: `UpdateLdapSystemReq`: optional `syncEnabled`, `ldapServer`, `userIdAttribute`.
         """
         return self.client.updateLdapSystem(**args)
 
@@ -653,6 +776,9 @@ class SystemMixin:
         :param name: node name (or uuid)
         :param uuid: node uuid (or name)
         :return: callManager dictionary
+        
+
+        Schema: `GetCallManagerReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCallManager(
             **self._identify(name=name, uuid=uuid)
@@ -663,6 +789,9 @@ class SystemMixin:
         List CallManager nodes.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of callManager dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCallManagerReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCallManager(
             {"name": "%"}, returnedTags=tagfilter
@@ -677,6 +806,9 @@ class SystemMixin:
         :param name: node name (or uuid)
         :param uuid: node uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateCallManagerReq`: optional `newName`, `description`, `autoRegistration`, `ports`, `lbmGroup`.
         """
         return self.client.updateCallManager(**args)
 
@@ -686,6 +818,9 @@ class SystemMixin:
         :param name: node name (or uuid)
         :param uuid: node uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCallManager(**self._identify(name=name, uuid=uuid))
 
@@ -695,6 +830,9 @@ class SystemMixin:
         :param name: node name (or uuid)
         :param uuid: node uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCallManager(**self._identify(name=name, uuid=uuid))
 
@@ -704,6 +842,9 @@ class SystemMixin:
         :param name: node name (or uuid)
         :param uuid: node uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartCallManager(**self._identify(name=name, uuid=uuid))
 
@@ -762,6 +903,9 @@ class SystemMixin:
         :param nodeUsage: node usage type
         :param lbmHubGroup: LBM hub group
         :return: result dictionary (uuid)
+        
+
+        Schema: `processNode` -> `XProcessNode`: `name` + `processNodeRole`; optional `description`, `mac`, `ipv6Name`, `lbmHubGroup`, `cupDomain`.
         """
         node = self._build_object(
             "addProcessNode",
@@ -776,6 +920,9 @@ class SystemMixin:
         :param name: node name (or uuid)
         :param uuid: node uuid (or name)
         :return: processNode dictionary
+        
+
+        Schema: `GetProcessNodeReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getProcessNode(
             **self._identify(name=name, uuid=uuid)
@@ -788,6 +935,9 @@ class SystemMixin:
         :param uuid: node uuid (or name)
         :param newName: new node name
         :return: result dictionary
+        
+
+        Schema: `UpdateProcessNodeReq`: optional `newName`, `description`, `mac`, `ipv6Name`, `lbmHubGroup`, `cupDomain`.
         """
         return self.client.updateProcessNode(**args)
 
@@ -797,6 +947,9 @@ class SystemMixin:
         :param name: node name (or uuid)
         :param uuid: node uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeProcessNode(
             **self._identify(name=name, uuid=uuid)
@@ -812,6 +965,9 @@ class SystemMixin:
         :param processNodeName: node hostname/IP — required
         :param service_name: service name — required (maps to AXL 'service' element)
         :return: processNodeService dictionary
+        
+
+        Schema: `GetProcessNodeServiceReq`: optional `returnedTags`; one of `uuid`, or (`processNodeName` + `service`).
         """
         return self.client.getProcessNodeService(
             **{"processNodeName": processNodeName, "service": service_name}
@@ -827,6 +983,9 @@ class SystemMixin:
         :param search_processNodeName: node name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of processNodeService dictionaries, empty when nothing matches
+        
+
+        Schema: `ListProcessNodeServiceReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listProcessNodeService(
             {"processNodeName": search_processNodeName}, returnedTags=tagfilter
@@ -842,6 +1001,9 @@ class SystemMixin:
         :param service_name: service name — required (maps to AXL 'service' element)
         :param traceLevel: trace level value
         :return: result dictionary
+        
+
+        Schema: `UpdateProcessNodeServiceReq`: optional `traceLevel`, `userCategories`, `enable`, `numFiles`, `maxFileSize`; one of `uuid`, or (`processNodeName` + `service`).
         """
         return self.client.updateProcessNodeService(
             **{"processNodeName": processNodeName, "service": service_name, **args}
@@ -858,6 +1020,9 @@ class SystemMixin:
         :param service_name: service name — required (maps to AXL 'service' element)
         :param name: parameter name — required
         :return: serviceParameter dictionary
+        
+
+        Schema: `GetServiceParameterReq`: optional `returnedTags`; one of `uuid`, or (`processNodeName` + `name` + `service`).
         """
         return self.client.getServiceParameter(
             **{"processNodeName": processNodeName, "service": service_name, "name": name}
@@ -875,6 +1040,9 @@ class SystemMixin:
         :param search_service: service search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of serviceParameter dictionaries, empty when nothing matches
+        
+
+        Schema: `ListServiceParameterReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listServiceParameter(
             {"processNodeName": search_processNodeName, "service": search_service},
@@ -892,6 +1060,9 @@ class SystemMixin:
         :param name: parameter name — required
         :param value: new parameter value
         :return: result dictionary
+        
+
+        Schema: `UpdateServiceParameterReq`: optional `value`; one of `uuid`, or (`processNodeName` + `name` + `service`).
         """
         kwargs = {"processNodeName": processNodeName, "service": service_name, "name": name}
         if value is not None:
@@ -914,6 +1085,9 @@ class SystemMixin:
         :param credChangeDuration: forced change interval in days
         :param credExpiresAfter: expiry period in days
         :return: result dictionary (uuid)
+        
+
+        Schema: `credentialPolicy` -> `XCredentialPolicy`: `name` + `failedLogon` + `resetFailedLogonAttempts` + `lockoutDuration` + `credChangeDuration` + `credExpiresAfter` + `minCredLength` + `prevCredStoredNum` + `inactiveDaysAllowed` + `expiryWarningDays` + `trivialCredCheck` + `minCharsToChange`.
         """
         policy = self._build_object(
             "addCredentialPolicy",
@@ -928,6 +1102,9 @@ class SystemMixin:
         :param name: policy name (or uuid)
         :param uuid: policy uuid (or name)
         :return: credentialPolicy dictionary
+        
+
+        Schema: `GetCredentialPolicyReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCredentialPolicy(
             **self._identify(name=name, uuid=uuid)
@@ -938,6 +1115,9 @@ class SystemMixin:
         List credential policies.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of credentialPolicy dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCredentialPolicyReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCredentialPolicy(
             {"name": "%"}, returnedTags=tagfilter
@@ -953,6 +1133,9 @@ class SystemMixin:
         :param uuid: policy uuid (or name)
         :param newName: new policy name
         :return: result dictionary
+        
+
+        Schema: `UpdateCredentialPolicyReq`: optional `newName`, `failedLogon`, `resetFailedLogonAttempts`, `lockoutDuration`, `credChangeDuration`, `credExpiresAfter` and 6 more.
         """
         return self.client.updateCredentialPolicy(**args)
 
@@ -962,6 +1145,9 @@ class SystemMixin:
         :param name: policy name (or uuid)
         :param uuid: policy uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCredentialPolicy(
             **self._identify(name=name, uuid=uuid)
@@ -975,6 +1161,9 @@ class SystemMixin:
         """
         Get the credential policy default configuration.
         :return: credentialPolicyDefault dictionary
+        
+
+        Schema: `GetCredentialPolicyDefaultReq`: optional `returnedTags`; one of (`credentialUser` + `credentialType` + `credPolicyName`).
         """
         return self.client.getCredentialPolicyDefault()["return"]["credentialPolicyDefault"]
 
@@ -984,6 +1173,9 @@ class SystemMixin:
         :param credentialUser: default policy for user pins/passwords
         :param credentialApplicationUser: default policy for application users
         :return: result dictionary
+        
+
+        Schema: `UpdateCredentialPolicyDefaultReq`: `credentialUser` + `credentialType` + `credPolicyName`; optional `newCredPolicyName`, `credentials`, `confirmCredentials`, `credUserCantChange`, `credUserMustChange`, `credDoesNotExpire`.
         """
         return self.client.updateCredentialPolicyDefault(**args)
 
@@ -997,6 +1189,9 @@ class SystemMixin:
         :param name: user ID / name (or uuid)
         :param uuid: user uuid (or name)
         :return: licensedUser dictionary
+        
+
+        Schema: `GetLicensedUserReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getLicensedUser(
             **self._identify(name=name, uuid=uuid)
@@ -1007,6 +1202,9 @@ class SystemMixin:
         List licensed users.
         :param tagfilter: AXL returned tags to include, e.g. {'userId': ''}
         :return: list of licensedUser dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLicensedUserReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listLicensedUser(
             {"userId": "%"}, returnedTags=tagfilter
@@ -1043,6 +1241,9 @@ class SystemMixin:
         :param messageWaitingIndicator: MWI On/Off
         :param callingSearchSpaceName: CSS name
         :return: result dictionary (uuid)
+        
+
+        Schema: `messageWaiting` -> `XMessageWaiting`: `pattern` + `routePartitionName` + `messageWaitingIndicator`; optional `description`, `callingSearchSpaceName`.
         """
         mwi = self._build_object(
             "addMessageWaiting",
@@ -1057,6 +1258,9 @@ class SystemMixin:
         :param pattern: DN pattern (or uuid)
         :param uuid: DN uuid (or pattern)
         :return: messageWaiting dictionary
+        
+
+        Schema: `GetMessageWaitingReq`: optional `returnedTags`; one of `uuid`, or (`pattern` + `routePartitionName`).
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -1068,6 +1272,9 @@ class SystemMixin:
         List message waiting numbers.
         :param tagfilter: AXL returned tags to include, e.g. {'pattern': ''}
         :return: list of messageWaiting dictionaries, empty when nothing matches
+        
+
+        Schema: `ListMessageWaitingReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listMessageWaiting(
             {"pattern": "%"}, returnedTags=tagfilter
@@ -1083,6 +1290,9 @@ class SystemMixin:
         :param uuid: DN uuid (or pattern)
         :param description: description
         :return: result dictionary
+        
+
+        Schema: `UpdateMessageWaitingReq`: optional `newPattern`, `newRoutePartitionName`, `description`, `messageWaitingIndicator`, `callingSearchSpaceName`; one of `uuid`, or (`pattern` + `routePartitionName`).
         """
         return self.client.updateMessageWaiting(**args)
 
@@ -1092,6 +1302,9 @@ class SystemMixin:
         :param pattern: DN pattern (or uuid)
         :param uuid: DN uuid (or pattern)
         :return: result dictionary
+        
+
+        Schema: `RemoveMessageWaitingReq`: one of `uuid`, or (`pattern` + `routePartitionName`).
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -1112,6 +1325,9 @@ class SystemMixin:
         :param locationName: location name
         :param voiceMailDn: voicemail directory number
         :return: result dictionary (uuid)
+        
+
+        Schema: `voiceMailPort` -> `XVoiceMailPort`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `useTrustedRelayPoint` + `securityProfileName` + `dnPattern`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `preemption`, `geoLocationName`, `automatedAlternateRoutingCssName` and 6 more.
         """
         port = self._build_object(
             "addVoiceMailPort",
@@ -1126,6 +1342,9 @@ class SystemMixin:
         :param name: port name (or uuid)
         :param uuid: port uuid (or name)
         :return: voiceMailPort dictionary
+        
+
+        Schema: `GetVoiceMailPortReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getVoiceMailPort(
             **self._identify(name=name, uuid=uuid)
@@ -1136,6 +1355,9 @@ class SystemMixin:
         List voice mail ports.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of voiceMailPort dictionaries, empty when nothing matches
+        
+
+        Schema: `ListVoiceMailPortReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listVoiceMailPort(
             {"name": "%"}, returnedTags=tagfilter
@@ -1151,6 +1373,9 @@ class SystemMixin:
         :param uuid: port uuid (or name)
         :param newName: new port name
         :return: result dictionary
+        
+
+        Schema: `UpdateVoiceMailPortReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `locationName` and 11 more.
         """
         return self.client.updateVoiceMailPort(**args)
 
@@ -1160,6 +1385,9 @@ class SystemMixin:
         :param name: port name (or uuid)
         :param uuid: port uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeVoiceMailPort(
             **self._identify(name=name, uuid=uuid)
@@ -1171,6 +1399,9 @@ class SystemMixin:
         :param name: port name (or uuid)
         :param uuid: port uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyVoiceMailPort(**self._identify(name=name, uuid=uuid))
 
@@ -1180,6 +1411,9 @@ class SystemMixin:
         :param name: port name (or uuid)
         :param uuid: port uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetVoiceMailPort(**self._identify(name=name, uuid=uuid))
 
@@ -1189,6 +1423,9 @@ class SystemMixin:
         :param name: port name (or uuid)
         :param uuid: port uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartVoiceMailPort(**self._identify(name=name, uuid=uuid))
 
@@ -1202,6 +1439,9 @@ class SystemMixin:
         :param softKeyTemplateName: softkey template name — required
         :param standardSoftKeyTemplateName: standard template name reference
         :return: result dictionary (uuid)
+        
+
+        Schema: `applicationToSoftkeyTemplate` -> `XApplicationToSoftKeyTemplate`: `softKeyTemplateName` + `standardSoftKeyTemplateName`.
         """
         obj = self._build_object(
             "addApplicationToSoftkeyTemplate",
@@ -1221,6 +1461,9 @@ class SystemMixin:
         :param softKeyTemplateName: softkey template name — required
         :param applicationName: application name
         :return: result dictionary
+        
+
+        Schema: `removeApplicationToSoftkeyTemplateReq`: `softKeyTemplateName` + `applicationName`.
         """
         return self.client.removeApplicationToSoftkeyTemplate(
             softKeyTemplateName=softKeyTemplateName,
@@ -1236,6 +1479,9 @@ class SystemMixin:
         Get device-profile option choices for a device profile UUID.
         :param uuid: device profile uuid — required
         :return: deviceProfile dictionary
+        
+
+        Schema: `GetDeviceProfileOptionsReq`: optional `returnedChoices`; one of `uuid`.
         """
         return self.client.getDeviceProfileOptions(uuid=uuid)["return"][
             "deviceProfile"
@@ -1250,6 +1496,9 @@ class SystemMixin:
         Get line option choices for a directory-number UUID.
         :param uuid: line (directory number) uuid — required
         :return: line options dictionary
+        
+
+        Schema: `GetLineOptionsReq`: optional `returnedChoices`; one of `uuid`.
         """
         return self.client.getLineOptions(uuid=uuid)["return"]["line"]
 
@@ -1263,6 +1512,9 @@ class SystemMixin:
         :param device_class: device class string — required (e.g. 'Phone', 'Gateway')
                              maps to AXL 'class' element (required by schema)
         :return: integer count or result dictionary
+        
+
+        Schema: `GetNumDevicesReq`: `class`.
         """
         return self.client.getNumDevices(**{"class": device_class})["return"]
 
@@ -1275,6 +1527,9 @@ class SystemMixin:
         Get phone option choices for a phone UUID.
         :param uuid: phone uuid — required
         :return: phone options dictionary
+        
+
+        Schema: `GetPhoneOptionsReq`: optional `returnedChoices`; one of `uuid`.
         """
         return self.client.getPhoneOptions(uuid=uuid)["return"]["phone"]
 
@@ -1289,6 +1544,9 @@ class SystemMixin:
         :param appServerContent: content type
         :param content: content payload
         :return: result dictionary (uuid)
+        
+
+        Schema: `appServerInfo` -> `XAppServerInfo`: `appServerName` + `appServerContent`; optional `content`.
         """
         obj = self._build_object("addAppServerInfo", "appServerInfo", args)
         return self.client.addAppServerInfo(appServerInfo=obj)
@@ -1298,6 +1556,9 @@ class SystemMixin:
         Get application-server info record.
         :param uuid: app server info uuid — required
         :return: appServerInfo dictionary
+        
+
+        Schema: `GetAppServerInfoReq`: optional `returnedTags`; `uuid`.
         """
         return self.client.getAppServerInfo(uuid=uuid)["return"]["appServerInfo"]
 
@@ -1309,6 +1570,9 @@ class SystemMixin:
         :param appServerContent: content type
         :param content: content payload
         :return: result dictionary
+        
+
+        Schema: `UpdateAppServerInfoReq`: optional `appServerName`, `appServerContent`, `content`; one of `uuid`.
         """
         return self.client.updateAppServerInfo(**args)
 
@@ -1317,6 +1581,9 @@ class SystemMixin:
         Remove application-server info record.
         :param uuid: app server info uuid — required
         :return: result dictionary
+        
+
+        Schema: `RemoveAppServerInfoReq`: `uuid`.
         """
         return self.client.removeAppServerInfo(uuid=uuid)
 
@@ -1334,6 +1601,9 @@ class SystemMixin:
         :param endUserUrl: end-user URL
         :param processNodeName: associated process node
         :return: result dictionary (uuid)
+        
+
+        Schema: `applicationServer` -> `XApplicationServer`: `appServerType` + `name`; optional `ipAddress`, `appUsers`, `url`, `endUserUrl`, `processNodeName`, `endUsers`.
         """
         obj = self._build_object("addApplicationServer", "applicationServer", args)
         return self.client.addApplicationServer(applicationServer=obj)
@@ -1343,6 +1613,9 @@ class SystemMixin:
         Get an application server.
         :param uuid: application server uuid — required
         :return: applicationServer dictionary
+        
+
+        Schema: `GetApplicationServerReq`: optional `returnedTags`; one of `uuid`.
         """
         return self.client.getApplicationServer(uuid=uuid)["return"][
             "applicationServer"
@@ -1358,6 +1631,9 @@ class SystemMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of applicationServer dictionaries, empty when nothing matches
+        
+
+        Schema: `ListApplicationServerReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listApplicationServer(
             {"name": search_name}, returnedTags=tagfilter
@@ -1373,6 +1649,9 @@ class SystemMixin:
         :param newName: new name
         :param ipAddress: new IP address
         :return: result dictionary
+        
+
+        Schema: `UpdateApplicationServerReq`: optional `newName`, `ipAddress`, optional choice of (optional `removeAppUsers`, `addAppUsers`), or `appUsers`, `url`, `endUserUrl`, `processNodeName` and 1 more; one of `uuid`.
         """
         return self.client.updateApplicationServer(**args)
 
@@ -1381,6 +1660,9 @@ class SystemMixin:
         Remove an application server.
         :param uuid: application server uuid — required
         :return: result dictionary
+        
+
+        Schema: `RemoveApplicationServerReq`: one of `uuid`.
         """
         return self.client.removeApplicationServer(uuid=uuid)
 
@@ -1398,6 +1680,9 @@ class SystemMixin:
         :param startChangeId: optional StartChangeId dict from prior queueInfo
         :param objectList: list of XChangeType strings to filter (default: all)
         :return: dict with 'queueInfo' and 'changes' keys (no 'return' wrapper)
+        
+
+        Schema: `ListChangeReq`: optional `startChangeId`, `objectList`.
         """
         kwargs = {}
         if startChangeId is not None:
@@ -1431,6 +1716,9 @@ class SystemMixin:
         :param description: description
         :param mode: NTP mode
         :return: result dictionary (uuid)
+        
+
+        Schema: `phoneNtp` -> `XPhoneNtp`: `ipAddress` + `ipv6Address` + `mode`; optional `description`.
         """
         obj = self._build_object("addPhoneNtp", "phoneNtp", args)
         return self.client.addPhoneNtp(phoneNtp=obj)
@@ -1445,6 +1733,9 @@ class SystemMixin:
         :param ipAddress: IPv4 address (use with ipv6Address="")
         :param ipv6Address: IPv6 address (use with ipAddress="")
         :return: phoneNtp dictionary
+        
+
+        Schema: `GetPhoneNtpReq`: optional `returnedTags`; one of `uuid`, or (`ipAddress` + `ipv6Address`).
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -1464,6 +1755,9 @@ class SystemMixin:
         :param search_ipAddress: IP address search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of phoneNtp dictionaries, empty when nothing matches
+        
+
+        Schema: `ListPhoneNtpReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listPhoneNtp(
             {"ipAddress": search_ipAddress}, returnedTags=tagfilter
@@ -1481,6 +1775,9 @@ class SystemMixin:
         :param newIpAddress: new IPv4 address
         :param newIpv6Address: new IPv6 address
         :return: result dictionary
+        
+
+        Schema: `UpdatePhoneNtpReq`: optional `newIpAddress`, `newIpv6Address`, `description`, `mode`; one of `uuid`, or (`ipAddress` + `ipv6Address`).
         """
         return self.client.updatePhoneNtp(**args)
 
@@ -1493,6 +1790,9 @@ class SystemMixin:
         :param ipAddress: IPv4 address (use with ipv6Address="")
         :param ipv6Address: IPv6 address (use with ipAddress="")
         :return: result dictionary
+        
+
+        Schema: `RemovePhoneNtpReq`: one of `uuid`, or (`ipAddress` + `ipv6Address`).
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -1513,6 +1813,9 @@ class SystemMixin:
 
         :param query: SQL query string
         :return: {'num_rows': int, 'query': str, 'rows': [{column: value}]}
+        
+
+        Schema: `executeSQLQueryInactiveReq`: `sql`.
         """
         result = {"num_rows": 0, "query": query}
 
@@ -1545,6 +1848,9 @@ class SystemMixin:
         :param processNodeName: node hostname/IP
         :param service: service name
         :return: result dictionary
+        
+
+        Schema: `DoServiceParametersResetReq`: `processNodeName` + `service`.
         """
         return self.client.doServiceParametersReset(
             processNodeName=processNodeName, service=service
@@ -1562,6 +1868,9 @@ class SystemMixin:
         :param service: service name — required
         :param tagfilter: AXL returned tags to include (optional)
         :return: syslogConfiguration dictionary
+        
+
+        Schema: `GetSyslogConfigurationReq`: optional `returnedTags`; `serverName` + `serviceGroup` + `service`.
         """
         kwargs = {
             "serverName": serverName,
@@ -1583,6 +1892,9 @@ class SystemMixin:
         :param alarmConfigs: alarm configuration list
         :param EndPointAlarm: boolean, enable endpoint alarm
         :return: result dictionary
+        
+
+        Schema: `UpdateSyslogConfigurationReq`: `alarmConfigs`; optional `EndPointAlarm`; `serverName` + `serviceGroup` + `service`.
         """
         return self.client.updateSyslogConfiguration(
             serverName=serverName,
@@ -1602,6 +1914,9 @@ class SystemMixin:
         :param password: user password (or pin)
         :param pin: user PIN (or password)
         :return: dict with 'userAuthenticated' and optionally 'code', 'daysToExpiry'
+        
+
+        Schema: `DoAuthenticateUserReq`: `userid`; one of `password`, or `pin`.
         """
         kwargs = {"userid": userid}
         if password is not None:
@@ -1619,6 +1934,9 @@ class SystemMixin:
         Add a custom user field definition.
         :param field: field name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `customUserField` -> `XCustomUserField`: `field`.
         """
         obj = self._build_object("addCustomUserField", "customUserField", args)
         return self.client.addCustomUserField(customUserField=obj)
@@ -1629,6 +1947,9 @@ class SystemMixin:
         :param field: field name (or uuid)
         :param uuid: field uuid (or field name)
         :return: customUserField dictionary
+        
+
+        Schema: `GetCustomUserFieldReq`: optional `returnedTags`; one of `field`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -1643,6 +1964,9 @@ class SystemMixin:
         List custom user field definitions.
         :param tagfilter: AXL returned tags to include, e.g. {'field': ''}
         :return: list of customUserField dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCustomUserFieldReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCustomUserField(
             {"field": "%"}, returnedTags=tagfilter
@@ -1658,6 +1982,9 @@ class SystemMixin:
         :param field: field name identifier
         :param newField: new field name
         :return: result dictionary
+        
+
+        Schema: `UpdateCustomUserFieldReq`: optional `newField`; one of `uuid`, or `field`.
         """
         return self.client.updateCustomUserField(**args)
 
@@ -1667,6 +1994,9 @@ class SystemMixin:
         :param field: field name (or uuid)
         :param uuid: field uuid (or field name)
         :return: result dictionary
+        
+
+        Schema: `RemoveCustomUserFieldReq`: one of `field`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -1689,5 +2019,8 @@ class SystemMixin:
         :param ctiRoutePoint: CTI route point name
         :param applicationUser: application user name
         :return: result dictionary
+        
+
+        Schema: `UpdateSelfProvisioningReq`: optional `requireAuthentication`, `allowAuthentication`, `authenticationCode`, `ctiRoutePoint`, `applicationUser`, optional choice of (optional `removeLanguages`, `addLanguages`), or `languages`.
         """
         return self.client.updateSelfProvisioning(**args)

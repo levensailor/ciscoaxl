@@ -43,6 +43,9 @@ class NetworkMixin:
         :param ProcessnodeActive: active process node reference — required
         :param ProcessnodeStandby: standby process node reference
         :return: result dictionary (uuid)
+        
+
+        Schema: `lbmGroup` -> `XLbmGroup`: `name` + `ProcessnodeActive`; optional `Description`, `ProcessnodeStandby`.
         """
         obj = self._build_object("addLbmGroup", "lbmGroup", args)
         return self.client.addLbmGroup(lbmGroup=obj)
@@ -53,6 +56,9 @@ class NetworkMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: lbmGroup dictionary
+        
+
+        Schema: `GetLbmGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -72,6 +78,9 @@ class NetworkMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of lbmGroup dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLbmGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listLbmGroup(
             {"name": search_name}, returnedTags=tagfilter
@@ -90,6 +99,9 @@ class NetworkMixin:
         :param ProcessnodeActive: new active process node
         :param ProcessnodeStandby: new standby process node
         :return: result dictionary
+        
+
+        Schema: `UpdateLbmGroupReq`: optional `newName`, `Description`, `ProcessnodeActive`, `ProcessnodeStandby`.
         """
         return self.client.updateLbmGroup(**args)
 
@@ -99,6 +111,9 @@ class NetworkMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -121,6 +136,9 @@ class NetworkMixin:
         :param member2: second member process node
         :param member3: third member process node
         :return: result dictionary (uuid)
+        
+
+        Schema: `lbmHubGroup` -> `XLbmHubGroup`: `name` + `member1`; optional `description`, `member2`, `member3`, `members`.
         """
         obj = self._build_object("addLbmHubGroup", "lbmHubGroup", args)
         return self.client.addLbmHubGroup(lbmHubGroup=obj)
@@ -131,6 +149,9 @@ class NetworkMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: lbmHubGroup dictionary
+        
+
+        Schema: `GetLbmHubGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -150,6 +171,9 @@ class NetworkMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of lbmHubGroup dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLbmHubGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listLbmHubGroup(
             {"name": search_name}, returnedTags=tagfilter
@@ -167,6 +191,9 @@ class NetworkMixin:
         :param description: new description
         :param member1: new first member
         :return: result dictionary
+        
+
+        Schema: `UpdateLbmHubGroupReq`: optional `newName`, `description`, `member1`, `member2`, `member3`, optional choice of (optional `removeMembers`, `addMembers`), or `members`.
         """
         return self.client.updateLbmHubGroup(**args)
 
@@ -176,6 +203,9 @@ class NetworkMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -200,6 +230,9 @@ class NetworkMixin:
         :param accessPrivilege: access privilege (e.g. 'ReadOnly') — required
         :param ArrayOfHosts: host restriction structure — required
         :return: result dictionary (message)
+        
+
+        Schema: `CommunityString` -> `RCommunityString`: `communityName` + `accessPrivilege` + `ArrayOfHosts`.
         """
         return self.client.addSNMPCommunityString(
             CommunityString={
@@ -214,6 +247,9 @@ class NetworkMixin:
         Get an SNMP community string.
         :param communityName: community string name — required
         :return: SNMPCommunityString dictionary
+        
+
+        Schema: `GetSNMPCommunityStringReq`: `communityName`.
         """
         return self.client.getSNMPCommunityString(communityName=communityName)[
             "return"
@@ -225,6 +261,9 @@ class NetworkMixin:
         :param communityName: community string name to update — required
         :param **newValues: fields to update passed as newValues wrapper
         :return: result dictionary (message)
+        
+
+        Schema: `UpdateSNMPCommunityStringReq`: `newValues`; optional `communityName`.
         """
         return self.client.updateSNMPCommunityString(
             communityName=communityName,
@@ -236,6 +275,9 @@ class NetworkMixin:
         Remove an SNMP community string.
         :param communityName: community string name — required
         :return: result dictionary (message)
+        
+
+        Schema: `RemoveSNMPCommunityStringReq`: `CommunityString`.
         """
         return self.client.removeSNMPCommunityString(CommunityString=communityName)
 
@@ -249,6 +291,9 @@ class NetworkMixin:
         Get the SNMP MIB2 list entry matching sysContact.
         :param sysContact: system contact string — required
         :return: SNMPMIB2List dictionary
+        
+
+        Schema: `GetSNMPMIB2ListReq`: `sysContact`.
         """
         return self.client.getSNMPMIB2List(sysContact=sysContact)["return"][
             "SNMPMIB2List"
@@ -260,6 +305,9 @@ class NetworkMixin:
         :param sysLocation: system location string — required
         :param sysContact: system contact string — required
         :return: result dictionary (message)
+        
+
+        Schema: `UpdateSNMPMIB2ListReq`: `sysLocation` + `sysContact`.
         """
         return self.client.updateSNMPMIB2List(
             sysLocation=sysLocation, sysContact=sysContact
@@ -285,6 +333,9 @@ class NetworkMixin:
         :param accessPrivilege: access privilege — required
         :param ArrayOfHosts: host restriction structure — required
         :return: result dictionary (message)
+        
+
+        Schema: `user` -> `RSNMPUser`: `userName` + `authRequired` + `authPassword` + `authProtocol` + `privacyRequired` + `privacyPassword` + `privacyProtocol` + `accessPrivilege` + `ArrayOfHosts`.
         """
         return self.client.addSNMPUser(user=args)
 
@@ -293,6 +344,9 @@ class NetworkMixin:
         Get an SNMP v3 user.
         :param userName: user name — required
         :return: SNMPUser dictionary
+        
+
+        Schema: `GetSNMPUserReq`: `userName`.
         """
         return self.client.getSNMPUser(userName=userName)["return"]["SNMPUser"]
 
@@ -303,6 +357,9 @@ class NetworkMixin:
         :param authPassword: new authentication password
         :param privacyPassword: new privacy password
         :return: result dictionary (message)
+        
+
+        Schema: `user` -> `RSNMPUser`: `userName` + `authRequired` + `authPassword` + `authProtocol` + `privacyRequired` + `privacyPassword` + `privacyProtocol` + `accessPrivilege` + `ArrayOfHosts`.
         """
         return self.client.updateSNMPUser(user=args)
 
@@ -311,6 +368,9 @@ class NetworkMixin:
         Remove an SNMP v3 user.
         :param userName: user name — required
         :return: result dictionary (message)
+        
+
+        Schema: `RemoveSNMPUserReq`: `User`.
         """
         return self.client.removeSNMPUser(User=userName)
 
@@ -327,6 +387,9 @@ class NetworkMixin:
         :param ipAddressLeaseTime: lease time — required (default 0)
         :param renewalTime: renewal time — required (default 0)
         :return: result dictionary (uuid)
+        
+
+        Schema: `dhcpServer` -> `XDhcpServer`: `processNodeName` + `arpCacheTimeout` + `ipAddressLeaseTime` + `renewalTime` + `rebindingTime`; optional `primaryDnsIpAddress`, `secondaryDnsIpAddress`, `primaryTftpServerIpAddress`, `secondaryTftpServerIpAddress`, `bootstrapServerIpAddress`, `domainName` and 1 more.
         """
         obj = self._build_object("addDhcpServer", "dhcpServer", args)
         return self.client.addDhcpServer(dhcpServer=obj)
@@ -337,6 +400,9 @@ class NetworkMixin:
         :param uuid: server uuid (or processNodeName)
         :param processNodeName: process node name (or uuid)
         :return: dhcpServer dictionary
+        
+
+        Schema: `GetDhcpServerReq`: optional `returnedTags`; one of `processNodeName`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -356,6 +422,9 @@ class NetworkMixin:
         :param search_processNodeName: process node name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of dhcpServer dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDhcpServerReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listDhcpServer(
             {"processNodeName": search_processNodeName}, returnedTags=tagfilter
@@ -371,6 +440,9 @@ class NetworkMixin:
         :param processNodeName: process node name (or uuid)
         :param newProcessNodeName: new process node name
         :return: result dictionary
+        
+
+        Schema: `UpdateDhcpServerReq`: optional `newProcessNodeName`, `primaryDnsIpAddress`, `secondaryDnsIpAddress`, `primaryTftpServerIpAddress`, `secondaryTftpServerIpAddress`, `bootstrapServerIpAddress` and 6 more; one of `uuid`, or `processNodeName`.
         """
         return self.client.updateDhcpServer(**args)
 
@@ -380,6 +452,9 @@ class NetworkMixin:
         :param uuid: server uuid (or processNodeName)
         :param processNodeName: process node name (or uuid)
         :return: result dictionary
+        
+
+        Schema: `RemoveDhcpServerReq`: one of `processNodeName`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -403,6 +478,9 @@ class NetworkMixin:
         :param primaryEndIpAddress: end of primary IP range — required
         :param subnetMask: subnet mask — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `dhcpSubnet` -> `XDhcpSubnet`: `dhcpServerName` + `subnetIpAddress` + `primaryStartIpAddress` + `primaryEndIpAddress` + `subnetMask`; optional `secondaryStartIpAddress`, `secondaryEndIpAddress`, `primaryRouterIpAddress`, `secondaryRouterIpAddress`, `domainName`, `primaryDnsIpAddress` and 9 more.
         """
         obj = self._build_object("addDhcpSubnet", "dhcpSubnet", args)
         return self.client.addDhcpSubnet(dhcpSubnet=obj)
@@ -414,6 +492,9 @@ class NetworkMixin:
         :param dhcpServerName: DHCP server name (use with subnetIpAddress)
         :param subnetIpAddress: subnet IP address (use with dhcpServerName)
         :return: dhcpSubnet dictionary
+        
+
+        Schema: `GetDhcpSubnetReq`: optional `returnedTags`; one of `uuid`, or (`dhcpServerName` + `subnetIpAddress`).
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -440,6 +521,9 @@ class NetworkMixin:
         :param search_subnetIpAddress: subnet IP address search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of dhcpSubnet dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDhcpSubnetReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listDhcpSubnet(
             {"subnetIpAddress": search_subnetIpAddress}, returnedTags=tagfilter
@@ -455,6 +539,9 @@ class NetworkMixin:
         :param dhcpServerName: DHCP server name (use with subnetIpAddress)
         :param subnetIpAddress: subnet IP address (use with dhcpServerName)
         :return: result dictionary
+        
+
+        Schema: `UpdateDhcpSubnetReq`: optional `newDhcpServerName`, `newSubnetIpAddress`, `primaryStartIpAddress`, `primaryEndIpAddress`, `secondaryStartIpAddress`, `secondaryEndIpAddress` and 14 more; one of `uuid`, or (`dhcpServerName` + `subnetIpAddress`).
         """
         return self.client.updateDhcpSubnet(**args)
 
@@ -465,6 +552,9 @@ class NetworkMixin:
         :param dhcpServerName: DHCP server name (use with subnetIpAddress)
         :param subnetIpAddress: subnet IP address (use with dhcpServerName)
         :return: result dictionary
+        
+
+        Schema: `RemoveDhcpSubnetReq`: one of `uuid`, or (`dhcpServerName` + `subnetIpAddress`).
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -492,6 +582,9 @@ class NetworkMixin:
         :param userModifiable: user-modifiable flag (default 'Disallowed') — required
         :param authMethod: authentication method (default 'EAP-FAST') — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `wLANProfile` -> `XWLANProfile`: `name` + `ssid` + `frequencyBand` + `userModifiable` + `authMethod`; optional `description`, `userName`, `password`, `pskPassphrase`, `wepKey`, `passwordDescription` and 1 more.
         """
         obj = self._build_object("addWLANProfile", "wLANProfile", args)
         return self.client.addWLANProfile(wLANProfile=obj)
@@ -502,6 +595,9 @@ class NetworkMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: wLANProfile dictionary
+        
+
+        Schema: `GetWLANProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -521,6 +617,9 @@ class NetworkMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of wLANProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListWLANProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listWLANProfile(
             {"name": search_name}, returnedTags=tagfilter
@@ -537,6 +636,9 @@ class NetworkMixin:
         :param newName: new profile name
         :param ssid: new SSID
         :return: result dictionary
+        
+
+        Schema: `UpdateWLANProfileReq`: optional `newName`, `description`, `ssid`, `frequencyBand`, `userModifiable`, `authMethod` and 6 more.
         """
         return self.client.updateWLANProfile(**args)
 
@@ -546,6 +648,9 @@ class NetworkMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -567,6 +672,9 @@ class NetworkMixin:
         :param frequencyBand: frequency band (default 'Auto') — required
         :param authenticationMethod: authentication method (default 'None') — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `wifiHotspot` -> `XWifiHotspot`: `name` + `ssidPrefix` + `frequencyBand` + `authenticationMethod`; optional `description`, `userModifiable`, `hostName`, `port`, `sharedSecret`, `pskPassPhrase` and 2 more.
         """
         obj = self._build_object("addWifiHotspot", "wifiHotspot", args)
         return self.client.addWifiHotspot(wifiHotspot=obj)
@@ -577,6 +685,9 @@ class NetworkMixin:
         :param name: hotspot name (or uuid)
         :param uuid: hotspot uuid (or name)
         :return: wifiHotspot dictionary
+        
+
+        Schema: `GetWifiHotspotReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -596,6 +707,9 @@ class NetworkMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of wifiHotspot dictionaries, empty when nothing matches
+        
+
+        Schema: `ListWifiHotspotReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listWifiHotspot(
             {"name": search_name}, returnedTags=tagfilter
@@ -612,6 +726,9 @@ class NetworkMixin:
         :param newName: new hotspot name
         :param ssidPrefix: new SSID prefix
         :return: result dictionary
+        
+
+        Schema: `UpdateWifiHotspotReq`: optional `newName`, `description`, `ssidPrefix`, `userModifiable`, `frequencyBand`, `authenticationMethod` and 6 more.
         """
         return self.client.updateWifiHotspot(**args)
 
@@ -621,6 +738,9 @@ class NetworkMixin:
         :param name: hotspot name (or uuid)
         :param uuid: hotspot uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -641,6 +761,9 @@ class NetworkMixin:
         :param snmpUserIdOrCommunityString: SNMP community string or user ID — required
         :param resyncInterval: resync interval in minutes (default 32) — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `wirelessAccessPointControllers` -> `XWirelessAccessPointControllers`: `name` + `snmpUserIdOrCommunityString` + `resyncInterval`; optional `description`, `snmpVersion`, `snmpAuthenticationProtocol`, `snmpAuthenticationPassword`, `snmpPrivacyProtocol`, `snmpPrivacyPassword` and 3 more.
         """
         obj = self._build_object(
             "addWirelessAccessPointControllers",
@@ -657,6 +780,9 @@ class NetworkMixin:
         :param name: controller name (or uuid)
         :param uuid: controller uuid (or name)
         :return: wirelessAccessPointControllers dictionary
+        
+
+        Schema: `GetWirelessAccessPointControllersReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -678,6 +804,9 @@ class NetworkMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of wirelessAccessPointControllers dictionaries, empty when nothing matches
+        
+
+        Schema: `ListWirelessAccessPointControllersReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listWirelessAccessPointControllers(
             {"name": search_name}, returnedTags=tagfilter
@@ -694,6 +823,9 @@ class NetworkMixin:
         :param newName: new controller name
         :param snmpUserIdOrCommunityString: new SNMP community/user
         :return: result dictionary
+        
+
+        Schema: `UpdateWirelessAccessPointControllersReq`: optional `newName`, `description`, `snmpVersion`, `snmpUserIdOrCommunityString`, `snmpAuthenticationProtocol`, `snmpAuthenticationPassword` and 6 more.
         """
         return self.client.updateWirelessAccessPointControllers(**args)
 
@@ -703,6 +835,9 @@ class NetworkMixin:
         :param name: controller name (or uuid)
         :param uuid: controller uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -723,6 +858,9 @@ class NetworkMixin:
         :param description: description — required
         :param members: member WLAN profiles
         :return: result dictionary (uuid)
+        
+
+        Schema: `wlanProfileGroup` -> `XWlanProfileGroup`: `name` + `description`; optional `members`.
         """
         obj = self._build_object("addWlanProfileGroup", "wlanProfileGroup", args)
         return self.client.addWlanProfileGroup(wlanProfileGroup=obj)
@@ -733,6 +871,9 @@ class NetworkMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: wlanProfileGroup dictionary
+        
+
+        Schema: `GetWlanProfileGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}
@@ -752,6 +893,9 @@ class NetworkMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of wlanProfileGroup dictionaries, empty when nothing matches
+        
+
+        Schema: `ListWlanProfileGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listWlanProfileGroup(
             {"name": search_name}, returnedTags=tagfilter
@@ -768,6 +912,9 @@ class NetworkMixin:
         :param newName: new group name
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateWlanProfileGroupReq`: optional `newName`, `description`, optional choice of (optional `removeMembers`, `addMembers`), or `members`.
         """
         return self.client.updateWlanProfileGroup(**args)
 
@@ -777,6 +924,9 @@ class NetworkMixin:
         :param name: group name (or uuid)
         :param uuid: group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if uuid:
             kwargs = {"uuid": uuid}

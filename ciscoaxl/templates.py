@@ -22,6 +22,9 @@ class TemplatesMixin:
         List Common Device Configs
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of commonDeviceConfig dicts, empty when nothing matches
+        
+
+        Schema: `ListCommonDeviceConfigReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listCommonDeviceConfig(
             {"name": "%"}, returnedTags=tagfilter
@@ -32,6 +35,9 @@ class TemplatesMixin:
         Get a Common Device Config
         :param name: config name (or uuid)
         :return: commonDeviceConfig dict
+        
+
+        Schema: `GetCommonDeviceConfigReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCommonDeviceConfig(**args)["return"]["commonDeviceConfig"]
 
@@ -40,6 +46,9 @@ class TemplatesMixin:
         Add a Common Device Config
         :param name: config name (required)
         :return: result dict
+        
+
+        Schema: `commonDeviceConfig` -> `XCommonDeviceConfig`: `name`; optional `softkeyTemplateName`, `userLocale`, `networkHoldMohAudioSourceId`, `userHoldMohAudioSourceId`, `mlppDomainId`, `mlppIndicationStatus` and 10 more.
         """
         return self.client.addCommonDeviceConfig(
             self._build_object("addCommonDeviceConfig", "commonDeviceConfig", args)
@@ -50,6 +59,9 @@ class TemplatesMixin:
         Update a Common Device Config
         :param name: config name (or uuid)
         :return: result dict
+        
+
+        Schema: `UpdateCommonDeviceConfigReq`: optional `newName`, `softkeyTemplateName`, `userLocale`, `networkHoldMohAudioSourceId`, `userHoldMohAudioSourceId`, `mlppDomainId` and 11 more.
         """
         return self.client.updateCommonDeviceConfig(**args)
 
@@ -59,6 +71,9 @@ class TemplatesMixin:
         :param name: config name (or use uuid)
         :param uuid: config uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCommonDeviceConfig(**self._identify(name=name, uuid=uuid))
 
@@ -68,6 +83,9 @@ class TemplatesMixin:
         :param name: config name (or use uuid)
         :param uuid: config uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCommonDeviceConfig(**self._identify(name=name, uuid=uuid))
 
@@ -77,6 +95,9 @@ class TemplatesMixin:
         :param name: config name (or use uuid)
         :param uuid: config uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCommonDeviceConfig(**self._identify(name=name, uuid=uuid))
 
@@ -89,6 +110,9 @@ class TemplatesMixin:
         List Common Phone Configs
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of commonPhoneConfig dicts, empty when nothing matches
+        
+
+        Schema: `ListCommonPhoneConfigReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listCommonPhoneConfig(
             {"name": "%"}, returnedTags=tagfilter
@@ -99,6 +123,9 @@ class TemplatesMixin:
         Get a Common Phone Config
         :param name: config name (or uuid)
         :return: commonPhoneConfig dict
+        
+
+        Schema: `GetCommonPhoneConfigReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCommonPhoneConfig(**args)["return"]["commonPhoneConfig"]
 
@@ -107,6 +134,9 @@ class TemplatesMixin:
         Add a Common Phone Config
         :param name: config name (required)
         :return: result dict
+        
+
+        Schema: `commonPhoneConfig` -> `XCommonPhoneConfig`: `name`; optional `description`, `unlockPwd`, `dndOption`, `dndAlertingType`, `backgroundImage`, `phonePersonalization` and 10 more.
         """
         return self.client.addCommonPhoneConfig(
             self._build_object("addCommonPhoneConfig", "commonPhoneConfig", args)
@@ -117,6 +147,9 @@ class TemplatesMixin:
         Update a Common Phone Config
         :param name: config name (or uuid)
         :return: result dict
+        
+
+        Schema: `UpdateCommonPhoneConfigReq`: optional `newName`, `description`, `unlockPwd`, `dndOption`, `dndAlertingType`, `backgroundImage` and 11 more.
         """
         return self.client.updateCommonPhoneConfig(**args)
 
@@ -126,6 +159,9 @@ class TemplatesMixin:
         :param name: config name (or use uuid)
         :param uuid: config uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCommonPhoneConfig(**self._identify(name=name, uuid=uuid))
 
@@ -135,6 +171,9 @@ class TemplatesMixin:
         :param name: config name (or use uuid)
         :param uuid: config uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyCommonPhoneConfig(**self._identify(name=name, uuid=uuid))
 
@@ -144,6 +183,9 @@ class TemplatesMixin:
         :param name: config name (or use uuid)
         :param uuid: config uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetCommonPhoneConfig(**self._identify(name=name, uuid=uuid))
 
@@ -156,6 +198,9 @@ class TemplatesMixin:
         List Phone Button Templates
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of phoneButtonTemplate dicts, empty when nothing matches
+        
+
+        Schema: `ListPhoneButtonTemplateReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listPhoneButtonTemplate(
             {"name": "%"}, returnedTags=tagfilter
@@ -166,6 +211,9 @@ class TemplatesMixin:
         Get a Phone Button Template
         :param name: template name (or uuid)
         :return: phoneButtonTemplate dict
+        
+
+        Schema: `GetPhoneButtonTemplateReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getPhoneButtonTemplate(**args)["return"]["phoneButtonTemplate"]
 
@@ -174,6 +222,9 @@ class TemplatesMixin:
         Add a Phone Button Template
         :param name: template name (required)
         :return: result dict
+        
+
+        Schema: `phoneButtonTemplate` -> `XPhoneButtonTemplate`: `name` + `basePhoneTemplateName`; optional `buttons`.
         """
         return self.client.addPhoneButtonTemplate(
             self._build_object("addPhoneButtonTemplate", "phoneButtonTemplate", args)
@@ -184,6 +235,9 @@ class TemplatesMixin:
         Update a Phone Button Template
         :param name: template name (or uuid)
         :return: result dict
+        
+
+        Schema: `UpdatePhoneButtonTemplateReq`: optional `newName`, `buttons`.
         """
         return self.client.updatePhoneButtonTemplate(**args)
 
@@ -193,6 +247,9 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removePhoneButtonTemplate(**self._identify(name=name, uuid=uuid))
 
@@ -202,6 +259,9 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applyPhoneButtonTemplate(**self._identify(name=name, uuid=uuid))
 
@@ -211,6 +271,9 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartPhoneButtonTemplate(**self._identify(name=name, uuid=uuid))
 
@@ -223,6 +286,9 @@ class TemplatesMixin:
         List Soft Key Templates
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of softKeyTemplate dicts, empty when nothing matches
+        
+
+        Schema: `ListSoftKeyTemplateReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listSoftKeyTemplate(
             {"name": "%"}, returnedTags=tagfilter
@@ -233,6 +299,9 @@ class TemplatesMixin:
         Get a Soft Key Template
         :param name: template name (or uuid)
         :return: softKeyTemplate dict
+        
+
+        Schema: `GetSoftKeyTemplateReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSoftKeyTemplate(**args)["return"]["softKeyTemplate"]
 
@@ -241,6 +310,9 @@ class TemplatesMixin:
         Add a Soft Key Template
         :param name: template name (required)
         :return: result dict
+        
+
+        Schema: `softKeyTemplate` -> `XSoftKeyTemplate`: `name` + `description` + `baseSoftkeyTemplateName`; optional `isDefault`.
         """
         return self.client.addSoftKeyTemplate(
             self._build_object("addSoftKeyTemplate", "softKeyTemplate", args)
@@ -251,6 +323,9 @@ class TemplatesMixin:
         Update a Soft Key Template
         :param name: template name (or uuid)
         :return: result dict
+        
+
+        Schema: `UpdateSoftKeyTemplateReq`: optional `newName`, `description`, `isDefault`.
         """
         return self.client.updateSoftKeyTemplate(**args)
 
@@ -260,6 +335,9 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSoftKeyTemplate(**self._identify(name=name, uuid=uuid))
 
@@ -269,6 +347,9 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.applySoftKeyTemplate(**self._identify(name=name, uuid=uuid))
 
@@ -278,6 +359,9 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.restartSoftKeyTemplate(**self._identify(name=name, uuid=uuid))
 
@@ -290,6 +374,9 @@ class TemplatesMixin:
         List Universal Device Templates
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of universalDeviceTemplate dicts, empty when nothing matches
+        
+
+        Schema: `ListUniversalDeviceTemplateReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listUniversalDeviceTemplate(
             {"name": "%"}, returnedTags=tagfilter
@@ -300,6 +387,9 @@ class TemplatesMixin:
         Get a Universal Device Template
         :param name: template name (or uuid)
         :return: universalDeviceTemplate dict
+        
+
+        Schema: `GetUniversalDeviceTemplateReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getUniversalDeviceTemplate(**args)["return"]["universalDeviceTemplate"]
 
@@ -308,6 +398,9 @@ class TemplatesMixin:
         Add a Universal Device Template
         :param name: template name (required)
         :return: result dict
+        
+
+        Schema: `universalDeviceTemplate` -> `XUniversalDeviceTemplate`: `name` + `devicePool` + `deviceSecurityProfile` + `sipProfile` + `phoneButtonTemplate` + `commonPhoneProfile` + `phonePersonalization` + `mtpPreferredOriginatingCodec` + `outboundCallRollover` + `useTrustedRelayPoint` + `certificateOperation` + `authenticationMode` + `keySize` + `servicesProvisioning` + `packetCaptureMode` + `mlppIndication` + `mlppPreemption` + `dndOption` + `blfPresenceGroup` + `blfAudibleAlertSettingPhoneBusy` + `blfAudibleAlertSettingPhoneIdle` + `location` + `deviceMobilityMode` + `joinAcrossLines` + `alwaysUsePrimeLine` + `alwaysUsePrimeLineForVoiceMessage` + `singleButtonBarge` + `builtInBridge` + `privacy`; optional `deviceDescription`, `sipDialRules`, `callingSearchSpace`, `callingPartyTransformationCSSForInboundCalls`, `callingPartyTransformationCSSForOutboundCalls`, `reroutingCallingSearchSpace` and 58 more.
         """
         return self.client.addUniversalDeviceTemplate(
             self._build_object("addUniversalDeviceTemplate", "universalDeviceTemplate", args)
@@ -318,6 +411,9 @@ class TemplatesMixin:
         Update a Universal Device Template
         :param name: template name (or uuid)
         :return: result dict
+        
+
+        Schema: `UpdateUniversalDeviceTemplateReq`: optional `newName`, `deviceDescription`, `devicePool`, `deviceSecurityProfile`, `sipProfile`, `phoneButtonTemplate` and 87 more.
         """
         return self.client.updateUniversalDeviceTemplate(**args)
 
@@ -327,6 +423,9 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeUniversalDeviceTemplate(**self._identify(name=name, uuid=uuid))
 
@@ -339,6 +438,9 @@ class TemplatesMixin:
         List Universal Line Templates
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of universalLineTemplate dicts, empty when nothing matches
+        
+
+        Schema: `ListUniversalLineTemplateReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listUniversalLineTemplate(
             {"name": "%"}, returnedTags=tagfilter
@@ -349,6 +451,9 @@ class TemplatesMixin:
         Get a Universal Line Template
         :param name: template name (or uuid)
         :return: universalLineTemplate dict
+        
+
+        Schema: `GetUniversalLineTemplateReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getUniversalLineTemplate(**args)["return"]["universalLineTemplate"]
 
@@ -357,6 +462,9 @@ class TemplatesMixin:
         Add a Universal Line Template
         :param name: template name (required)
         :return: result dict
+        
+
+        Schema: `universalLineTemplate` -> `XUniversalLineTemplate`: `name` + `blfPresenceGroup` + `partyEntranceTone` + `autoAnswer`; optional `urgentPriority`, `lineDescription`, `routePartition`, `voiceMailProfile`, `callingSearchSpace`, `alertingName` and 46 more.
         """
         return self.client.addUniversalLineTemplate(
             self._build_object("addUniversalLineTemplate", "universalLineTemplate", args)
@@ -367,6 +475,9 @@ class TemplatesMixin:
         Update a Universal Line Template
         :param name: template name (or uuid)
         :return: result dict
+        
+
+        Schema: `UpdateUniversalLineTemplateReq`: optional `newName`, `urgentPriority`, `lineDescription`, `routePartition`, `voiceMailProfile`, `callingSearchSpace` and 50 more.
         """
         return self.client.updateUniversalLineTemplate(**args)
 
@@ -376,5 +487,8 @@ class TemplatesMixin:
         :param name: template name (or use uuid)
         :param uuid: template uuid (or use name)
         :return: result dict
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeUniversalLineTemplate(**self._identify(name=name, uuid=uuid))

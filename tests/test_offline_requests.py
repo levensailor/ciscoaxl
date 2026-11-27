@@ -179,6 +179,15 @@ class TestFriendlyNames:
         _, body = sent(ucm)
         assert text(body, "pattern") == "5000"
 
+    def test_mixin_methods_accept_friendly_names(self, ucm):
+        ucm.get_meet_me(pattern="8000", partition="Internal_PT")
+        ucm.delete_recording_profile(profile="Rec1")
+        ucm.get_handoff_configuration(pattern="9900", partition="PT")
+        assert text(sent(ucm, 0)[1], "routePartitionName") == "Internal_PT"
+        assert sent(ucm, 1)[0] == "removeRecordingProfile"
+        assert text(sent(ucm, 1)[1], "name") == "Rec1"
+        assert text(sent(ucm, 2)[1], "routePartitionName") == "PT"
+
     def test_object_noun_becomes_name(self, ucm):
         ucm.delete_device_pool(device_pool="Branch_DP")
         ucm.get_partition(partition="Internal_PT")

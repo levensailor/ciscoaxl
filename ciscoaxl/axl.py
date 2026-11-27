@@ -181,6 +181,9 @@ class axl(
         Get location details
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLocationReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listLocation({"name": "%"}, returnedTags=tagfilter,)[
             "return"
@@ -192,6 +195,9 @@ class axl(
         :param query: SQL Query to execute
         :return: {'num_rows': int, 'query': str, 'rows': [{column: value}]} ('rows' only when num_rows > 0)
         :raises zeep.exceptions.Fault: on AXL error
+        
+
+        Schema: `ExecuteSQLQueryReq`: `sql`.
         """
         result = {"num_rows": 0, "query": query}
 
@@ -218,6 +224,9 @@ class axl(
         Execute SQL query
         :param query: SQL Query to execute
         :return: result dictionary
+        
+
+        Schema: `ExecuteSQLQueryReq`: `sql`.
         """
         return self.client.executeSQLQuery(query)["return"]
 
@@ -226,6 +235,9 @@ class axl(
         Execute SQL update
         :param query: SQL Update to execute
         :return: result dictionary
+        
+
+        Schema: `ExecuteSQLUpdateReq`: `sql`.
         """
         return self.client.executeSQLUpdate(query)["return"]
 
@@ -240,6 +252,9 @@ class axl(
         """
         Get LDAP Syncs
         :return: result dictionary
+        
+
+        Schema: `ListLdapDirectoryReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listLdapDirectory(
             {"name": "%"},
@@ -253,6 +268,9 @@ class axl(
         :param name: LDAP directory name (or use uuid)
         :param sync: True starts a sync, False cancels a running sync
         :return: result dictionary
+        
+
+        Schema: `DoLdapSyncReq`: `sync`; one of `name`, or `uuid`.
         """
         identifier = self._identify(name=name, uuid=uuid)
         return self.client.doLdapSync(**identifier, sync=sync)
@@ -264,6 +282,9 @@ class axl(
         :param uuid: user uuid (or userID)
         :param status: DND on/off, boolean (AXL name: dndStatus) - required
         :return: result dictionary
+        
+
+        Schema: `DoChangeDNDStatusReq`: `dndStatus`; one of `userID`, or `uuid`.
         """
         return self.client.doChangeDNDStatus(**args)
 
@@ -275,6 +296,9 @@ class axl(
         :param profileName: device profile name - required
         :param userId: user ID - required
         :return: result dictionary
+        
+
+        Schema: `DoDeviceLoginReq`: `deviceName` + `loginDuration` + `profileName` + `userId`.
         """
         return self.client.doDeviceLogin(**args)
 
@@ -283,6 +307,9 @@ class axl(
         Log the Extension Mobility user out of a device
         :param device: device name or uuid (AXL name: deviceName) - required
         :return: result dictionary
+        
+
+        Schema: `DoDeviceLogoutReq`: `deviceName`.
         """
         return self.client.doDeviceLogout(**args)
 
@@ -293,6 +320,9 @@ class axl(
         :param uuid: device uuid (or use name)
         :param hard_reset: True for a hard reset (reboot), False for a restart
         :return: result dictionary
+        
+
+        Schema: `DoDeviceResetReq`: `deviceName`; one of `isHardReset`, or `deviceResetType`.
         """
         identifier = self._identify(name=name, uuid=uuid)
         device = identifier.get("name") or identifier.get("uuid")
@@ -304,6 +334,9 @@ class axl(
         :param name: trunk name (or use uuid)
         :param uuid: trunk uuid (or use name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.resetSipTrunk(**self._identify(name=name, uuid=uuid))
 
@@ -356,6 +389,9 @@ class axl(
         :param name: location name
         :param uuid: location uuid
         :return: location dictionary
+        
+
+        Schema: `GetLocationReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getLocation(**args)["return"]["location"]
 
@@ -379,6 +415,9 @@ class axl(
         :param within_immersive_kbits: immersive bandwidth within the location (9.1 and later)
         :param hub_location: location linked to this one (9.1 and later)
         :return: result dictionary
+        
+
+        Schema: `location` -> `XLocation`: `name` + `withinAudioBandwidth` + `withinVideoBandwidth` + `withinImmersiveKbits` + `betweenLocations`; optional `relatedLocations`.
         """
         if "withinAudioBandwidth" not in self._schema_fields("addLocation", "location"):
             return self.client.addLocation(
@@ -410,6 +449,9 @@ class axl(
         :param name: The name of the location to delete
         :param uuid: The uuid of the location to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeLocation(**args)
 
@@ -424,6 +466,9 @@ class axl(
         :param withinImmersiveKbits: immersive bandwidth within the location
         :param betweenLocations: {'betweenLocation': [{'locationName', 'weight', 'audioBandwidth', 'videoBandwidth', 'immersiveBandwidth'}]}
         :return: result dictionary
+        
+
+        Schema: `UpdateLocationReq`: optional `newName`, `relatedLocations`, `withinAudioBandwidth`, `withinVideoBandwidth`, `withinImmersiveKbits`, `betweenLocations`.
         """
         return self.client.updateLocation(**args)
 
@@ -432,6 +477,9 @@ class axl(
         Get region details
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRegionReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listRegion({"name": "%"}, returnedTags=tagfilter)[
             "return"
@@ -442,6 +490,9 @@ class axl(
         Get region information
         :param name: Region name
         :return: result dictionary
+        
+
+        Schema: `GetRegionReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getRegion(**args)["return"]["region"]
 
@@ -450,6 +501,9 @@ class axl(
         Add a region
         :param name: Name of the region to add
         :return: result dictionary
+        
+
+        Schema: `region` -> `XRegion`: `name`; optional `relatedRegions`, `defaultCodec`.
         """
         return self.client.addRegion({"name": name})
 
@@ -461,6 +515,9 @@ class axl(
         :param newName: new region name, omitted when None
         :param moh_region: music on hold region name
         :return: result dictionary
+        
+
+        Schema: `UpdateRegionReq`: optional `newName`, `relatedRegions`.
         """
         # Get all Regions
         all_regions = self.client.listRegion({"name": "%"}, returnedTags={"name": ""})
@@ -516,6 +573,9 @@ class axl(
         :param name: The name of the region to delete
         :param uuid: The uuid of the region to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeRegion(**args)
 
@@ -524,6 +584,9 @@ class axl(
         Get all SRST details
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSrstReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listSrst({"name": "%"}, returnedTags=tagfilter)[
             "return"
@@ -534,6 +597,9 @@ class axl(
         Get SRST information
         :param name: SRST name
         :return: result dictionary
+        
+
+        Schema: `GetSrstReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSrst(**args)["return"]["srst"]
 
@@ -545,6 +611,9 @@ class axl(
         :param port: SRST port
         :param sip_port: SIP port
         :return: result dictionary
+        
+
+        Schema: `srst` -> `XSrst`: `name` + `port` + `ipAddress` + `SipPort`; optional `ipv6Address`, `SipNetwork`, `isSecure`.
         """
         return self.client.addSrst(
             {
@@ -561,6 +630,9 @@ class axl(
         :param name: The name of the SRST to delete (or uuid)
         :param uuid: The uuid of the SRST to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSrst(**self._identify(name=name, uuid=uuid))
 
@@ -574,6 +646,9 @@ class axl(
         :param port: SRST port
         :param SipPort: SIP port
         :return: result dictionary
+        
+
+        Schema: `UpdateSrstReq`: optional `newName`, `port`, `ipAddress`, `ipv6Address`, `SipNetwork`, `SipPort` and 1 more.
         """
         if newName:
             args["newName"] = newName
@@ -595,6 +670,9 @@ class axl(
         Get a dictionary of device pools
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: a list of dictionary's of device pools information
+        
+
+        Schema: `ListDevicePoolReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listDevicePool({"name": "%"}, returnedTags=tagfilter,)[
             "return"
@@ -605,6 +683,9 @@ class axl(
         Get device pool parameters
         :param name: device pool name
         :return: result dictionary
+        
+
+        Schema: `GetDevicePoolReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getDevicePool(**args)["return"]["devicePool"]
 
@@ -637,6 +718,9 @@ class axl(
         :param aar_group: AAR group name, None for no AAR group
         :param local_route_group_name: Local route group slot that route_group fills
         :return: result dictionary
+        
+
+        Schema: `devicePool` -> `XDevicePool`: `name` + `dateTimeSettingName` + `callManagerGroupName` + `regionName` + `srstName` + `aarNeighborhoodName`; optional `autoSearchSpaceName`, `mediaResourceListName`, `networkLocale`, `connectionMonitorDuration`, `automatedAlternateRoutingCssName`, `locationName` and 44 more.
         """
         device_pool = {
             "name": name,
@@ -672,6 +756,9 @@ class axl(
         :param localRouteGroup: {'name': 'Standard Local Route Group', 'value': route group name}
         :param elinGroup: ELIN group name
         :return: result dictionary
+        
+
+        Schema: `UpdateDevicePoolReq`: optional `newName`, `autoSearchSpaceName`, `dateTimeSettingName`, `callManagerGroupName`, `mediaResourceListName`, `regionName` and 50 more.
         """
         return self.client.updateDevicePool(**args)
 
@@ -680,6 +767,9 @@ class axl(
         Delete a Device pool
         :param device_pool: The name of the Device pool to delete (or name / uuid)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeDevicePool(**args)
 
@@ -696,6 +786,9 @@ class axl(
         Get conference bridges
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: results dictionary
+        
+
+        Schema: `ListConferenceBridgeReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listConferenceBridge(
             {"name": "%"},
@@ -707,6 +800,9 @@ class axl(
         Get conference bridge parameters
         :param name: conference bridge name
         :return: result dictionary
+        
+
+        Schema: `GetConferenceBridgeReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getConferenceBridge(**args)["return"]["conferenceBridge"]
 
@@ -728,6 +824,9 @@ class axl(
         :param product: Conference bridge type
         :param security_profile: Conference bridge security type
         :return: result dictionary
+        
+
+        Schema: `conferenceBridge` -> `XConferenceBridge`: `name` + `product` + `devicePoolName` + `locationName`; optional `description`, `commonDeviceConfigName`, `subUnit`, `loadInformation`, `vendorConfig`, `maximumCapacity` and 18 more.
         """
         return self.client.addConferenceBridge(
             {
@@ -751,6 +850,9 @@ class axl(
         :param location: Location name (AXL name: locationName)
         :param security_profile: Conference bridge security profile (AXL name: securityProfileName)
         :return: result dictionary
+        
+
+        Schema: `UpdateConferenceBridgeReq`: optional `newName`, `description`, `product`, `devicePoolName`, `commonDeviceConfigName`, `locationName` and 21 more.
         """
         return self.client.updateConferenceBridge(**args)
 
@@ -760,6 +862,9 @@ class axl(
         :param name: The name of the Conference bridge to delete (or uuid)
         :param uuid: The uuid of the Conference bridge to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeConferenceBridge(**self._identify(name=name, uuid=uuid))
 
@@ -770,6 +875,9 @@ class axl(
         Get transcoders
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: results dictionary
+        
+
+        Schema: `ListTranscoderReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listTranscoder({"name": "%"}, returnedTags=tagfilter,)[
             "return"
@@ -781,6 +889,9 @@ class axl(
         :param name: transcoder name (or uuid)
         :param uuid: transcoder uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `GetTranscoderReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getTranscoder(**args)["return"]["transcoder"]
 
@@ -800,6 +911,9 @@ class axl(
         :param product: Transcoder product
         :param load_information: firmware load, None for the system default
         :return: result dictionary
+        
+
+        Schema: `transcoder` -> `XTranscoder`: `name` + `product` + `devicePoolName` + `loadInformation`; optional `description`, `subUnit`, `commonDeviceConfigName`, `vendorConfig`, `isTrustedRelayPoint`, `maximumCapacity`.
         """
         return self.client.addTranscoder(
             {
@@ -820,6 +934,9 @@ class axl(
         :param description: Transcoder description
         :param device_pool: Transcoder device pool (AXL name: devicePoolName)
         :return: result dictionary
+        
+
+        Schema: `UpdateTranscoderReq`: optional `newName`, `description`, `devicePoolName`, `commonDeviceConfigName`, `loadInformation`, `vendorConfig` and 2 more.
         """
         return self.client.updateTranscoder(**args)
 
@@ -829,6 +946,9 @@ class axl(
         :param name: The name of the Transcoder to delete (or uuid)
         :param uuid: The uuid of the Transcoder to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeTranscoder(**self._identify(name=name, uuid=uuid))
 
@@ -837,6 +957,9 @@ class axl(
         Get mtps
         :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'description': ''}
         :return: list of MTP dictionaries
+        
+
+        Schema: `ListMtpReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listMtp({"name": "%"}, returnedTags=tagfilter,)[
             "return"
@@ -848,6 +971,9 @@ class axl(
         :param name: MTP name (or uuid)
         :param uuid: MTP uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `GetMtpReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getMtp(**args)["return"]["mtp"]
 
@@ -865,6 +991,9 @@ class axl(
         :param device_pool: MTP device pool
         :param mtpType: MTP Type
         :return: result dictionary
+        
+
+        Schema: `mtp` -> `XMtp`: `mtpType` + `name` + `devicePoolName`; optional `description`, `trustedRelayPoint`.
         """
         return self.client.addMtp(
             {
@@ -885,6 +1014,9 @@ class axl(
         :param device_pool: MTP device pool (AXL name: devicePoolName)
         :param trustedRelayPoint: boolean
         :return: result dictionary
+        
+
+        Schema: `UpdateMtpReq`: optional `newName`, `description`, `devicePoolName`, `trustedRelayPoint`.
         """
         return self.client.updateMtp(**args)
 
@@ -894,6 +1026,9 @@ class axl(
         :param name: The name of the MTP to delete (or uuid)
         :param uuid: The uuid of the MTP to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeMtp(**self._identify(name=name, uuid=uuid))
 
@@ -911,6 +1046,9 @@ class axl(
         Get H323 Gateways
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: results dictionary
+        
+
+        Schema: `ListH323GatewayReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listH323Gateway({"name": "%"}, returnedTags=tagfilter,)[
             "return"
@@ -921,6 +1059,9 @@ class axl(
         Get H323 Gateway parameters
         :param name: H323 Gateway name
         :return: result dictionary
+        
+
+        Schema: `GetH323GatewayReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getH323Gateway(**args)["return"]["h323Gateway"]
 
@@ -959,6 +1100,9 @@ class axl(
         :param clng_party_unknown_trans_css: (AXL name: callingPartyUnknownTransformationCssName)
         :param clng_party_sub_trans_css: (AXL name: callingPartySubscriberTransformationCssName)
         :return: result dictionary
+        
+
+        Schema: `h323Gateway` -> `XH323Gateway`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `tunneledProtocol` + `useTrustedRelayPoint` + `packetCaptureMode` + `callingPartySelection` + `callingLineIdPresentation` + `signalingPort` + `calledPartyIeNumberType` + `callingPartyIeNumberType` + `calledNumberingPlan` + `callingNumberingPlan`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `networkLocation`, `mediaResourceListName`, `automatedAlternateRoutingCssName` and 69 more.
         """
         gateway = self._build_object(
             "addH323Gateway",
@@ -981,6 +1125,9 @@ class axl(
         :param uuid: gateway uuid (or name)
         :param newName: new gateway name
         :return: result dictionary
+        
+
+        Schema: `UpdateH323GatewayReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `networkLocation` and 82 more.
         """
         return self.client.updateH323Gateway(**args)
 
@@ -990,6 +1137,9 @@ class axl(
         :param name: The name of the H323 gateway to delete (or uuid)
         :param uuid: The uuid of the H323 gateway to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeH323Gateway(**self._identify(name=name, uuid=uuid))
 
@@ -998,6 +1148,9 @@ class axl(
         Get route groups
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRouteGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listRouteGroup({"name": "%"}, returnedTags=tagfilter)[
             "return"
@@ -1009,6 +1162,9 @@ class axl(
         :param name: route group name
         :param uuid: route group uuid
         :return: result dictionary
+        
+
+        Schema: `GetRouteGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getRouteGroup(**args)["return"]["routeGroup"]
 
@@ -1019,6 +1175,9 @@ class axl(
         :param distribution_algorithm: Top Down, Circular, Longest Idle Time or Broadcast
         :param members: A list of existing gateway/trunk device names, in selection order
         :return: result dictionary
+        
+
+        Schema: `routeGroup` -> `XRouteGroup`: `distributionAlgorithm` + `members` + `name`.
         """
         req = {
             "name": name,
@@ -1038,6 +1197,9 @@ class axl(
         :param name: The name of the Route group to delete (or uuid)
         :param uuid: The uuid of the Route group to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeRouteGroup(**args)
 
@@ -1052,6 +1214,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateRouteGroupReq`: optional `distributionAlgorithm`, optional choice of (optional `removeMembers`, `addMembers`), or `members`, `newName`.
         """
         return self.client.updateRouteGroup(**args)
 
@@ -1060,6 +1225,9 @@ class axl(
         Get route lists
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRouteListReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listRouteList({"name": "%"}, returnedTags=tagfilter)[
             "return"
@@ -1071,6 +1239,9 @@ class axl(
         :param name: route list name
         :param uuid: route list uuid
         :return: result dictionary
+        
+
+        Schema: `GetRouteListReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getRouteList(**args)["return"]["routeList"]
 
@@ -1093,6 +1264,9 @@ class axl(
         :param run_on_all_nodes: Run route list on all nodes
         :param members: A list of route group names, in selection order
         :return: Result dictionary
+        
+
+        Schema: `routeList` -> `XRouteList`: `name` + `callManagerGroupName`; optional `description`, `routeListEnabled`, `members`, `runOnEveryNode`.
         """
         req = {
             "name": name,
@@ -1123,6 +1297,9 @@ class axl(
         :param name: The name of the Route list to delete
         :param uuid: The uuid of the Route list to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeRouteList(**args)
 
@@ -1140,6 +1317,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateRouteListReq`: optional `newName`, `description`, `callManagerGroupName`, `routeListEnabled`, optional choice of (optional `removeMembers`, `addMembers`), or `members`, `runOnEveryNode`.
         """
         return self.client.updateRouteList(**args)
 
@@ -1148,6 +1328,9 @@ class axl(
         Get partitions
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRoutePartitionReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listRoutePartition(
             {"name": "%"}, returnedTags=tagfilter
@@ -1159,6 +1342,9 @@ class axl(
         :param partition: Partition name (AXL name: name)
         :param uuid: Partition uuid
         :return: result dictionary
+        
+
+        Schema: `GetRoutePartitionReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getRoutePartition(**args)["return"]["routePartition"]
 
@@ -1169,6 +1355,9 @@ class axl(
         :param description: Partition description, max 50 characters
         :param time_schedule_name: Name of an existing time schedule, None for always active
         :return: result dictionary
+        
+
+        Schema: `routePartition` -> `XRoutePartition`: `name`; optional `description`, `timeScheduleIdName`, `useOriginatingDeviceTimeZone`, `timeZone`, `partitionUsage`.
         """
         partition = {"name": name, "description": description}
         if time_schedule_name:
@@ -1181,6 +1370,9 @@ class axl(
         :param partition: The name of the partition to delete (AXL name: name)
         :param uuid: The uuid of the partition to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeRoutePartition(**args)
 
@@ -1195,6 +1387,9 @@ class axl(
         :param useOriginatingDeviceTimeZone: boolean
         :param timeZone: time zone when not using the originating device's
         :return: result dictionary
+        
+
+        Schema: `UpdateRoutePartitionReq`: optional `newName`, `description`, `timeScheduleIdName`, `useOriginatingDeviceTimeZone`, `timeZone`.
         """
         return self.client.updateRoutePartition(**args)
 
@@ -1203,6 +1398,9 @@ class axl(
         Get calling search spaces
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCssReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listCss({"name": "%"}, returnedTags=tagfilter)["return"][
             "css"
@@ -1214,6 +1412,9 @@ class axl(
         :param name: Calling search space name
         :param uuid: Calling search space uuid
         :return: result dictionary
+        
+
+        Schema: `GetCssReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCss(**args)["return"]["css"]
 
@@ -1224,6 +1425,9 @@ class axl(
         :param description: Calling search space description
         :param members: A list of partitions to add to the CSS
         :return: result dictionary
+        
+
+        Schema: `css` -> `XCss`: `name`; optional `description`, `members`, `partitionUsage`.
         """
         req = {
             "name": name,
@@ -1243,6 +1447,9 @@ class axl(
         :param calling_search_space: The name of the calling search space to delete (AXL name: name)
         :param uuid: The uuid of the calling search space to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCss(**args)
 
@@ -1257,6 +1464,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateCssReq`: optional `description`, optional choice of (optional `removeMembers`, `addMembers`), or `members`, `newName`.
         """
         return self.client.updateCss(**args)
 
@@ -1267,6 +1477,9 @@ class axl(
         Get route patterns
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRoutePatternReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listRoutePattern(
             {"pattern": "%"},
@@ -1280,6 +1493,9 @@ class axl(
         :param uuid: route pattern uuid (or pattern)
         :param partition: route pattern partition; when omitted, the first pattern match in any partition is returned
         :return: route pattern dictionary
+        
+
+        Schema: `GetRoutePatternReq`: optional `returnedTags`; one of `uuid`, or (`pattern` + `routePartitionName` + `dialPlanName` + `routeFilterName`).
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -1323,6 +1539,9 @@ class axl(
         :param patternUrgency: route immediately on match (urgent priority)
         :param releaseClause: release cause when blocked, e.g. 'Call Rejected'; default 'No Error'
         :return: result dictionary
+        
+
+        Schema: `routePattern` -> `XRoutePattern`: `pattern` + `routePartitionName` + `blockEnable` + `useCallingPartyPhoneMask` + `dialPlanName` + `digitDiscardInstructionName` + `networkLocation` + `prefixDigitsOut` + `routeFilterName` + `destination`; optional `description`, `calledPartyTransformationMask`, `callingPartyTransformationMask`, `callingPartyPrefixDigits`, `patternUrgency`, `callingLinePresentationBit` and 22 more.
         """
         if bool(gateway) == bool(route_list):
             raise ValueError("Provide exactly one of gateway or route_list")
@@ -1350,6 +1569,9 @@ class axl(
         :param dialPlanName: dial plan, usually omitted
         :param routeFilterName: route filter, usually omitted
         :return: result dictionary
+        
+
+        Schema: `RemoveRoutePatternReq`: one of `uuid`, or (`pattern` + `routePartitionName` + `dialPlanName` + `routeFilterName`).
         """
         if "uuid" not in args:
             args.setdefault("dialPlanName", None)
@@ -1369,6 +1591,9 @@ class axl(
                Provide at most one of gateway or route_list
         :param description: Route pattern description
         :return: result dictionary
+        
+
+        Schema: `UpdateRoutePatternReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `blockEnable`, `calledPartyTransformationMask`, `callingPartyTransformationMask` and 32 more; one of `uuid`, or (`pattern` + `routePartitionName` + `dialPlanName` + `routeFilterName`).
         """
         if "uuid" not in args:
             args.setdefault("dialPlanName", None)
@@ -1380,6 +1605,9 @@ class axl(
         Get media resource groups
         :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'description': ''}
         :return: list of media resource group dictionaries
+        
+
+        Schema: `ListMediaResourceGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listMediaResourceGroup(
             {"name": "%"}, returnedTags=tagfilter
@@ -1391,6 +1619,9 @@ class axl(
         :param media_resource_group: Media resource group name (AXL name: name)
         :param uuid: Media resource group uuid
         :return: result dictionary
+        
+
+        Schema: `GetMediaResourceGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getMediaResourceGroup(**args)["return"][
             "mediaResourceGroup"
@@ -1406,6 +1637,9 @@ class axl(
         :param multicast: Multicast enabled
         :param members: list of media resource device names
         :return: result dictionary
+        
+
+        Schema: `mediaResourceGroup` -> `XMediaResourceGroup`: `name` + `multicast` + `members`; optional `description`.
         """
         req = {
             "name": name,
@@ -1427,6 +1661,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateMediaResourceGroupReq`: optional `newName`, `description`, `multicast`, optional choice of (optional `removeMembers`, `addMembers`), or `members`.
         """
         return self.client.updateMediaResourceGroup(**args)
 
@@ -1436,6 +1673,9 @@ class axl(
         :param name: The name of the media resource group to delete (or uuid)
         :param uuid: The uuid of the media resource group to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeMediaResourceGroup(**self._identify(name=name, uuid=uuid))
 
@@ -1444,6 +1684,9 @@ class axl(
         Get media resource group lists
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of media resource group list dictionaries
+        
+
+        Schema: `ListMediaResourceListReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listMediaResourceList(
             {"name": "%"}, returnedTags=tagfilter
@@ -1455,6 +1698,9 @@ class axl(
         :param name: Media resource group list name (or uuid)
         :param uuid: Media resource group list uuid (or name)
         :return: media resource group list dictionary
+        
+
+        Schema: `GetMediaResourceListReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getMediaResourceList(**self._identify(name=name, uuid=uuid))[
             "return"
@@ -1466,6 +1712,9 @@ class axl(
         :param name: Media resource group list name
         :param members: list of media resource group names, in priority order
         :return: result dictionary
+        
+
+        Schema: `mediaResourceList` -> `XMediaResourceList`: `name` + `members`.
         """
         req = {
             "name": name,
@@ -1488,6 +1737,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateMediaResourceListReq`: optional `newName`, optional choice of (optional `removeMembers`, `addMembers`), or `members`.
         """
         return self.client.updateMediaResourceList(**args)
 
@@ -1497,6 +1749,9 @@ class axl(
         :param name: The name of the media resource group list to delete (or uuid)
         :param uuid: The uuid of the media resource group list to delete (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeMediaResourceList(**self._identify(name=name, uuid=uuid))
 
@@ -1512,6 +1767,9 @@ class axl(
         Get directory numbers
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLineReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listLine({"pattern": "%"}, returnedTags=tagfilter,)[
             "return"
@@ -1524,6 +1782,9 @@ class axl(
         :param uuid: directory number uuid (or pattern + partition)
         :param partition: route partition name, optional (AXL name: routePartitionName)
         :return: result dictionary
+        
+
+        Schema: `GetLineReq`: optional `returnedTags`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.getLine(**args)["return"]["line"]
 
@@ -1561,6 +1822,9 @@ class axl(
         :param forward_all_destination: Forward all destination
         :param forward_to_vm: Forward to voice mail checkbox
         :return: result dictionary
+        
+
+        Schema: `line` -> `XLine`: `pattern` + `usage`; optional `description`, `routePartitionName`, `aarNeighborhoodName`, `aarDestinationMask`, `aarKeepCallHistory`, `aarVoiceMailEnabled` and 49 more.
         """
         return self.client.addLine(
             {
@@ -1638,6 +1902,9 @@ class axl(
         :param uuid: Directory number uuid (or pattern)
         :param partition: Route partition name, empty for the <None> partition
         :return: result dictionary
+        
+
+        Schema: `RemoveLineReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -1665,6 +1932,9 @@ class axl(
         :param callForwardAll: {'forwardToVoiceMail', 'callingSearchSpaceName', 'destination'}
         :param callForwardBusy: same shape as callForwardAll; likewise callForwardNoAnswer, callForwardNotRegistered, etc.
         :return: result dictionary
+        
+
+        Schema: `UpdateLineReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `aarNeighborhoodName`, `aarDestinationMask`, `aarKeepCallHistory` and 50 more; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.updateLine(**args)
 
@@ -1673,6 +1943,9 @@ class axl(
         Get CTI route points
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCtiRoutePointReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listCtiRoutePoint({"name": "%"}, returnedTags=tagfilter)[
             "return"
@@ -1684,6 +1957,9 @@ class axl(
         :param name: CTI route point name
         :param uuid: CTI route point uuid
         :return: result dictionary
+        
+
+        Schema: `GetCtiRoutePointReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCtiRoutePoint(**args)["return"]["ctiRoutePoint"]
 
@@ -1721,6 +1997,9 @@ class axl(
         :param use_trusted_relay_point: Use trusted relay point: (Default, On, Off)
         :param lines: A list of tuples of [(directory_number, partition)]
         :return: result dictionary
+        
+
+        Schema: `ctiRoutePoint` -> `XCtiRoutePoint`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `useTrustedRelayPoint`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `mediaResourceListName`, `networkHoldMohAudioSourceId`, `userHoldMohAudioSourceId` and 5 more.
         """
 
         req = {
@@ -1747,6 +2026,9 @@ class axl(
         :param cti_route_point: The name of the CTI route point to delete (AXL name: name)
         :param uuid: The uuid of the CTI route point to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCtiRoutePoint(**args)
 
@@ -1767,6 +2049,9 @@ class axl(
         :param use_trusted_relay_point: Use trusted relay point: (Default, On, Off)
         :param lines: replaces all lines: list of tuples [(directory_number, partition)]
         :return: result dictionary
+        
+
+        Schema: `UpdateCtiRoutePointReq`: optional `newName`, `description`, `protocol`, `protocolSide`, `callingSearchSpaceName`, `devicePoolName` and 11 more.
         """
         return self.client.updateCtiRoutePoint(**self._with_lines(args))
 
@@ -1787,6 +2072,9 @@ class axl(
         :param query: AXL search criteria, e.g. {'name': 'SEP%'} or {'devicePoolName': 'Default'}
         :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'product': ''}
         :return: list of phone dictionaries, empty when nothing matches
+        
+
+        Schema: `ListPhoneReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         skip = 0
         a = []
@@ -1811,6 +2099,9 @@ class axl(
         Get device profile parameters
         :param phone: profile name
         :return: result dictionary
+        
+
+        Schema: `GetPhoneReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getPhone(**args)["return"]["phone"]
 
@@ -1879,6 +2170,9 @@ class axl(
         :param sip_profile: SIP profile, used when protocol is SIP
         :param common_phone_config: common phone profile name
         :return: result dictionary
+        
+
+        Schema: `phone` -> `XPhone`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `commonPhoneConfigName` + `locationName` + `useTrustedRelayPoint` + `phoneTemplateName` + `primaryPhoneName` + `builtInBridgeStatus` + `packetCaptureMode` + `certificateOperation` + `deviceMobilityMode`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `networkLocation`, `mediaResourceListName`, `networkHoldMohAudioSourceId` and 105 more.
         """
 
         req = {
@@ -1953,6 +2247,9 @@ class axl(
         :param phone: The name of the phone to delete (AXL name: name)
         :param uuid: The uuid of the phone to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removePhone(**args)
 
@@ -1984,6 +2281,9 @@ class axl(
         :param security_profile: security profile name
         :param sip_profile: SIP profile name
         :return: result dictionary
+        
+
+        Schema: `UpdatePhoneReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `commonPhoneConfigName` and 115 more.
         """
         return self.client.updatePhone(**self._with_lines(args))
 
@@ -2000,6 +2300,9 @@ class axl(
         Get device profile details
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDeviceProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listDeviceProfile(
             {"name": "%"},
@@ -2012,6 +2315,9 @@ class axl(
         :param name: profile name
         :param uuid: profile uuid
         :return: result dictionary
+        
+
+        Schema: `GetDeviceProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getDeviceProfile(**args)["return"]["deviceProfile"]
 
@@ -2046,6 +2352,9 @@ class axl(
         :param softkey_template: softkey template name
         :param em_service_name: Extension Mobility service to subscribe, None for no services
         :return: result dictionary
+        
+
+        Schema: `deviceProfile` -> `XDeviceProfile`: `name` + `product` + `class` + `protocol` + `protocolSide` + `phoneTemplateName`; optional `description`, `userHoldMohAudioSourceId`, `vendorConfig`, `traceFlag`, `mlppDomainId`, `mlppIndicationStatus` and 21 more.
         """
 
         req = {
@@ -2075,6 +2384,9 @@ class axl(
         :param profile: The name of the device profile to delete (AXL name: name)
         :param uuid: The uuid of the device profile to delete
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeDeviceProfile(**args)
 
@@ -2096,6 +2408,9 @@ class axl(
         :param lines: replaces all lines: list of line tuples, see above
         :param services: {'service': [{'telecasterServiceName', 'name'}]}
         :return: result dictionary
+        
+
+        Schema: `UpdateDeviceProfileReq`: optional `newName`, `description`, `userHoldMohAudioSourceId`, `vendorConfig`, `mlppDomainId`, `mlppIndicationStatus` and 22 more.
         """
         return self.client.updateDeviceProfile(**self._with_lines(args))
 
@@ -2113,6 +2428,9 @@ class axl(
         -------
         users
             A list of Users
+        
+
+        Schema: `ListUserReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         skip = 0
         a = []
@@ -2139,6 +2457,9 @@ class axl(
         :param user_id: same as userid
         :param uuid: user uuid (or userid)
         :return: user dictionary
+        
+
+        Schema: `GetUserReq`: optional `returnedTags`; one of `userid`, or `uuid`.
         """
         userid = userid or user_id
         if bool(userid) == bool(uuid):
@@ -2165,6 +2486,9 @@ class axl(
         :param presenceGroupName: presence group name
         :param phoneProfiles: list of device profile names to associate
         :return: result dictionary
+        
+
+        Schema: `user` -> `XUser`: `lastName` + `userid` + `presenceGroupName`; optional `firstName`, `displayName`, `middleName`, `emMaxLoginTime`, `password`, `pin` and 50 more.
         """
         userid = userid or user_id
         lastName = lastName or last_name
@@ -2195,6 +2519,9 @@ class axl(
         :param associatedGroups: replaces all groups: {'userGroup': [{'name': group}]}
         :param phoneProfiles: replaces all device profiles: {'profileName': [name, ...]}
         :return: result dictionary
+        
+
+        Schema: `UpdateUserReq`: optional `firstName`, `displayName`, `middleName`, `lastName`, `emMaxLoginTime`, `newUserid` and 53 more; one of `uuid`, or `userid`.
         """
         return self.client.updateUser(**args)
 
@@ -2219,6 +2546,9 @@ class axl(
         :param user_group: user group to add, None to leave groups unchanged
         :param primary_extension_partition: partition of the primary extension
         :return: result dictionary
+        
+
+        Schema: `UpdateUserReq`: optional `firstName`, `displayName`, `middleName`, `lastName`, `emMaxLoginTime`, `newUserid` and 53 more; one of `uuid`, or `userid`.
         """
         profile_uuid = self.client.getDeviceProfile(name=device_profile)["return"][
             "deviceProfile"
@@ -2269,6 +2599,9 @@ class axl(
         :param password: Web interface password
         :param pin: Extension mobility PIN
         :return: result dictionary
+        
+
+        Schema: `UpdateUserReq`: optional `firstName`, `displayName`, `middleName`, `lastName`, `emMaxLoginTime`, `newUserid` and 53 more; one of `uuid`, or `userid`.
         """
         if password == "" and pin == "":  # nosec
             raise ValueError("Password and/or Pin are required")
@@ -2286,6 +2619,9 @@ class axl(
         :param userid: The user ID of the user to delete (or uuid; user_id also works)
         :param uuid: The uuid of the user to delete
         :return: result dictionary
+        
+
+        Schema: `RemoveUserReq`: one of `userid`, or `uuid`.
         """
         return self.client.removeUser(**args)
 
@@ -2293,6 +2629,9 @@ class axl(
         """
         Get translation patterns
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListTransPatternReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listTransPattern(
             {"pattern": "%"},
@@ -2335,6 +2674,9 @@ class axl(
         :param uuid: translation pattern uuid (or pattern)
         :param partition: partition of the pattern, empty for the <None> partition
         :return: translation pattern dictionary
+        
+
+        Schema: `GetTransPatternReq`: optional `returnedTags`; one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         identifier = self._pattern_identifier(
             pattern, partition or routePartitionName, uuid
@@ -2393,6 +2735,9 @@ class axl(
         :param useCallingPartyPhoneMask: Off, On or Default - optional
         :param routeNextHopByCgpn: route next hop by calling party number - optional
         :return: result dictionary
+        
+
+        Schema: `transPattern` -> `XTransPattern`: `pattern` + `usage` + `routePartitionName`; optional `description`, `blockEnable`, `calledPartyTransformationMask`, `callingPartyTransformationMask`, `useCallingPartyPhoneMask`, `callingPartyPrefixDigits` and 24 more.
         """
         return self.client.addTransPattern(
             {
@@ -2421,6 +2766,9 @@ class axl(
         :param partition: The name of the partition, empty for the <None> partition
         :param uuid: The uuid of the translation to delete (or pattern)
         :return: result dictionary
+        
+
+        Schema: `RemoveTransPatternReq`: one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         return self.client.removeTransPattern(
             **self._pattern_identifier(pattern, partition, uuid)
@@ -2464,6 +2812,9 @@ class axl(
         :param callingPartyPrefixDigits: - optional
         :param blockEnable: - optional
         :return: result dictionary
+        
+
+        Schema: `UpdateTransPatternReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `blockEnable`, `calledPartyTransformationMask`, `callingPartyTransformationMask` and 26 more; one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
 
         args = self._pattern_identifier(pattern, partition, uuid)
@@ -2500,6 +2851,9 @@ class axl(
         List Route Plan
         :param pattern: Route Plan Contains Pattern
         :return: results dictionary
+        
+
+        Schema: `ListRoutePlanReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listRoutePlan(
             {"dnOrPattern": "%" + pattern + "%"},
@@ -2516,6 +2870,9 @@ class axl(
         List Route Plan
         :param pattern: Route Plan Contains Pattern
         :return: list of route plan dictionaries, empty when nothing matches
+        
+
+        Schema: `ListRoutePlanReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listRoutePlan(
             {"dnOrPattern": pattern},
@@ -2534,6 +2891,9 @@ class axl(
         """
         Get called party xforms
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCalledPartyTransformationPatternReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCalledPartyTransformationPattern(
             {"pattern": "%"},
@@ -2565,6 +2925,9 @@ class axl(
         :param partition: partition of the pattern (AXL name: routePartitionName)
         :param uuid: transformation uuid (or pattern + partition)
         :return: result dictionary
+        
+
+        Schema: `GetCalledPartyTransformationPatternReq`: optional `returnedTags`; one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         args = self._pattern_lookup("getCalledPartyTransformationPattern", args)
         return self.client.getCalledPartyTransformationPattern(**args)["return"][
@@ -2595,6 +2958,9 @@ class axl(
         :param calledPartyNumberType: optional
         :param mlppPreemptionDisabled: boolean, default false - optional
         :return: result dictionary
+        
+
+        Schema: `calledPartyTransformationPattern` -> `XCalledPartyTransformationPattern`: `pattern` + `routePartitionName`; optional `description`, `calledPartyTransformationMask`, `dialPlanName`, `digitDiscardInstructionName`, `routeFilterName`, `calledPartyPrefixDigits` and 3 more.
         """
         return self.client.addCalledPartyTransformationPattern(
             {
@@ -2615,6 +2981,9 @@ class axl(
         :param pattern: The pattern of the transformation to delete
         :param partition: The name of the partition (AXL name: routePartitionName)
         :return: result dictionary
+        
+
+        Schema: `RemoveCalledPartyTransformationPatternReq`: one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         args = self._pattern_lookup("removeCalledPartyTransformationPattern", args)
         return self.client.removeCalledPartyTransformationPattern(**args)
@@ -2635,6 +3004,9 @@ class axl(
         :param calledPartyNumberType: number type
         :param mlppPreemptionDisabled: boolean, default false
         :return: result dictionary
+        
+
+        Schema: `UpdateCalledPartyTransformationPatternReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `calledPartyTransformationMask`, `newDialPlanName`, `digitDiscardInstructionName` and 5 more; one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         args = self._pattern_lookup("updateCalledPartyTransformationPattern", args)
         return self.client.updateCalledPartyTransformationPattern(**args)
@@ -2643,6 +3015,9 @@ class axl(
         """
         Get calling party xforms
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCallingPartyTransformationPatternReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listCallingPartyTransformationPattern(
             {"pattern": "%"},
@@ -2656,6 +3031,9 @@ class axl(
         :param partition: partition of the pattern (AXL name: routePartitionName)
         :param uuid: transformation uuid (or pattern + partition)
         :return: result dictionary
+        
+
+        Schema: `GetCallingPartyTransformationPatternReq`: optional `returnedTags`; one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         args = self._pattern_lookup("getCallingPartyTransformationPattern", args)
         return self.client.getCallingPartyTransformationPattern(**args)["return"][
@@ -2686,6 +3064,9 @@ class axl(
         :param callingPartyNumberType: optional
         :param mlppPreemptionDisabled: boolean, default false - optional
         :return: result dictionary
+        
+
+        Schema: `callingPartyTransformationPattern` -> `XCallingPartyTransformationPattern`: `pattern` + `routePartitionName`; optional `description`, `callingPartyTransformationMask`, `useCallingPartyPhoneMask`, `dialPlanName`, `digitDiscardInstructionName`, `callingPartyPrefixDigits` and 5 more.
         """
         return self.client.addCallingPartyTransformationPattern(
             {
@@ -2706,6 +3087,9 @@ class axl(
         :param pattern: The pattern of the transformation to delete
         :param partition: The name of the partition (AXL name: routePartitionName)
         :return: result dictionary
+        
+
+        Schema: `RemoveCallingPartyTransformationPatternReq`: one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         args = self._pattern_lookup("removeCallingPartyTransformationPattern", args)
         return self.client.removeCallingPartyTransformationPattern(**args)
@@ -2728,6 +3112,9 @@ class axl(
         :param callingLinePresentationBit: Default, Allowed or Restricted
         :param mlppPreemptionDisabled: boolean, default false
         :return: result dictionary
+        
+
+        Schema: `UpdateCallingPartyTransformationPatternReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `callingPartyTransformationMask`, `useCallingPartyPhoneMask`, `newDialPlanName` and 7 more; one of `uuid`, or (`pattern` + `routePartitionName`; optional `dialPlanName`, `routeFilterName`).
         """
         args = self._pattern_lookup("updateCallingPartyTransformationPattern", args)
         return self.client.updateCallingPartyTransformationPattern(**args)
@@ -2739,6 +3126,9 @@ class axl(
         Get SIP trunks
         :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'sipProfileName': ''}
         :return: list of SIP trunk dictionaries
+        
+
+        Schema: `ListSipTrunkReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listSipTrunk({"name": "%"}, returnedTags=tagfilter)[
             "return"
@@ -2750,6 +3140,9 @@ class axl(
         :param name: trunk name (or uuid)
         :param uuid: trunk uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `GetSipTrunkReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSipTrunk(**args)["return"]["sipTrunk"]
 
@@ -2767,6 +3160,9 @@ class axl(
         :param mtpRequired: boolean
         :param destinations: {'destination': [{'addressIpv4', 'port', 'sortOrder'}]}, max 16
         :return: result dictionary
+        
+
+        Schema: `UpdateSipTrunkReq`: optional `newName`, `description`, `callingSearchSpaceName`, `devicePoolName`, `commonDeviceConfigName`, `networkLocation` and 89 more.
         """
         return self.client.updateSipTrunk(**args)
 
@@ -2776,6 +3172,9 @@ class axl(
         :param name: trunk name (or uuid)
         :param uuid: trunk uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeSipTrunk(**args)
 
@@ -2785,6 +3184,9 @@ class axl(
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: SIP trunk security profile dictionary
+        
+
+        Schema: `GetSipTrunkSecurityProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSipTrunkSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -2796,6 +3198,9 @@ class axl(
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: SIP profile dictionary
+        
+
+        Schema: `GetSipProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getSipProfile(**self._identify(name=name, uuid=uuid))[
             "return"
@@ -2820,6 +3225,9 @@ class axl(
         :param destinations: {'destination': [{'addressIpv4', 'port', 'sortOrder'}]}, sortOrder required, max 16
         :param runOnEveryNode: boolean
         :return: result dictionary
+        
+
+        Schema: `sipTrunk` -> `XSipTrunk`: `name` + `product` + `class` + `protocol` + `protocolSide` + `devicePoolName` + `locationName` + `securityProfileName` + `sipProfileName` + `presenceGroupName` + `callingAndCalledPartyInfoFormat`; optional `description`, `callingSearchSpaceName`, `commonDeviceConfigName`, `networkLocation`, `mediaResourceListName`, `networkHoldMohAudioSourceId` and 84 more.
         """
         trunk = self._build_object(
             "addSipTrunk",
@@ -2842,6 +3250,9 @@ class axl(
         """
         List the Unified CM call processing nodes
         :return: list of process node dictionaries with name
+        
+
+        Schema: `ListProcessNodeReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         return self.client.listProcessNode(
             {"name": "%", "processNodeRole": "CUCM Voice/Video"},
@@ -2871,6 +3282,9 @@ class axl(
         :param members: list of Unified CM names in priority order (at least one),
                         or {'member': [{'callManagerName', 'priority'}]}
         :return: result dictionary
+        
+
+        Schema: `callManagerGroup` -> `XCallManagerGroup`: `name` + `members`; optional `tftpDefault`.
         """
         return self.client.addCallManagerGroup(
             {"name": name, "members": self._cm_group_members(members)}
@@ -2882,6 +3296,9 @@ class axl(
         :param name: name of cmg (or uuid)
         :param uuid: uuid of cmg (or name)
         :return: call manager group dictionary
+        
+
+        Schema: `GetCallManagerGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCallManagerGroup(**self._identify(name=name, uuid=uuid))[
             "return"
@@ -2891,6 +3308,9 @@ class axl(
         """
         Get call manager groups
         :return: list of call manager group dictionaries with name, empty when nothing matches
+        
+
+        Schema: `ListCallManagerGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listCallManagerGroup(
             {"name": "%"}, returnedTags={"name": ""}
@@ -2911,6 +3331,9 @@ class axl(
         :param addMembers: members to add, {'member': [...]} (instead of members)
         :param removeMembers: members to remove, {'member': [...]} (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateCallManagerGroupReq`: optional `newName`, `tftpDefault`, optional choice of (optional `removeMembers`, `addMembers`), or `members`.
         """
         if "members" in args:
             args["members"] = self._cm_group_members(args["members"])
@@ -2922,6 +3345,9 @@ class axl(
         :param name: name of cmg (or uuid)
         :param uuid: uuid of cmg (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCallManagerGroup(**self._identify(name=name, uuid=uuid))
 
@@ -2938,6 +3364,9 @@ class axl(
         Get hunt pilots
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListHuntPilotReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listHuntPilot(
             {"pattern": "%"},
@@ -2955,6 +3384,9 @@ class axl(
         :param partition: partition of the pattern (AXL name: routePartitionName)
         :param uuid: hunt pilot uuid (or pattern)
         :return: result dictionary
+        
+
+        Schema: `GetHuntPilotReq`: optional `returnedTags`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.getHuntPilot(**args)["return"]["huntPilot"]
 
@@ -2968,6 +3400,9 @@ class axl(
         :param useCallingPartyPhoneMask: "Off", "On" or "Default" (default)
         :param blockEnable: boolean, default false
         :return: result dictionary
+        
+
+        Schema: `huntPilot` -> `XHuntPilot`: `pattern` + `blockEnable` + `useCallingPartyPhoneMask` + `huntListName`; optional `description`, `routePartitionName`, `calledPartyTransformationMask`, `callingPartyTransformationMask`, `callingPartyPrefixDigits`, `dialPlanName` and 26 more.
         """
         pilot = self._build_object(
             "addHuntPilot", "huntPilot", args, defaults={"blockEnable": False}
@@ -2987,6 +3422,9 @@ class axl(
         :param blockEnable: boolean
         :param hunt_list: hunt list name (AXL name: huntListName)
         :return: result dictionary
+        
+
+        Schema: `UpdateHuntPilotReq`: optional `newPattern`, `description`, `newRoutePartitionName`, `blockEnable`, `calledPartyTransformationMask`, `callingPartyTransformationMask` and 30 more; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.updateHuntPilot(**args)
 
@@ -2997,6 +3435,9 @@ class axl(
         :param pattern: The pattern of the hunt pilot to delete
         :param partition: The name of the partition (AXL name: routePartitionName)
         :return: result dictionary
+        
+
+        Schema: `RemoveHuntPilotReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.removeHuntPilot(**args)
 
@@ -3015,6 +3456,9 @@ class axl(
         Get hunt lists
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListHuntListReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listHuntList(
             {"name": "%"},
@@ -3031,6 +3475,9 @@ class axl(
         :param name: hunt list name (or uuid)
         :param uuid: hunt list uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `GetHuntListReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getHuntList(**args)["return"]["huntList"]
 
@@ -3044,6 +3491,9 @@ class axl(
         :param voiceMailUsage: bool
         :param members: {'member': [{'lineGroupName', 'selectionOrder'}]}
         :return: result dictionary
+        
+
+        Schema: `huntList` -> `XHuntList`: `callManagerGroupName` + `name`; optional `description`, `routeListEnabled`, `voiceMailUsage`, `members`.
         """
         hunt_list = self._build_object("addHuntList", "huntList", args)
         return self.client.addHuntList(hunt_list)
@@ -3062,6 +3512,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateHuntListReq`: optional `description`, `callManagerGroupName`, `routeListEnabled`, `voiceMailUsage`, optional choice of (optional `removeMembers`, `addMembers`), or `members`, `newName`.
         """
         return self.client.updateHuntList(**args)
 
@@ -3071,6 +3524,9 @@ class axl(
         :param name: hunt list name (or uuid)
         :param uuid: hunt list uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeHuntList(**args)
 
@@ -3091,6 +3547,9 @@ class axl(
         Get Line Groups
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dictionaries, empty when nothing matches
+        
+
+        Schema: `ListLineGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listLineGroup(
             {"name": "%"},
@@ -3107,6 +3566,9 @@ class axl(
         :param name: line group name (or uuid)
         :param uuid: line group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `GetLineGroupReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getLineGroup(**args)["return"]["lineGroup"]
 
@@ -3121,6 +3583,9 @@ class axl(
         :param huntAlgorithmNotAvailable: default "Try next member; then, try next group in Hunt List"
         :param members: {'member': [{'lineSelectionOrder', 'directoryNumber': {'pattern', 'routePartitionName'}}]}
         :return: result dictionary
+        
+
+        Schema: `lineGroup` -> `XLineGroup`: `distributionAlgorithm` + `rnaReversionTimeOut` + `huntAlgorithmNoAnswer` + `huntAlgorithmBusy` + `huntAlgorithmNotAvailable` + `name`; optional `members`, `autoLogOffHunt`.
         """
         line_group = self._build_object("addLineGroup", "lineGroup", args)
         return self.client.addLineGroup(line_group)
@@ -3141,6 +3606,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateLineGroupReq`: optional `distributionAlgorithm`, `rnaReversionTimeOut`, `huntAlgorithmNoAnswer`, `huntAlgorithmBusy`, `huntAlgorithmNotAvailable`, optional choice of (optional `removeMembers`, `addMembers`), or `members` and 2 more.
         """
         return self.client.updateLineGroup(**args)
 
@@ -3150,6 +3618,9 @@ class axl(
         :param name: line group name (or uuid)
         :param uuid: line group uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeLineGroup(**args)
 
@@ -3171,6 +3642,9 @@ class axl(
         Get Call Pickup Groups
         :param tagfilter: AXL returned tags to include, e.g. {'name': '', 'pattern': ''}
         :return: list of call pickup group dictionaries
+        
+
+        Schema: `ListCallPickupGroupReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         response = self.client.listCallPickupGroup(
             {"pattern": "%"},
@@ -3189,6 +3663,9 @@ class axl(
         :param partition: partition of the pattern (AXL name: routePartitionName)
         :param uuid: call pickup group uuid
         :return: result dictionary
+        
+
+        Schema: `GetCallPickupGroupReq`: optional `returnedTags`; one of `uuid`, or `name`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.getCallPickupGroup(**args)["return"]["callPickupGroup"]
 
@@ -3205,6 +3682,9 @@ class axl(
         :param members: {'member': [{'priority': 1, 'pickupGroupName': name}]}; priority starts at 1
                         and the group can't list itself
         :return: result dictionary
+        
+
+        Schema: `callPickupGroup` -> `XCallPickupGroup`: `pattern` + `name`; optional `description`, `routePartitionName`, `members`, `pickupNotification`, `pickupNotificationTimer`, `callInfoForPickupNotification`.
         """
         args.pop("usage", None)
         return self.client.addCallPickupGroup({**args})
@@ -3227,6 +3707,9 @@ class axl(
         :param addMembers: members to add, same shape as members (instead of members)
         :param removeMembers: members to remove, same shape as members (instead of members)
         :return: result dictionary
+        
+
+        Schema: `UpdateCallPickupGroupReq`: optional `newPattern`, `description`, `newRoutePartitionName`, optional choice of (optional `removeMembers`, `addMembers`), or `members`, `pickupNotification`, `pickupNotificationTimer` and 2 more; one of `uuid`, or `name`, or (`pattern`; optional `routePartitionName`).
         """
         args.pop("usage", None)
         return self.client.updateCallPickupGroup(**args)
@@ -3239,5 +3722,8 @@ class axl(
         :param pattern: call pickup group number
         :param partition: partition of the pattern (AXL name: routePartitionName)
         :return: result dictionary
+        
+
+        Schema: `RemoveCallPickupGroupReq`: one of `uuid`, or `name`, or (`pattern`; optional `routePartitionName`).
         """
         return self.client.removeCallPickupGroup(**args)

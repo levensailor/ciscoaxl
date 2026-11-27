@@ -74,6 +74,9 @@ class NicheMixin:
         Add a geo location.
         :param name: geo location name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `geoLocation` -> `XGeoLocation`: `name`; optional `country`, `description`, `nationalSubDivision`, `district`, `communityName`, `cityDivision` and 12 more.
         """
         obj = self._build_object("addGeoLocation", "geoLocation", args)
         return self.client.addGeoLocation(geoLocation=obj)
@@ -84,6 +87,9 @@ class NicheMixin:
         :param name: geo location name
         :param uuid: geo location uuid
         :return: geoLocation dictionary
+        
+
+        Schema: `GetGeoLocationReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGeoLocation(
             **self._identify(name=name, uuid=uuid)
@@ -94,6 +100,9 @@ class NicheMixin:
         List all geo locations.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of geoLocation dictionaries, empty when nothing matches
+        
+
+        Schema: `ListGeoLocationReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listGeoLocation(
@@ -107,6 +116,9 @@ class NicheMixin:
         :param name: geo location name (or uuid)
         :param uuid: geo location uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateGeoLocationReq`: optional `newName`, `country`, `description`, `nationalSubDivision`, `district`, `communityName` and 13 more.
         """
         return self.client.updateGeoLocation(
             **self._identify(name=name, uuid=uuid), **args
@@ -118,6 +130,9 @@ class NicheMixin:
         :param name: geo location name
         :param uuid: geo location uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGeoLocation(**self._identify(name=name, uuid=uuid))
 
@@ -130,6 +145,9 @@ class NicheMixin:
         Add a geo location filter.
         :param name: filter name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `geoLocationFilter` -> `XGeoLocationFilter`: `name`; optional `description`, `useCountry`, `useNationalSubDivision`, `useDistrict`, `useCommunityName`, `useCityDivision` and 12 more.
         """
         obj = self._build_object("addGeoLocationFilter", "geoLocationFilter", args)
         return self.client.addGeoLocationFilter(geoLocationFilter=obj)
@@ -140,6 +158,9 @@ class NicheMixin:
         :param name: filter name
         :param uuid: filter uuid
         :return: geoLocationFilter dictionary
+        
+
+        Schema: `GetGeoLocationFilterReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGeoLocationFilter(
             **self._identify(name=name, uuid=uuid)
@@ -150,6 +171,9 @@ class NicheMixin:
         List all geo location filters.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of geoLocationFilter dictionaries, empty when nothing matches
+        
+
+        Schema: `ListGeoLocationFilterReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listGeoLocationFilter(
@@ -163,6 +187,9 @@ class NicheMixin:
         :param name: filter name (or uuid)
         :param uuid: filter uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateGeoLocationFilterReq`: optional `newName`, `description`, `useCountry`, `useNationalSubDivision`, `useDistrict`, `useCommunityName` and 13 more.
         """
         return self.client.updateGeoLocationFilter(
             **self._identify(name=name, uuid=uuid), **args
@@ -174,6 +201,9 @@ class NicheMixin:
         :param name: filter name
         :param uuid: filter uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGeoLocationFilter(
             **self._identify(name=name, uuid=uuid)
@@ -188,6 +218,9 @@ class NicheMixin:
         Add a geo location policy.
         :param name: policy name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `geoLocationPolicy` -> `XGeoLocationPolicy`: `name`; optional `country`, `description`, `nationalSubDivision`, `district`, `communityName`, `cityDivision` and 13 more.
         """
         obj = self._build_object("addGeoLocationPolicy", "geoLocationPolicy", args)
         return self.client.addGeoLocationPolicy(geoLocationPolicy=obj)
@@ -198,6 +231,9 @@ class NicheMixin:
         :param name: policy name
         :param uuid: policy uuid
         :return: geoLocationPolicy dictionary
+        
+
+        Schema: `GetGeoLocationPolicyReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getGeoLocationPolicy(
             **self._identify(name=name, uuid=uuid)
@@ -208,6 +244,9 @@ class NicheMixin:
         List all geo location policies.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of geoLocationPolicy dictionaries, empty when nothing matches
+        
+
+        Schema: `ListGeoLocationPolicyReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listGeoLocationPolicy(
@@ -221,6 +260,9 @@ class NicheMixin:
         :param name: policy name (or uuid)
         :param uuid: policy uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateGeoLocationPolicyReq`: optional `newName`, `country`, `description`, `nationalSubDivision`, `district`, `communityName` and 14 more.
         """
         return self.client.updateGeoLocationPolicy(
             **self._identify(name=name, uuid=uuid), **args
@@ -232,6 +274,9 @@ class NicheMixin:
         :param name: policy name
         :param uuid: policy uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeGeoLocationPolicy(
             **self._identify(name=name, uuid=uuid)
@@ -246,6 +291,9 @@ class NicheMixin:
         Add a billing server.
         :param hostName: billing server hostname — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `billingServer` -> `XBillingServer`: `hostName` + `userId` + `password` + `directory` + `billingServerProtocol`; optional `resendOnFailure`.
         """
         obj = self._build_object("addBillingServer", "billingServer", args)
         return self.client.addBillingServer(billingServer=obj)
@@ -255,6 +303,9 @@ class NicheMixin:
         Get a billing server by uuid.
         :param uuid: billing server uuid — required
         :return: billingServer dictionary
+        
+
+        Schema: `GetBillingServerReq`: `uuid`; optional `returnedTags`.
         """
         return self.client.getBillingServer(uuid=uuid)["return"]["billingServer"]
 
@@ -263,6 +314,9 @@ class NicheMixin:
         List all billing servers.
         :param tagfilter: AXL returned tags to include, e.g. {'hostName': ''}
         :return: list of billingServer dictionaries, empty when nothing matches
+        
+
+        Schema: `ListBillingServerReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"hostName": ""}
         result = self.client.listBillingServer(
@@ -275,6 +329,9 @@ class NicheMixin:
         Update a billing server.
         :param uuid: billing server uuid — required
         :return: result dictionary
+        
+
+        Schema: `UpdateBillingServerReq`: `uuid`; optional `userId`, `password`, `resendOnFailure`, `billingServerProtocol`.
         """
         return self.client.updateBillingServer(uuid=uuid, **args)
 
@@ -283,6 +340,9 @@ class NicheMixin:
         Delete a billing server by uuid.
         :param uuid: billing server uuid — required
         :return: result dictionary
+        
+
+        Schema: `RemoveBillingServerReq`: `uuid`.
         """
         return self.client.removeBillingServer(uuid=uuid)
 
@@ -295,6 +355,9 @@ class NicheMixin:
         Add a blocked learned patterns entry.
         :param pattern: pattern — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `blockedLearnedPatterns` -> `XBlockedLearnedPatterns`: optional `description`, `pattern`, `prefix`, `clusterId`, `patternType`.
         """
         obj = self._build_object(
             "addBlockedLearnedPatterns", "blockedLearnedPatterns", args
@@ -309,6 +372,9 @@ class NicheMixin:
         :return: blockedLearnedPatterns dictionary
 
         Note: BlockedLearnedPatterns uses 'pattern' (not 'name') as the AXL name identifier.
+        
+
+        Schema: `GetBlockedLearnedPatternsReq`: optional `returnedTags`; one of `pattern`, or `uuid`.
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -322,6 +388,9 @@ class NicheMixin:
         List all blocked learned patterns entries.
         :param tagfilter: AXL returned tags to include, e.g. {'pattern': ''}
         :return: list of blockedLearnedPatterns dictionaries, empty when nothing matches
+        
+
+        Schema: `ListBlockedLearnedPatternsReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"pattern": ""}
         result = self.client.listBlockedLearnedPatterns(
@@ -335,6 +404,9 @@ class NicheMixin:
         :param pattern: pattern string (identity)
         :param uuid: entry uuid
         :return: result dictionary
+        
+
+        Schema: `UpdateBlockedLearnedPatternsReq`: optional `description`, `newPattern`, `prefix`, `clusterId`, `patternType`; one of `uuid`, or `pattern`.
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -347,6 +419,9 @@ class NicheMixin:
         :param pattern: pattern string (identity)
         :param uuid: entry uuid
         :return: result dictionary
+        
+
+        Schema: `RemoveBlockedLearnedPatternsReq`: one of `pattern`, or `uuid`.
         """
         if bool(pattern) == bool(uuid):
             raise ValueError("Provide exactly one of pattern or uuid")
@@ -362,6 +437,9 @@ class NicheMixin:
         Add a CCA profile.
         :param name: profile name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `cCAProfiles` -> `XCCAProfiles`: `ccaId` + `primarySoftSwitchId` + `objectClass`; optional `secondarySoftSwitchId`, `subscriberType`, `sipAliasSuffix`, `sipUserNameSuffix`.
         """
         obj = self._build_object("addCCAProfiles", "cCAProfiles", args)
         return self.client.addCCAProfiles(cCAProfiles=obj)
@@ -374,6 +452,9 @@ class NicheMixin:
         :return: cCAProfiles dictionary
 
         Note: CCAProfiles uses 'ccaId' (not 'name') as the AXL name identifier.
+        
+
+        Schema: `GetCCAProfilesReq`: optional `returnedTags`; one of `ccaId`, or `uuid`.
         """
         if bool(ccaId) == bool(uuid):
             raise ValueError("Provide exactly one of ccaId or uuid")
@@ -385,6 +466,9 @@ class NicheMixin:
         List all CCA profiles.
         :param tagfilter: AXL returned tags to include, e.g. {'ccaId': ''}
         :return: list of cCAProfiles dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCCAProfilesReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"ccaId": ""}
         result = self.client.listCCAProfiles(
@@ -398,6 +482,9 @@ class NicheMixin:
         :param ccaId: CCA profile ID (or uuid)
         :param uuid: profile uuid (or ccaId)
         :return: result dictionary
+        
+
+        Schema: `UpdateCCAProfilesReq`: optional `newCcaId`, `primarySoftSwitchId`, `secondarySoftSwitchId`, `objectClass`, `subscriberType`, `sipAliasSuffix` and 1 more; one of `uuid`, or `ccaId`.
         """
         if bool(ccaId) == bool(uuid):
             raise ValueError("Provide exactly one of ccaId or uuid")
@@ -410,6 +497,9 @@ class NicheMixin:
         :param ccaId: CCA profile ID
         :param uuid: profile uuid
         :return: result dictionary
+        
+
+        Schema: `RemoveCCAProfilesReq`: one of `ccaId`, or `uuid`.
         """
         if bool(ccaId) == bool(uuid):
             raise ValueError("Provide exactly one of ccaId or uuid")
@@ -427,6 +517,9 @@ class NicheMixin:
         :return: list of ciscoCloudOnboarding dictionaries, empty when nothing matches
 
         Note: listCiscoCloudOnboarding searchCriteria has no filterable fields; pass empty dict.
+        
+
+        Schema: `ListCiscoCloudOnboardingReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"orgId": ""}
         result = self.client.listCiscoCloudOnboarding(
@@ -438,6 +531,9 @@ class NicheMixin:
         """
         Update the Cisco Cloud Onboarding configuration.
         :return: result dictionary
+        
+
+        Schema: `UpdateCiscoCloudOnboardingReq`: optional `voucherExists`, `enablePushNotifications`, `enableHttpProxy`, `httpProxyAddress`, `proxyUsername`, `proxyPassword` and 9 more; one of `uuid`.
         """
         return self.client.updateCiscoCloudOnboarding(**args)
 
@@ -450,6 +546,9 @@ class NicheMixin:
         Add a CUMA server security profile.
         :param name: profile name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `cumaServerSecurityProfile` -> `XCumaServerSecurityProfile`: `name` + `securityMode` + `transportType` + `serverIpHostName`; optional `description`, `x509SubjectName`.
         """
         obj = self._build_object(
             "addCumaServerSecurityProfile", "cumaServerSecurityProfile", args
@@ -464,6 +563,9 @@ class NicheMixin:
         :param name: profile name
         :param uuid: profile uuid
         :return: cumaServerSecurityProfile dictionary
+        
+
+        Schema: `GetCumaServerSecurityProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCumaServerSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -474,6 +576,9 @@ class NicheMixin:
         List all CUMA server security profiles.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of cumaServerSecurityProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCumaServerSecurityProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listCumaServerSecurityProfile(
@@ -487,6 +592,9 @@ class NicheMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateCumaServerSecurityProfileReq`: optional `newName`, `description`, `securityMode`, `transportType`, `x509SubjectName`, `serverIpHostName`.
         """
         return self.client.updateCumaServerSecurityProfile(
             **self._identify(name=name, uuid=uuid), **args
@@ -498,6 +606,9 @@ class NicheMixin:
         :param name: profile name
         :param uuid: profile uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCumaServerSecurityProfile(
             **self._identify(name=name, uuid=uuid)
@@ -512,6 +623,9 @@ class NicheMixin:
         Add a customer record.
         :param name: customer name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `customer` -> `XCustomer`: `name`.
         """
         obj = self._build_object("addCustomer", "customer", args)
         return self.client.addCustomer(customer=obj)
@@ -522,6 +636,9 @@ class NicheMixin:
         :param name: customer name
         :param uuid: customer uuid
         :return: customer dictionary
+        
+
+        Schema: `GetCustomerReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getCustomer(
             **self._identify(name=name, uuid=uuid)
@@ -532,6 +649,9 @@ class NicheMixin:
         List all customer records.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of customer dictionaries, empty when nothing matches
+        
+
+        Schema: `ListCustomerReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listCustomer(
@@ -545,6 +665,9 @@ class NicheMixin:
         :param name: customer name (or uuid)
         :param uuid: customer uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateCustomerReq`: optional `newName`.
         """
         return self.client.updateCustomer(
             **self._identify(name=name, uuid=uuid), **args
@@ -556,6 +679,9 @@ class NicheMixin:
         :param name: customer name
         :param uuid: customer uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeCustomer(**self._identify(name=name, uuid=uuid))
 
@@ -568,6 +694,9 @@ class NicheMixin:
         Get a single DDI entry by uuid.
         :param uuid: DDI uuid — required
         :return: ddi dictionary
+        
+
+        Schema: `GetDdiReq`: optional `returnedTags`; one of `uuid`, or (`name` + `dialPlanName`).
         """
         return self.client.getDdi(uuid=uuid)["return"]["ddi"]
 
@@ -576,6 +705,9 @@ class NicheMixin:
         List all DDI entries.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of ddi dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDdiReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listDdi(
@@ -593,6 +725,9 @@ class NicheMixin:
         :param name: dial plan name
         :param uuid: dial plan uuid
         :return: dialPlan dictionary
+        
+
+        Schema: `GetDialPlanReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getDialPlan(
             **self._identify(name=name, uuid=uuid)
@@ -603,6 +738,9 @@ class NicheMixin:
         List all dial plans.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dialPlan dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDialPlanReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listDialPlan(
@@ -623,6 +761,9 @@ class NicheMixin:
         :return: dialPlanTag dictionary
 
         Note: AXL requires either uuid alone, or both name + dialPlanName.
+        
+
+        Schema: `GetDialPlanTagReq`: optional `returnedTags`; one of `uuid`, or (`name` + `dialPlanName`).
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -639,6 +780,9 @@ class NicheMixin:
         List all dial plan tags.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of dialPlanTag dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDialPlanTagReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listDialPlanTag(
@@ -655,6 +799,9 @@ class NicheMixin:
         Add a directory number alias lookup and sync entry.
         :param name: entry name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `dirNumberAliasLookupandSync` -> `XDirNumberAliasLookupandSync`: `ldapConfigName` + `ldapManagerDisgName` + `ldapPassword` + `ldapUserSearch` + `servers`; optional `ldapDirectoryServerUsage`, `keepAliveSearch`, `keepAliveTime`, `sipAliasSuffix`, `enableCachingofRecords`, `cacheSizeforAliasLookup` and 1 more.
         """
         obj = self._build_object(
             "addDirNumberAliasLookupandSync",
@@ -671,6 +818,9 @@ class NicheMixin:
         :param name: entry name
         :param uuid: entry uuid
         :return: dirNumberAliasLookupandSync dictionary
+        
+
+        Schema: `GetDirNumberAliasLookupandSyncReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getDirNumberAliasLookupandSync(
             **self._identify(name=name, uuid=uuid)
@@ -681,6 +831,9 @@ class NicheMixin:
         List all directory number alias lookup and sync entries.
         :param tagfilter: AXL returned tags to include, e.g. {'ldapConfigName': ''}
         :return: list of dirNumberAliasLookupandSync dictionaries, empty when nothing matches
+        
+
+        Schema: `ListDirNumberAliasLookupandSyncReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"ldapConfigName": ""}
         result = self.client.listDirNumberAliasLookupandSync(
@@ -694,6 +847,9 @@ class NicheMixin:
         :param name: entry name (or uuid)
         :param uuid: entry uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateDirNumberAliasLookupandSyncReq`: optional `ldapConfigName`, `ldapManagerDisgName`, `ldapPassword`, `ldapUserSearch`, `ldapDirectoryServerUsage`, `keepAliveSearch` and 6 more.
         """
         return self.client.updateDirNumberAliasLookupandSync(
             **self._identify(name=name, uuid=uuid), **args
@@ -705,6 +861,9 @@ class NicheMixin:
         :param name: entry name
         :param uuid: entry uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeDirNumberAliasLookupandSync(
             **self._identify(name=name, uuid=uuid)
@@ -718,6 +877,9 @@ class NicheMixin:
         """
         Get EMCC feature configuration (singleton).
         :return: emccFeatureConfig dictionary
+        
+
+        Schema: `GetEmccFeatureConfigReq`: optional `returnedTags`; one of `parameterName`, or `uuid`.
         """
         return self.client.getEmccFeatureConfig()["return"]["emccFeatureConfig"]
 
@@ -725,6 +887,9 @@ class NicheMixin:
         """
         Update EMCC feature configuration.
         :return: result dictionary
+        
+
+        Schema: `UpdateEmccFeatureConfigReq`: optional `value`; one of `uuid`, or `parameterName`.
         """
         return self.client.updateEmccFeatureConfig(**args)
 
@@ -745,6 +910,9 @@ class NicheMixin:
         """
         Update fallback feature configuration.
         :return: result dictionary
+        
+
+        Schema: `UpdateFallbackFeatureConfigReq`: optional `enableFallbackForImeCalls`, `qosSensistivityLevel`, `dtmfCorrelationDigits`, `dtmfCollectionTimer`, `callAnswerTimer`, `clearImeCallDelayTimer` and 4 more.
         """
         return self.client.updateFallbackFeatureConfig(**args)
 
@@ -757,6 +925,9 @@ class NicheMixin:
         Add a fallback profile.
         :param name: profile name — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `fallbackProfile` -> `XFallbackProfile`: `name` + `callCss`; optional `description`, `advertisedFallbackDirectoryE164Number`, `qosSensistivityLevel`, `callAnswerTimer`, `directoryNumberPartition`, `directoryNumber` and 1 more.
         """
         obj = self._build_object("addFallbackProfile", "fallbackProfile", args)
         return self.client.addFallbackProfile(fallbackProfile=obj)
@@ -767,6 +938,9 @@ class NicheMixin:
         :param name: profile name
         :param uuid: profile uuid
         :return: fallbackProfile dictionary
+        
+
+        Schema: `GetFallbackProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         return self.client.getFallbackProfile(
             **self._identify(name=name, uuid=uuid)
@@ -777,6 +951,9 @@ class NicheMixin:
         List all fallback profiles.
         :param tagfilter: AXL returned tags to include, e.g. {'name': ''}
         :return: list of fallbackProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListFallbackProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         tags = tagfilter if tagfilter is not None else {"name": ""}
         result = self.client.listFallbackProfile(
@@ -790,6 +967,9 @@ class NicheMixin:
         :param name: profile name (or uuid)
         :param uuid: profile uuid (or name)
         :return: result dictionary
+        
+
+        Schema: `UpdateFallbackProfileReq`: optional `newName`, `description`, `advertisedFallbackDirectoryE164Number`, `qosSensistivityLevel`, `callCss`, `callAnswerTimer` and 3 more.
         """
         return self.client.updateFallbackProfile(
             **self._identify(name=name, uuid=uuid), **args
@@ -801,6 +981,9 @@ class NicheMixin:
         :param name: profile name
         :param uuid: profile uuid
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         return self.client.removeFallbackProfile(
             **self._identify(name=name, uuid=uuid)
@@ -819,6 +1002,9 @@ class NicheMixin:
 
         Note: HandoffConfiguration identity is 'pattern' + optional 'routePartitionName',
         not 'handoffType'.
+        
+
+        Schema: `handoffConfiguration` -> `XHandoffConfiguration`: `pattern`; optional `routePartitionName`.
         """
         obj = self._build_object(
             "addHandoffConfiguration", "handoffConfiguration", args
@@ -832,6 +1018,9 @@ class NicheMixin:
         :param pattern: DN pattern (alternative identity)
         :param routePartitionName: route partition name (optional companion to pattern)
         :return: handoffConfiguration dictionary
+        
+
+        Schema: `GetHandoffConfigurationReq`: optional `returnedTags`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -852,6 +1041,9 @@ class NicheMixin:
         :param pattern: DN pattern (alternative identity)
         :param routePartitionName: route partition name (optional companion to pattern)
         :return: result dictionary
+        
+
+        Schema: `UpdateHandoffConfigurationReq`: optional `newPattern`, `newRoutePartitionName`; one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -870,6 +1062,9 @@ class NicheMixin:
         :param pattern: DN pattern (alternative identity)
         :param routePartitionName: route partition name (optional companion to pattern)
         :return: result dictionary
+        
+
+        Schema: `RemoveHandoffConfigurationReq`: one of `uuid`, or (`pattern`; optional `routePartitionName`).
         """
         if uuid:
             identifier = {"uuid": uuid}
@@ -895,6 +1090,9 @@ class NicheMixin:
         :param retryCount: retry count
         :param webServiceRootUri: web service root URI
         :return: result dictionary (uuid)
+        
+
+        Schema: `httpProfile` -> `XHttpProfile`: `name` + `userName` + `password` + `webServiceRootUri`; optional `requestTimeout`, `retryCount`.
         """
         obj = self._build_object("addHttpProfile", "httpProfile", args)
         return self.client.addHttpProfile(httpProfile=obj)
@@ -905,6 +1103,9 @@ class NicheMixin:
         :param name: profile name  (or uuid)
         :param uuid: profile uuid  (or name)
         :return: httpProfile dictionary
+        
+
+        Schema: `GetHttpProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -919,6 +1120,9 @@ class NicheMixin:
         :param newName: new profile name
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateHttpProfileReq`: optional `newName`, `userName`, `password`, `requestTimeout`, `retryCount`, `webServiceRootUri`.
         """
         return self.client.updateHttpProfile(**args)
 
@@ -928,6 +1132,9 @@ class NicheMixin:
         :param name: profile name  (or uuid)
         :param uuid: profile uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -947,6 +1154,9 @@ class NicheMixin:
         :param ipv6Address: IPv6 address
         :param deviceType: device type
         :return: result dictionary (uuid)
+        
+
+        Schema: `infrastructureDevice` -> `XInfrastructureDevice`: optional `name`, `ipv4Address`, `ipv6Address`, `bssidWithMask`, `wapLocation`, `isActive`.
         """
         obj = self._build_object(
             "addInfrastructureDevice", "infrastructureDevice", args
@@ -958,6 +1168,9 @@ class NicheMixin:
         Get an infrastructure device.  AXL only supports lookup by uuid.
         :param uuid: device uuid — required
         :return: infrastructureDevice dictionary
+        
+
+        Schema: `GetInfrastructureDeviceReq`: optional `returnedTags`; one of `uuid`.
         """
         if not uuid:
             raise ValueError("uuid is required")
@@ -975,6 +1188,9 @@ class NicheMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of infrastructureDevice dictionaries, empty when nothing matches
+        
+
+        Schema: `ListInfrastructureDeviceReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listInfrastructureDevice(
             {"name": search_name}, returnedTags=tagfilter
@@ -990,6 +1206,9 @@ class NicheMixin:
         :param newName: new device name
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateInfrastructureDeviceReq`: optional `newName`, `ipv4Address`, `ipv6Address`, `bssidWithMask`, `wapLocation`, `isActive`; one of `uuid`.
         """
         if not uuid:
             raise ValueError("uuid is required")
@@ -1000,6 +1219,9 @@ class NicheMixin:
         Remove an infrastructure device.  AXL only supports removal by uuid.
         :param uuid: device uuid — required
         :return: result dictionary
+        
+
+        Schema: `RemoveInfrastructureDeviceReq`: one of `uuid`.
         """
         if not uuid:
             raise ValueError("uuid is required")
@@ -1016,6 +1238,9 @@ class NicheMixin:
         :param exchangeDirectoryUri: boolean, exchange directory URIs
         :param routeString: route string (max 50 chars)
         :return: result dictionary
+        
+
+        Schema: `UpdateInterClusterDirectoryUriReq`: `exchangeDirectoryUri` + `routeString`.
         """
         return self.client.updateInterClusterDirectoryUri(**args)
 
@@ -1029,6 +1254,9 @@ class NicheMixin:
         :param interClusterService: service identifier  (or uuid)
         :param uuid: profile uuid  (or interClusterService)
         :return: interClusterServiceProfile dictionary
+        
+
+        Schema: `GetInterClusterServiceProfileReq`: optional `returnedTags`; one of `interClusterService`, or `uuid`.
         """
         if bool(interClusterService) == bool(uuid):
             raise ValueError(
@@ -1051,6 +1279,9 @@ class NicheMixin:
         :param isActivated: boolean, activate profile
         :param sipTrunkName: SIP trunk name reference
         :return: result dictionary
+        
+
+        Schema: `UpdateInterClusterServiceProfileReq`: optional `isActivated`, `sipTrunkName`; one of `uuid`, or `interClusterService`.
         """
         return self.client.updateInterClusterServiceProfile(**args)
 
@@ -1065,6 +1296,9 @@ class NicheMixin:
         :param userLocale: locale reference — required
         :param orderIndex: ordering index
         :return: result dictionary (uuid)
+        
+
+        Schema: `ivrUserLocale` -> `XIvrUserLocale`: `userLocale` + `orderIndex`.
         """
         obj = self._build_object("addIvrUserLocale", "ivrUserLocale", args)
         return self.client.addIvrUserLocale(ivrUserLocale=obj)
@@ -1075,6 +1309,9 @@ class NicheMixin:
         :param userLocale: locale reference  (or uuid)
         :param uuid: locale uuid  (or userLocale)
         :return: ivrUserLocale dictionary
+        
+
+        Schema: `GetIvrUserLocaleReq`: optional `returnedTags`; one of `userLocale`, or `uuid`.
         """
         if bool(userLocale) == bool(uuid):
             raise ValueError("Provide exactly one of userLocale or uuid")
@@ -1091,6 +1328,9 @@ class NicheMixin:
         :param search_locale: userLocale search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of ivrUserLocale dictionaries, empty when nothing matches
+        
+
+        Schema: `ListIvrUserLocaleReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listIvrUserLocale(
             {"userLocale": search_locale}, returnedTags=tagfilter
@@ -1107,6 +1347,9 @@ class NicheMixin:
         :param newUserLocale: new locale reference
         :param orderIndex: new ordering index
         :return: result dictionary
+        
+
+        Schema: `UpdateIvrUserLocaleReq`: optional `newUserLocale`, `orderIndex`; one of `uuid`, or `userLocale`.
         """
         return self.client.updateIvrUserLocale(**args)
 
@@ -1116,6 +1359,9 @@ class NicheMixin:
         :param userLocale: locale reference  (or uuid)
         :param uuid: locale uuid  (or userLocale)
         :return: result dictionary
+        
+
+        Schema: `RemoveIvrUserLocaleReq`: one of `userLocale`, or `uuid`.
         """
         if bool(userLocale) == bool(uuid):
             raise ValueError("Provide exactly one of userLocale or uuid")
@@ -1133,6 +1379,9 @@ class NicheMixin:
         :param domainName: domain name — required
         :param domainId: hex domain ID (6 hex chars) — required
         :return: result dictionary (uuid)
+        
+
+        Schema: `mlppDomain` -> `XMlppDomain`: `domainName` + `domainId`.
         """
         obj = self._build_object("addMlppDomain", "mlppDomain", args)
         return self.client.addMlppDomain(mlppDomain=obj)
@@ -1143,6 +1392,9 @@ class NicheMixin:
         :param domainName: domain name  (or uuid)
         :param uuid: domain uuid  (or domainName)
         :return: mlppDomain dictionary
+        
+
+        Schema: `GetMlppDomainReq`: optional `returnedTags`; one of `domainName`, or `uuid`.
         """
         if bool(domainName) == bool(uuid):
             raise ValueError("Provide exactly one of domainName or uuid")
@@ -1159,6 +1411,9 @@ class NicheMixin:
         :param search_name: domainName search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of mlppDomain dictionaries, empty when nothing matches
+        
+
+        Schema: `ListMlppDomainReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listMlppDomain(
             {"domainName": search_name}, returnedTags=tagfilter
@@ -1175,6 +1430,9 @@ class NicheMixin:
         :param newDomainName: new domain name
         :param domainId: new hex domain ID
         :return: result dictionary
+        
+
+        Schema: `UpdateMlppDomainReq`: optional `newDomainName`, `domainId`; one of `uuid`, or `domainName`.
         """
         return self.client.updateMlppDomain(**args)
 
@@ -1184,6 +1442,9 @@ class NicheMixin:
         :param domainName: domain name  (or uuid)
         :param uuid: domain uuid  (or domainName)
         :return: result dictionary
+        
+
+        Schema: `RemoveMlppDomainReq`: one of `domainName`, or `uuid`.
         """
         if bool(domainName) == bool(uuid):
             raise ValueError("Provide exactly one of domainName or uuid")
@@ -1200,6 +1461,9 @@ class NicheMixin:
         :param name: profile name  (or uuid)
         :param uuid: profile uuid  (or name)
         :return: mobileSmartClientProfile dictionary
+        
+
+        Schema: `GetMobileSmartClientProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1218,6 +1482,9 @@ class NicheMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of mobileSmartClientProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListMobileSmartClientProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listMobileSmartClientProfile(
             {"name": search_name}, returnedTags=tagfilter
@@ -1236,6 +1503,9 @@ class NicheMixin:
         :param name: profile name — required
         :param description: description
         :return: result dictionary (uuid)
+        
+
+        Schema: `networkAccessProfile` -> `XNetworkAccessProfile`: `name` + `vpnRequired` + `proxySettings` + `proxyHostname` + `proxyPort`; optional `description`, `proxyRequiresAuthentication`, `provideSharedCredentials`, `username`, `password`.
         """
         obj = self._build_object(
             "addNetworkAccessProfile", "networkAccessProfile", args
@@ -1248,6 +1518,9 @@ class NicheMixin:
         :param name: profile name  (or uuid)
         :param uuid: profile uuid  (or name)
         :return: networkAccessProfile dictionary
+        
+
+        Schema: `GetNetworkAccessProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1266,6 +1539,9 @@ class NicheMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of networkAccessProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListNetworkAccessProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listNetworkAccessProfile(
             {"name": search_name}, returnedTags=tagfilter
@@ -1282,6 +1558,9 @@ class NicheMixin:
         :param newName: new profile name
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateNetworkAccessProfileReq`: optional `newName`, `description`, `vpnRequired`, `proxySettings`, `proxyHostname`, `proxyPort` and 4 more.
         """
         return self.client.updateNetworkAccessProfile(**args)
 
@@ -1291,6 +1570,9 @@ class NicheMixin:
         :param name: profile name  (or uuid)
         :param uuid: profile uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1306,6 +1588,9 @@ class NicheMixin:
         Get the page layout preferences for a given page.
         :param pageName: page name — required by AXL schema
         :return: pageLayoutPreferences dictionary
+        
+
+        Schema: `GetPageLayoutPreferencesReq`: `pageName`; optional `returnedTags`.
         """
         return self.client.getPageLayoutPreferences(pageName=pageName)["return"][
             "pageLayoutPreferences"
@@ -1317,6 +1602,9 @@ class NicheMixin:
         :param pageName: page name — required
         :param maxDevicesPerPage: maximum devices per page
         :return: result dictionary
+        
+
+        Schema: `UpdatePageLayoutPreferencesReq`: `pageName` + `pageSections`.
         """
         return self.client.updatePageLayoutPreferences(**args)
 
@@ -1334,6 +1622,9 @@ class NicheMixin:
         :param protocol: protocol string — required
         :param trunkType: trunk type string — optional
         :return: displayInstance string
+        
+
+        Schema: `GetPhoneTypeDisplayInstanceReq`: `productName` + `protocol`; optional `trunkType`.
         """
         if not productName:
             raise ValueError("productName is required")
@@ -1357,6 +1648,9 @@ class NicheMixin:
         :param description: description
         :param isDefault: boolean, mark as default
         :return: result dictionary (uuid)
+        
+
+        Schema: `resourcePriorityNamespace` -> `XResourcePriorityNamespace`: `namespace`; optional `description`, `isDefault`.
         """
         obj = self._build_object(
             "addResourcePriorityNamespace", "resourcePriorityNamespace", args
@@ -1371,6 +1665,9 @@ class NicheMixin:
         :param namespace: namespace string  (or uuid)
         :param uuid: namespace uuid  (or namespace)
         :return: resourcePriorityNamespace dictionary
+        
+
+        Schema: `GetResourcePriorityNamespaceReq`: optional `returnedTags`; one of `namespace`, or `uuid`.
         """
         if bool(namespace) == bool(uuid):
             raise ValueError("Provide exactly one of namespace or uuid")
@@ -1389,6 +1686,9 @@ class NicheMixin:
         :param search_namespace: namespace search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of resourcePriorityNamespace dictionaries, empty when nothing matches
+        
+
+        Schema: `ListResourcePriorityNamespaceReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listResourcePriorityNamespace(
             {"namespace": search_namespace}, returnedTags=tagfilter
@@ -1404,6 +1704,9 @@ class NicheMixin:
         :param uuid: namespace uuid  (or namespace) — required
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateResourcePriorityNamespaceReq`: optional `newNamespace`, `description`, `isDefault`; one of `uuid`, or `namespace`.
         """
         return self.client.updateResourcePriorityNamespace(**args)
 
@@ -1413,6 +1716,9 @@ class NicheMixin:
         :param namespace: namespace string  (or uuid)
         :param uuid: namespace uuid  (or namespace)
         :return: result dictionary
+        
+
+        Schema: `RemoveResourcePriorityNamespaceReq`: one of `namespace`, or `uuid`.
         """
         if bool(namespace) == bool(uuid):
             raise ValueError("Provide exactly one of namespace or uuid")
@@ -1425,6 +1731,9 @@ class NicheMixin:
         :param namespace: namespace string  (or uuid)
         :param uuid: namespace uuid  (or namespace)
         :return: result dictionary
+        
+
+        Schema: `ResetResourcePriorityNamespaceReq`: one of `namespace`, or `uuid`.
         """
         if bool(namespace) == bool(uuid):
             raise ValueError("Provide exactly one of namespace or uuid")
@@ -1437,6 +1746,9 @@ class NicheMixin:
         :param namespace: namespace string  (or uuid)
         :param uuid: namespace uuid  (or namespace)
         :return: result dictionary
+        
+
+        Schema: `RestartResourcePriorityNamespaceReq`: one of `namespace`, or `uuid`.
         """
         if bool(namespace) == bool(uuid):
             raise ValueError("Provide exactly one of namespace or uuid")
@@ -1449,6 +1761,9 @@ class NicheMixin:
         :param namespace: namespace string  (or uuid)
         :param uuid: namespace uuid  (or namespace)
         :return: result dictionary
+        
+
+        Schema: `ApplyResourcePriorityNamespaceReq`: one of `namespace`, or `uuid`.
         """
         if bool(namespace) == bool(uuid):
             raise ValueError("Provide exactly one of namespace or uuid")
@@ -1465,6 +1780,9 @@ class NicheMixin:
         :param name: list name — required
         :param description: description
         :return: result dictionary (uuid)
+        
+
+        Schema: `resourcePriorityNamespaceList` -> `XResourcePriorityNamespaceList`: `name`; optional `description`, `members`.
         """
         obj = self._build_object(
             "addResourcePriorityNamespaceList",
@@ -1481,6 +1799,9 @@ class NicheMixin:
         :param name: list name  (or uuid)
         :param uuid: list uuid  (or name)
         :return: resourcePriorityNamespaceList dictionary
+        
+
+        Schema: `GetResourcePriorityNamespaceListReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1499,6 +1820,9 @@ class NicheMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of resourcePriorityNamespaceList dictionaries, empty when nothing matches
+        
+
+        Schema: `ListResourcePriorityNamespaceListReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listResourcePriorityNamespaceList(
             {"name": search_name}, returnedTags=tagfilter
@@ -1515,6 +1839,9 @@ class NicheMixin:
         :param newName: new list name
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateResourcePriorityNamespaceListReq`: optional `newName`, `description`, optional choice of (optional `removeMembers`, `addMembers`), or `members`.
         """
         return self.client.updateResourcePriorityNamespaceList(**args)
 
@@ -1524,6 +1851,9 @@ class NicheMixin:
         :param name: list name  (or uuid)
         :param uuid: list uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1536,6 +1866,9 @@ class NicheMixin:
         :param name: list name  (or uuid)
         :param uuid: list uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1548,6 +1881,9 @@ class NicheMixin:
         :param name: list name  (or uuid)
         :param uuid: list uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1560,6 +1896,9 @@ class NicheMixin:
         :param name: list name  (or uuid)
         :param uuid: list uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1583,6 +1922,9 @@ class NicheMixin:
         :param partitionForEnterprisePatterns: route partition for enterprise patterns
         :param partitionForE164Pattern: route partition for E.164 patterns
         :return: result dictionary
+        
+
+        Schema: `UpdateRoutePartitionsForLearnedPatternsReq`: `partitionForEnterpriseANo` + `partitionForE164ANo` + `partitionForEnterprisePatterns` + `partitionForE164Pattern` + `markLearnedEntAltNumbers` + `markLearnedE164AltNumbers` + `markFixedLengthEntPatterns` + `markVariableLengthEntPatterns` + `markFixedLengthE164Patterns` + `markVariableLengthE164Patterns`.
         """
         return self.client.updateRoutePartitionsForLearnedPatterns(**args)
 
@@ -1596,6 +1938,9 @@ class NicheMixin:
         :param name: profile name — required
         :param description: description
         :return: result dictionary (uuid)
+        
+
+        Schema: `sdpTransparencyProfile` -> `XSdpTransparencyProfile`: `name` + `attributeSet`; optional `description`.
         """
         obj = self._build_object(
             "addSdpTransparencyProfile", "sdpTransparencyProfile", args
@@ -1608,6 +1953,9 @@ class NicheMixin:
         :param name: profile name  (or uuid)
         :param uuid: profile uuid  (or name)
         :return: sdpTransparencyProfile dictionary
+        
+
+        Schema: `GetSdpTransparencyProfileReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1626,6 +1974,9 @@ class NicheMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of sdpTransparencyProfile dictionaries, empty when nothing matches
+        
+
+        Schema: `ListSdpTransparencyProfileReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listSdpTransparencyProfile(
             {"name": search_name}, returnedTags=tagfilter
@@ -1642,6 +1993,9 @@ class NicheMixin:
         :param newName: new profile name
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateSdpTransparencyProfileReq`: optional `newName`, `description`.
         """
         return self.client.updateSdpTransparencyProfile(**args)
 
@@ -1651,6 +2005,9 @@ class NicheMixin:
         :param name: profile name  (or uuid)
         :param uuid: profile uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1683,6 +2040,9 @@ class NicheMixin:
         :param proxyUserName: proxy username
         :param proxyPassword: proxy password
         :return: result dictionary
+        
+
+        Schema: `DoUpdateTransportSettingsReq`: `transportMode` + `url` + `httpHost` + `httpPort`; optional `enableProxyAuthentication`, `proxyUserName`, `proxyPassword`.
         """
         return self.client.doUpdateTransportSettings(**args)
 
@@ -1699,6 +2059,9 @@ class NicheMixin:
         :param sipTrunkName: SIP trunk name reference
         :param defaultVideoStreamId: default video stream ID
         :return: result dictionary (uuid)
+        
+
+        Schema: `vohServer` -> `XVohServer`: `name` + `sipTrunkName` + `defaultVideoStreamId`; optional `description`.
         """
         obj = self._build_object("addVohServer", "vohServer", args)
         return self.client.addVohServer(vohServer=obj)
@@ -1709,6 +2072,9 @@ class NicheMixin:
         :param name: server name  (or uuid)
         :param uuid: server uuid  (or name)
         :return: vohServer dictionary
+        
+
+        Schema: `GetVohServerReq`: optional `returnedTags`; one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
@@ -1725,6 +2091,9 @@ class NicheMixin:
         :param search_name: name search pattern, default '%' (all)
         :param tagfilter: AXL returned tags to include
         :return: list of vohServer dictionaries, empty when nothing matches
+        
+
+        Schema: `ListVohServerReq`: `searchCriteria` + `returnedTags`; optional `skip`, `first`.
         """
         result = self.client.listVohServer(
             {"name": search_name}, returnedTags=tagfilter
@@ -1741,6 +2110,9 @@ class NicheMixin:
         :param newName: new server name
         :param description: new description
         :return: result dictionary
+        
+
+        Schema: `UpdateVohServerReq`: optional `newName`, `description`, `sipTrunkName`, `defaultVideoStreamId`.
         """
         return self.client.updateVohServer(**args)
 
@@ -1750,6 +2122,9 @@ class NicheMixin:
         :param name: server name  (or uuid)
         :param uuid: server uuid  (or name)
         :return: result dictionary
+        
+
+        Schema: `NameAndGUIDRequest`: one of `name`, or `uuid`.
         """
         if bool(name) == bool(uuid):
             raise ValueError("Provide exactly one of name or uuid")
