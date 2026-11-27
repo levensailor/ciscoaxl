@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.173 - 11-27-2026
+### Fixed
+- fix: publish workflow installs Python 3.10 and 3.12 with current setup-python and Poetry, so a version tag can reach PyPI
+
 ## v0.172 - 11-27-2026
 ### Changed
 - refactor: organize wrapper mixins by entity instead of rollout priority — `ciscoaxl/p0_*.py`…`p3_*.py` are now `templates`, `users`, `presence`, `security`, `lifecycle`, `dialplan`, `gateways`, `media`, `system`, `ils`, `ime`, `ccd_saf`, `network`, and `niche` (classes `TemplatesMixin`, `MediaMixin`, …), and their tests are `tests/test_<entity>.py`. `ucm.<method>()` calls are unchanged; only direct imports of the old `ciscoaxl.pX_*` modules need updating.
