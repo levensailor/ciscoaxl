@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased - 11-27-2026
+### Docs
+- docs: coverage table lists Remote Destinations, UC Services, and Voicemail Profiles
+
 ## v0.171 - 11-26-2026
 ### Fixed
 - fix: correct SOAP unwrap keys on seven AXL getters — OS version (`os`), Smart License (`LicenseDetails`; status stays on `return`), device profile options (`deviceProfile`), translation pattern options (`transPattern`), SIP profile options (`sipProfile`), phone type display instance (`displayInstance`, requires `productName` and `protocol`), and transport settings (`TransportSettings`)

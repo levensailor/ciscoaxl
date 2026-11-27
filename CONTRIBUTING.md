@@ -58,5 +58,3 @@ method coverage is always welcome.
 
 Unimplemented features are tracked at:
 [https://github.com/users/levensailor/projects/6](https://github.com/users/levensailor/projects/6)
-
-P0 items (Remote Destinations, UC Services, Voicemail) are great first contributions.

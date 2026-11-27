@@ -38,10 +38,12 @@ ciscoaxl wraps the Cisco AXL SOAP API, providing Pythonic methods for every majo
 | Hunt Lists | get_hunt_lists, get_hunt_list, add_hunt_list, update_hunt_list, delete_hunt_list |
 | Line Groups | get_line_groups, get_line_group, add_line_group, update_line_group, delete_line_group |
 | Call Pickup | get_call_pickup_groups, get_call_pickup_group, add_call_pickup_group, update_call_pickup_group, delete_call_pickup_group |
+| [Remote Destinations](rd.md) | get_remote_destinations, get_remote_destination, add_remote_destination, update_remote_destination, delete_remote_destination |
+| [Remote Destination Profiles](rd.md) | get_remote_destination_profiles, get_remote_destination_profile, add_remote_destination_profile, update_remote_destination_profile, delete_remote_destination_profile |
+| [UC Services](ucservice.md) | get_uc_services, get_uc_service, add_uc_service, update_uc_service, delete_uc_service, apply_uc_service, reset_uc_service, restart_uc_service |
+| [Service Profiles](ucservice.md) | get_service_profiles, get_service_profile, add_service_profile, update_service_profile, delete_service_profile |
+| [Voicemail Pilots](vm.md) | get_voice_mail_pilots, get_voice_mail_pilot, add_voice_mail_pilot, update_voice_mail_pilot, delete_voice_mail_pilot |
+| [Voicemail Profiles](vm.md) | get_voice_mail_profiles, get_voice_mail_profile, add_voice_mail_profile, update_voice_mail_profile, delete_voice_mail_profile, apply_voice_mail_profile, reset_voice_mail_profile, restart_voice_mail_profile |
 | SQL | run_sql_query, sql_query, sql_update |
 | LDAP | get_ldap_dir, do_ldap_sync |
 | Actions | do_device_login, do_device_logout, do_device_reset, reset_sip_trunk, do_change_dnd_status |
-
-!!! info "Not yet wrapped"
-    Remote Destinations, UC Services, and Voicemail Profiles are not yet implemented.
-    See [rd.md](rd.md), [ucservice.md](ucservice.md), [vm.md](vm.md) for details.
