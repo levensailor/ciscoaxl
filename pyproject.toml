@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ciscoaxl"
-version = "0.173"
+version = "0.174"
 description = "Cisco CUCM AXL Library. simple to use."
 authors = ["Jeff Levensailor <jeff@levensailor.com>", "Brad Haas <bradh11@gmail.com>"]
 license = "MIT"
@@ -45,12 +45,6 @@ github = ['flake8']
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[dependency-groups]
-dev = [
-    "pytest>=9.2.0",
-    "zeep>=4.3.3",
-]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]

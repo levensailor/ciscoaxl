@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.174 - 11-27-2026
+### Fixed
+- fix: drop the extra dev dependency group that asked Poetry for pytest 9 and pytest 7 at the same time, which stopped the publish install
+
 ## v0.173 - 11-27-2026
 ### Fixed
 - fix: publish workflow installs Python 3.10 and 3.12 with current setup-python and Poetry, so a version tag can reach PyPI
