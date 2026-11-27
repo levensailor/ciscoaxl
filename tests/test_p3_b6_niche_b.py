@@ -585,7 +585,7 @@ class TestPageLayoutPreferences:
 class TestPhoneTypeDisplayInstance:
     def test_get_phone_type_display_instance(self, ucm):
         ucm.recorder.responses["getPhoneTypeDisplayInstance"] = {
-            "return": {"phoneTypeDisplayInstance": {"productName": "Cisco 7960"}}
+            "displayInstance": "Cisco 7960"
         }
         result = ucm.get_phone_type_display_instance(
             productName="Cisco 7960",
@@ -596,11 +596,15 @@ class TestPhoneTypeDisplayInstance:
         assert op == "getPhoneTypeDisplayInstance"
         assert text(body, "productName") == "Cisco 7960"
         assert text(body, "protocol") == "SCCP"
-        assert result == {"productName": "Cisco 7960"}
+        assert result == "Cisco 7960"
 
     def test_get_phone_type_display_instance_raises_on_missing_product_name(self, ucm):
         with pytest.raises(ValueError):
             ucm.get_phone_type_display_instance()
+
+    def test_get_phone_type_display_instance_raises_on_missing_protocol(self, ucm):
+        with pytest.raises(ValueError):
+            ucm.get_phone_type_display_instance(productName="Cisco 7960")
 
 
 # ---------------------------------------------------------------------------
@@ -899,7 +903,8 @@ class TestSdpTransparencyProfile:
 class TestTransportSettings:
     def test_get_transport_settings(self, ucm):
         ucm.recorder.responses["getTransportSettings"] = {
-            "return": {"TransportSettings": {"transportmode": "HTTPS"}}
+            "return": "true",
+            "TransportSettings": {"transportmode": "HTTPS"},
         }
         result = ucm.get_transport_settings()
         op, _ = sent(ucm)

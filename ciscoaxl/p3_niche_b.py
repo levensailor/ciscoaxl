@@ -480,20 +480,23 @@ class P3NicheB:
     def get_phone_type_display_instance(self, productName="", protocol="", trunkType=""):
         """
         Get a phone type display instance.
-        AXL schema requires ``productName``, ``protocol``, and ``trunkType``
-        (all three fields together identify the instance).
+        AXL schema requires ``productName`` and ``protocol``. ``trunkType``
+        is optional and applies to some gateway endpoints. The response has
+        no ``return`` wrapper; ``displayInstance`` is a string on the response.
         :param productName: phone model name — required
         :param protocol: protocol string — required
-        :param trunkType: trunk type string — required
-        :return: phoneTypeDisplayInstance dictionary
+        :param trunkType: trunk type string — optional
+        :return: displayInstance string
         """
         if not productName:
             raise ValueError("productName is required")
+        if not protocol:
+            raise ValueError("protocol is required")
         return self.client.getPhoneTypeDisplayInstance(
             productName=productName,
             protocol=protocol,
             trunkType=trunkType,
-        )["return"]["phoneTypeDisplayInstance"]
+        )["displayInstance"]
 
     # ------------------------------------------------------------------ #
     # ResourcePriorityNamespace                                            #
@@ -814,9 +817,11 @@ class P3NicheB:
     def get_transport_settings(self):
         """
         Get cluster transport settings (singleton; no identifier).
+        The SOAP ``return`` element is a status string. This method returns
+        the sibling ``TransportSettings`` object.
         :return: TransportSettings dictionary
         """
-        return self.client.getTransportSettings()["return"]["TransportSettings"]
+        return self.client.getTransportSettings()["TransportSettings"]
 
     def do_update_transport_settings(self, **args):
         """

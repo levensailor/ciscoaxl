@@ -164,8 +164,8 @@ class P2Media:
     # ------------------------------------------------------------------
 
     def get_trans_pattern_options(self, **args):
-        """Get TransPatternOptions (system-wide singleton)."""
-        return self.client.getTransPatternOptions(**args)["return"]["transPatternOptions"]
+        """Get translation-pattern option choices. Returns the ``transPattern`` object."""
+        return self.client.getTransPatternOptions(**args)["return"]["transPattern"]
 
     # ------------------------------------------------------------------
     # TransformationProfile
@@ -236,8 +236,8 @@ class P2Media:
     # ------------------------------------------------------------------
 
     def get_sip_profile_options(self, **args):
-        """Get SipProfileOptions (system-wide singleton)."""
-        return self.client.getSipProfileOptions(**args)["return"]["sipProfileOptions"]
+        """Get SIP profile option choices. Returns the ``sipProfile`` object."""
+        return self.client.getSipProfileOptions(**args)["return"]["sipProfile"]
 
     # ------------------------------------------------------------------
     # Announcement

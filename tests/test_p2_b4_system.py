@@ -137,7 +137,7 @@ class TestApplicationToSoftkeyTemplate:
 class TestDeviceProfileOptions:
     def test_get_device_profile_options(self, ucm):
         ucm.recorder.responses["getDeviceProfileOptions"] = {
-            "return": {"deviceProfileOptions": {"product": "Cisco 7962"}}
+            "return": {"deviceProfile": {"product": "Cisco 7962"}}
         }
         result = ucm.get_device_profile_options(uuid="{BBBB-2222}")
         op, body = sent(ucm)

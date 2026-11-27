@@ -758,12 +758,12 @@ class TestEnterpriseParameters:
 class TestOSVersion:
     def test_get_os_version(self, ucm):
         ucm.recorder.responses["getOSVersion"] = {
-            "return": {"osVersion": {"version": "14.0.1.12900-20"}}
+            "return": {"os": {"osName": "VOS", "osVersion": "14.0.1.12900-20"}}
         }
         result = ucm.get_os_version()
         op, body = sent(ucm)
         assert op == "getOSVersion"
-        assert result == {"version": "14.0.1.12900-20"}
+        assert result == {"osName": "VOS", "osVersion": "14.0.1.12900-20"}
 
 
 # ---------------------------------------------------------------------------
@@ -1059,12 +1059,17 @@ class TestLicensedUser:
 class TestSmartLicenseStatus:
     def test_get_smart_license_status(self, ucm):
         ucm.recorder.responses["getSmartLicenseStatus"] = {
-            "return": {"smartLicenseStatus": {"registrationStatus": "Registered"}}
+            "return": "Registered",
+            "LicenseDetails": {
+                "SmartLicensing": "true",
+                "Registration": {"Status": "REGISTERED"},
+            },
         }
         result = ucm.get_smart_license_status()
         op, body = sent(ucm)
         assert op == "getSmartLicenseStatus"
-        assert result == {"registrationStatus": "Registered"}
+        assert result["SmartLicensing"] == "true"
+        assert result["Registration"]["Status"] == "REGISTERED"
 
 
 # ---------------------------------------------------------------------------

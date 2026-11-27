@@ -230,7 +230,7 @@ class TestFacInfo:
 class TestTransPatternOptions:
     def test_get_unwraps(self, ucm):
         ucm.recorder.responses["getTransPatternOptions"] = {
-            "return": {"transPatternOptions": {"patternUrgency": "f"}}
+            "return": {"transPattern": {"patternUrgency": "f"}}
         }
         result = ucm.get_trans_pattern_options()
         assert "patternUrgency" in result
@@ -335,7 +335,7 @@ class TestH323Trunk:
 class TestSipProfileOptions:
     def test_get_unwraps(self, ucm):
         ucm.recorder.responses["getSipProfileOptions"] = {
-            "return": {"sipProfileOptions": {"sipSessionRefreshMethod": "invite"}}
+            "return": {"sipProfile": {"sipSessionRefreshMethod": "invite"}}
         }
         result = ucm.get_sip_profile_options()
         assert "sipSessionRefreshMethod" in result

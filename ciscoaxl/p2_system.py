@@ -84,10 +84,10 @@ class P2System:
         """
         Get device-profile option choices for a device profile UUID.
         :param uuid: device profile uuid — required
-        :return: deviceProfileOptions dictionary
+        :return: deviceProfile dictionary
         """
         return self.client.getDeviceProfileOptions(uuid=uuid)["return"][
-            "deviceProfileOptions"
+            "deviceProfile"
         ]
 
     # ------------------------------------------------------------------ #

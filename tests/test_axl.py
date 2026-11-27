@@ -1,10 +1,26 @@
+"""Live CUCM AXL tests.
+
+Skipped unless python-decouple is installed and CUCM credentials are set.
+Offline tests do not import this module's dependencies.
+"""
+import pytest
+
+pytest.importorskip("decouple")
+
 from ciscoaxl import axl
 from decouple import config
 
-cucm = config("CUCM_PUBLISHER")
-username = config("CUCM_AXL_USERNAME")
-password = config("CUCM_AXL_PASSWORD")
-version = config("CUCM_VERSION")
+cucm = config("CUCM_PUBLISHER", default="")
+username = config("CUCM_AXL_USERNAME", default="")
+password = config("CUCM_AXL_PASSWORD", default="")
+version = config("CUCM_VERSION", default="")
+
+if not all((cucm, username, password, version)):
+    pytest.skip(
+        "CUCM credentials are not configured "
+        "(CUCM_PUBLISHER, CUCM_AXL_USERNAME, CUCM_AXL_PASSWORD, CUCM_VERSION)",
+        allow_module_level=True,
+    )
 
 ucm = axl(username=username, password=password, cucm=cucm, cucm_version=version)
 

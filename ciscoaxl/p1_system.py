@@ -709,9 +709,9 @@ class P1System:
     def get_os_version(self):
         """
         Get the OS version of the connected node.
-        :return: osVersion dictionary
+        :return: os dictionary (osName, osVersion)
         """
-        return self.client.getOSVersion()["return"]["osVersion"]
+        return self.client.getOSVersion()["return"]["os"]
 
     # ------------------------------------------------------------------ #
     # ProcessNode                                                          #
@@ -987,10 +987,14 @@ class P1System:
 
     def get_smart_license_status(self):
         """
-        Get the Smart Licensing status.
-        :return: smartLicenseStatus dictionary
+        Get Smart Licensing details.
+
+        AXL puts the overall status string on ``return``. This method
+        returns the sibling ``LicenseDetails`` object. Read ``return`` on
+        the raw SOAP response for that status string.
+        :return: LicenseDetails dictionary
         """
-        return self.client.getSmartLicenseStatus()["return"]["smartLicenseStatus"]
+        return self.client.getSmartLicenseStatus()["LicenseDetails"]
 
     # ------------------------------------------------------------------ #
     # MessageWaiting                                                       #

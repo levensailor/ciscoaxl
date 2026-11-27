@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.171 - 11-26-2026
+### Fixed
+- fix: correct SOAP unwrap keys on seven AXL getters — OS version (`os`), Smart License (`LicenseDetails`; status stays on `return`), device profile options (`deviceProfile`), translation pattern options (`transPattern`), SIP profile options (`sipProfile`), phone type display instance (`displayInstance`, requires `productName` and `protocol`), and transport settings (`TransportSettings`)
+
 ## v0.170 - 11-26-2026
 ### Added
 - feat: wrap P3 AXL objects for niche, legacy, IME/CCD/SAF, and network features — IME, CCD/SAF, LBM/SNMP/DHCP/WLAN, Catalyst 6000/VG224/H.323/gatekeeper, geo-location/billing/cloud onboarding/dial-plan tags, HTTP/infrastructure/MLPP/resource-priority/SDP/VoH/transport settings
