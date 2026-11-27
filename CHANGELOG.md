@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v0.175 - 11-27-2026
+### Fixed
+- fix: publish scan skips the lxml import check, and the tag workflow runs the offline tests. The live CUCM module stays available for a lab run.
+
 ## v0.174 - 11-27-2026
 ### Fixed
 - fix: drop the extra dev dependency group that asked Poetry for pytest 9 and pytest 7 at the same time, which stopped the publish install

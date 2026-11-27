@@ -44,7 +44,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          poetry run coverage run -m pytest -v
+          poetry run coverage run -m pytest -v --ignore=tests/test_axl.py
 
       - name: Code Coverage Report
         run: |
